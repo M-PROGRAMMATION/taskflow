@@ -1,6 +1,6 @@
 /*
  * storage.js — objet Stockage
- * Lecture / écriture JSON dans localStorage (clés taskflow_taches, taskflow_utilisateurs).
+ * Lecture / écriture JSON dans localStorage (clés taskflow_tasks, taskflow_users).
  * Renvoie une valeur par défaut si la donnée est absente ou corrompue (try/catch).
  * Dépend de : rien.
  * Seul fichier qui accède à localStorage. Pas de règle métier ici.

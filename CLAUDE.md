@@ -91,7 +91,7 @@ Règles de structure (architecture validée par le binôme, voir PROMPTS.md, pro
 - Les validations renvoient un résultat (valide ou message d'erreur) ; seule `Interface` affiche les erreurs.
 - Clics dans la liste : un seul écouteur sur le conteneur (délégation d'événements), la tâche est retrouvée par son id.
 - Sécurité : afficher les textes saisis avec `textContent` / `createElement`, jamais `innerHTML` (XSS). Lecture de `localStorage` protégée par `try/catch`.
-- Clés `localStorage` préfixées : `taskflow_taches`, `taskflow_utilisateurs`.
+- Clés `localStorage` préfixées : `taskflow_tasks`, `taskflow_users`.
 - Les scripts sont chargés avec des balises `<script>` classiques à la fin de `index.html`, dans l'ordre : `utils.js`, `storage.js`, `auth.js`, `tasks.js`, `ui.js`, puis `app.js`. Pas de `type="module"` : les modules ES ne marchent pas en ouvrant le fichier directement (`file://`), et le projet n'a pas de serveur.
 - L'application s'ouvre en double-cliquant sur `src/index.html` (ou avec l'extension Live Server de VS Code).
 - Ordre d'implémentation : sprint 1 = base (CRUD + sauvegarde), sprint 2 = Informatique (filtre, tri, catégories, recherche), sprint 3 = Cybersécurité (connexion, jauge, blocage).
@@ -101,29 +101,34 @@ Règles de structure (architecture validée par le binôme, voir PROMPTS.md, pro
 2. Blocage après 3 échecs : durée et moyen de débloquer.
 3. Session : se reconnecter à chaque rechargement, ou `sessionStorage` ? Bouton de déconnexion ?
 4. Tâches propres à chaque utilisateur ou communes ?
-5. Champ `categorie` et modèle utilisateur : à confirmer.
+5. Valeur par défaut de `category` et modèle utilisateur : à confirmer.
 6. Description : présente dans le formulaire et modifiable ?
 7. Échéance : obligatoire ? date passée acceptée ? place des tâches sans date dans le tri ?
 8. Modification : dans la liste, ou en réutilisant le formulaire d'ajout ?
 9. README : ajouter les user stories des catégories et de la Cybersécurité.
 
-## Modèle de données d'une tâche (base du cours)
+## Modèle de données d'une tâche
+
+Décision du binôme (PROMPTS.md, prompt 10) : les clés et les valeurs enregistrées sont **en anglais**. Le texte affiché à l'écran reste en français ; la traduction code → texte se fait dans `ui.js`.
 
 ```json
 {
-  "id": 1,
-  "titre": "Réviser le CSS",
+  "id": 1761818400000,
+  "title": "Réviser le CSS",
   "description": "Flexbox",
-  "priorite": "haute",
-  "echeance": "2026-11-15",
-  "statut": "a_faire"
+  "priority": "high",
+  "dueDate": "2026-11-15",
+  "status": "todo",
+  "category": "school"
 }
 ```
 
-- `priorite` : `"haute"` | `"moyenne"` | `"basse"`
-- `statut` : `"a_faire"` | `"terminee"`
-- `echeance` : date ISO `AAAA-MM-JJ`
-- Le cours demande de se poser la question : « Qu'est-ce qui manque à ce modèle pour ma fonctionnalité filière ? ». Pistes : un champ `categorie` (`"cours"` | `"perso"` | `"projet"`) pour l'Informatique ; un modèle utilisateur séparé (identifiant, mot de passe haché, compteur d'échecs) pour la Cybersécurité. Toute modification du modèle est une décision du binôme.
+- `priority` : `"high"` | `"medium"` | `"low"` (affiché Haute / Moyenne / Basse)
+- `status` : `"todo"` | `"done"` (affiché À faire / Terminée)
+- `dueDate` : date ISO `YYYY-MM-DD`, ou `""` si aucune (affichée jj/mm/aaaa)
+- `category` (sprint 2) : `"school"` | `"personal"` | `"project"` (affiché Cours / Perso / Projet)
+- Correspondance avec le modèle du cours : `titre` → `title`, `priorite` → `priority`, `echeance` → `dueDate`, `statut` → `status`, `categorie` → `category`, `a_faire` → `todo`, `terminee` → `done`.
+- Modèle utilisateur (Cybersécurité) : à définir avant le sprint 3, clés en anglais aussi. Toute modification du modèle est une décision du binôme.
 
 ## Planning et livrables
 
@@ -162,7 +167,7 @@ Pour chaque prompt important : le prompt exact, l'outil utilisé, ce qui a été
 - **Poser des questions d'abord** quand la demande est ambiguë.
 - **Garder la trace** : après un échange important (user stories, architecture, sprint), rappeler d'ajouter une entrée dans `PROMPTS.md`, ou proposer le texte de l'entrée.
 - **Commits** : un commit par sprint en séance 2, seulement quand le binôme le demande.
-- Vocabulaire et noms de champs en français, cohérents avec le modèle de données ci-dessus.
+- Clés et valeurs des données (JSON, `localStorage`) en anglais, cohérentes avec le modèle de données ci-dessus. Commentaires, textes affichés et documentation en français.
 
 ## Rappels du cours sur les LLM (utile pour l'oral et le README)
 
