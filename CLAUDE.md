@@ -64,6 +64,9 @@ taskflow/
 │   ├── index.html          # page unique : écran de connexion + écran des tâches
 │   ├── css/
 │   │   └── style.css       # mise en page, couleurs priorité/catégorie, tâche barrée, jauge
+│   ├── assets/
+│   │   ├── images/         # images de l'application (logo, illustrations)
+│   │   └── icones/         # icônes de l'interface (corbeille, modifier, favicon…)
 │   └── js/
 │       ├── utils.js        # Utils : id, format de date, nettoyage des saisies
 │       ├── storage.js      # Stockage : lecture / écriture JSON dans localStorage
@@ -79,6 +82,7 @@ taskflow/
 
 Règles de structure (architecture validée par le binôme, voir PROMPTS.md, prompt 5) :
 - Tout le code de l'application va dans `src/`. La documentation reste à la racine.
+- Les images et icônes vont dans `src/assets/` et sont référencées par des chemins relatifs (ex. `assets/icones/corbeille.svg`). Fichiers locaux uniquement : pas de lien vers un CDN ni de bibliothèque d'icônes (Font Awesome, etc.). Préférer le SVG pour les icônes. Noms de fichiers en minuscules, sans espace ni accent.
 - Un fichier JS = une responsabilité, et chaque fichier expose **un seul objet** : `Utils`, `Stockage`, `Auth`, `Taches`, `Interface`. Pas d'autre variable globale. Ne pas nommer un objet `Storage` (conflit avec `window.Storage`).
 - Accès au DOM uniquement dans `ui.js`. Accès à `localStorage` uniquement dans `storage.js`. Règles métier uniquement dans `tasks.js` et `auth.js`.
 - `tasks.js` contient des fonctions pures : elles reçoivent une liste et renvoient une nouvelle liste, sans modifier l'originale (trier une copie).

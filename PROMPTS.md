@@ -186,3 +186,20 @@ IMPORTANT :
 **Rejeté :** le hachage du mot de passe proposé par l'IA, inutile pour une simple todo-list ; l'architecture en un seul `app.js` (tout est mélangé, conflits entre nous deux) et les modules ES ou MVC (ne marchent pas en `file://`, trop complexes pour la taille du projet).
 **À décider :** les 9 questions ouvertes (création du compte, durée du blocage, session, tâches par utilisateur, catégorie, description, échéance, mode de modification, user stories manquantes), notées dans CLAUDE.md.
 **Pourquoi :** une architecture simple mais séparée en rôles clairs ; les points non documentés sont signalés plutôt qu'inventés par l'IA.
+
+## Prompt 6 · Dossier des ressources (Claude Code)
+**Demande d'origine :** je voudrais que tu fasses un dossier "assets" contenant les images, etc. du projet.
+**Prompt (version structurée) :**
+
+```text
+Tu es un développeur web qui accompagne des étudiants de 1re année.
+Contexte : TaskFlow, application de tâches en HTML, CSS et JavaScript natif, sans framework ni bibliothèque externe, ouverte en double-cliquant sur src/index.html (pas de serveur). L'architecture est décrite dans CLAUDE.md.
+Tâche : ajoute à l'architecture un dossier pour les ressources statiques (images, icônes).
+Contraintes : respecter la structure existante (tout le code dans src/), uniquement des fichiers locaux, aucune dépendance externe, pas de fonctionnalité en plus.
+Format : l'arborescence mise à jour et les règles d'utilisation (emplacement, chemins, nommage), sans code.
+```
+
+**Résultat :** un dossier `src/assets/` avec deux sous-dossiers, `images/` (logo, illustrations) et `icones/` (corbeille, modifier, favicon). Les règles sont ajoutées dans CLAUDE.md : chemins relatifs, fichiers locaux, SVG pour les icônes, noms en minuscules sans espace ni accent.
+**Gardé :** `src/assets/` avec `images/` et `icones/`. Un fichier `.gitkeep` dans chaque dossier, parce que Git ne suit pas les dossiers vides.
+**Rejeté :** utiliser une bibliothèque d'icônes en ligne (Font Awesome ou Bootstrap Icons, chargée depuis un CDN) au lieu de fichiers locaux.
+**Pourquoi :** CLAUDE.md interdit toute bibliothèque externe, et l'application ne doit dépendre d'aucune connexion internet. Quelques icônes SVG locales suffisent pour une todo-list.
