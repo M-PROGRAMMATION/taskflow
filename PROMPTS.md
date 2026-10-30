@@ -1,7 +1,7 @@
 # Journal de prompts — TaskFlow
 
 ## Prompt 1 · Règles du projet dans CLAUDE.md (Claude Code)
-**Prompt :** Je voudrais que tu fasses en sorte que, tu lises le pdf dans "/docs", il y a tout le court dedans, que tu prennes en compte et que tu mettes toutes les règles et la description du projet dans le CLAUDE.md pour les règles qu'après sur chaque discussion qu'on a c'est bon, pas besoin de retourner à chaque fois.
+**Prompt :** Je voudrais que tu fasses en sorte que, tu lises le pdf dans "/docs", il y a tout le cours dedans, que tu prennes en compte et que tu mettes toutes les règles et la description du projet dans le CLAUDE.md pour les règles qu'après sur chaque discussion qu'on a c'est bon, pas besoin de retourner à chaque fois.
 **Résultat :** un CLAUDE.md qui résume le cours : fonctionnalités, cadre technique, modèle de données, planning, livrables, format de PROMPTS.md, règles de travail pour l'IA.
 **Gardé :** tout le résumé du cours et les règles de travail.
 **Modifié :** l'IA avait supposé que notre filière était IA & Data (à cause du nom du dossier `ia-data`). Corrigé au prompt 2.
