@@ -11,7 +11,7 @@
 **Prompt :** On fait pas l'ia data, uniquement informatique et cybersécurité.
 **Résultat :** CLAUDE.md mis à jour avec le détail des fonctionnalités Informatique (tri, filtres, catégories, recherche) et Cybersécurité (connexion, robustesse du mot de passe, jauge, blocage après 3 échecs).
 **Gardé :** les deux listes de fonctionnalités, la règle « pas de bibliothèque externe ».
-**À décider :** les pistes proposées par l'IA pour le modèle de données (champ `categorie`, modèle utilisateur avec mot de passe haché et compteur d'échecs).
+**À décider :** les pistes proposées par l'IA pour le modèle de données (champ `categorie`, modèle utilisateur avec mot de passe et compteur d'échecs).
 **Pourquoi :** l'IA ne devait pas deviner notre filière ; on a rectifié son hypothèse.
 
 ## Prompt 3 · Structure des fichiers (Claude Code)
@@ -29,3 +29,160 @@
 **Modifié :** la recherche par mot-clé est placée en fonctionnalité complémentaire, parce que le prompt la présente comme un bonus et limite la liste à 8 stories.
 **Manquant :** le prompt ne mentionne ni les catégories colorées (Informatique) ni la partie Cybersécurité (connexion, robustesse du mot de passe, jauge, blocage). À traiter dans une prochaine itération du prompt.
 **Pourquoi :** première itération sur les user stories ; le cours en demande au moins 3.
+
+## Prompt 5 · Architecture (Claude Code)
+**Prompt :**
+
+```text
+Tu es un architecte logiciel senior et développeur Full Stack expérimenté. Tu accompagnes des étudiants de première année de Bachelor Informatique dans la conception de leur première application web structurée.
+
+1. Contexte
+
+Nous travaillons sur TaskFlow, une application web de gestion de tâches.
+
+Avant toute chose, tu dois impérativement lire et analyser intégralement le fichier CLAUDE.md situé à la racine du projet.
+
+Ce fichier constitue la référence principale du projet. Il contient les informations, les objectifs, les contraintes et les consignes que tu dois respecter.
+
+Ne fais aucune supposition sur les fonctionnalités qui ne sont pas documentées.
+
+2. Ta mission
+
+Ta mission est de concevoir une architecture logicielle complète pour TaskFlow.
+
+Tu dois réfléchir à une architecture :
+
+* Simple à comprendre pour des étudiants de première année.
+* Organisée et cohérente.
+* Facile à maintenir et à faire évoluer.
+* Sans complexité inutile.
+* Respectant les bonnes pratiques de développement.
+* Adaptée aux technologies et contraintes définies dans CLAUDE.md.
+
+3. Analyse préalable
+
+Avant de proposer une architecture :
+
+1. Lis CLAUDE.md intégralement.
+2. Analyse les fichiers et dossiers déjà présents dans le dépôt.
+3. Identifie les fonctionnalités attendues.
+4. Identifie les contraintes techniques.
+5. Repère les éventuelles incohérences ou informations manquantes.
+
+Ne modifie aucun fichier pendant cette phase.
+
+4. Conception de l'architecture
+
+Propose une architecture qui sépare clairement les responsabilités.
+
+Réfléchis notamment aux éléments suivants :
+
+* Présentation : gestion de l'interface HTML et des interactions utilisateur.
+* Logique métier : gestion des tâches, règles de validation et opérations.
+* Données : gestion de la sauvegarde et de la récupération des tâches avec localStorage.
+* Utilitaires : fonctions communes et réutilisables.
+
+Évite de mélanger la manipulation du DOM, la logique métier et la persistance des données dans les mêmes fonctions.
+
+Privilégie une architecture modulaire avec des responsabilités bien définies.
+
+Ne mets pas en place de design pattern complexe s'il n'apporte pas de réelle valeur au projet.
+
+5. Structure des fichiers
+
+Propose une arborescence complète du projet.
+
+Pour chaque fichier et dossier :
+
+* Indique son rôle.
+* Explique ce qu'il doit contenir.
+* Précise ses responsabilités.
+* Identifie ses éventuelles dépendances avec les autres modules.
+
+La structure doit rester proportionnée à la taille du projet.
+
+6. Modèle de données
+
+Définis le modèle de données utilisé pour représenter une tâche.
+
+Précise :
+
+* Les propriétés nécessaires.
+* Le type de chaque propriété.
+* Les valeurs autorisées.
+* Les règles de validation.
+* La manière dont les données seront sauvegardées.
+
+7. Flux de fonctionnement
+
+Explique les principaux flux de l'application :
+
+* Chargement initial de l'application.
+* Récupération des tâches depuis localStorage.
+* Création d'une tâche.
+* Modification d'une tâche.
+* Suppression d'une tâche.
+* Changement de statut.
+* Filtrage et tri des tâches.
+* Sauvegarde des modifications.
+
+Pour chaque flux, explique quels modules interviennent et dans quel ordre.
+
+8. Bonnes pratiques
+
+Respecte les principes suivants :
+
+* Une responsabilité claire par module.
+* Éviter la duplication de code.
+* Favoriser les fonctions courtes et compréhensibles.
+* Utiliser des noms explicites.
+* Limiter les dépendances entre modules.
+* Centraliser les règles métier.
+* Gérer les erreurs de manière cohérente.
+* Éviter les variables globales inutiles.
+* Ne pas surarchitecturer une application de cette taille.
+
+9. Contraintes
+
+Respecte impérativement les contraintes définies dans CLAUDE.md.
+
+En particulier, le projet utilise HTML, CSS et JavaScript natif, sans framework.
+
+N'ajoute aucune dépendance externe sans justification et validation préalable.
+
+Ne développe aucune fonctionnalité supplémentaire qui ne fait pas partie du périmètre défini.
+
+10. Livrables attendus
+
+Présente ton travail dans cet ordre :
+
+1. Synthèse de ta compréhension du projet.
+2. Analyse des contraintes techniques.
+3. Proposition d'architecture et justification des choix.
+4. Arborescence complète des fichiers.
+5. Description détaillée du rôle de chaque module.
+6. Modèle de données.
+7. Schéma des dépendances entre modules.
+8. Explication des principaux flux de fonctionnement.
+9. Ordre recommandé d'implémentation.
+10. Risques techniques et points de vigilance.
+
+11. Règles de travail
+
+IMPORTANT :
+
+* Ne génère aucun code pour le moment.
+* Ne crée, ne supprime et ne modifie aucun fichier.
+* Ne commence pas l'implémentation.
+* Ne prends aucune décision structurante sans expliquer pourquoi.
+* Si plusieurs architectures sont envisageables, compare-les et recommande la plus adaptée.
+* Si une information manque dans CLAUDE.md, signale-le plutôt que d'inventer une réponse.
+
+À la fin, présente une architecture complète que nous pourrons valider avant de passer à l'implémentation.
+```
+
+**Résultat :** comparaison de 3 architectures (un seul `app.js` / un fichier par rôle avec scripts classiques / modules ES ou MVC). Recommandation : un fichier par rôle, chacun exposant un seul objet (`Utils`, `Stockage`, `Auth`, `Taches`, `Interface`), et `app.js` qui garde l'état avec la boucle « modifier l'état → sauvegarder → réafficher ». Le reste : modèle tâche + utilisateur, schéma des dépendances, flux, ordre des 3 sprints, risques (XSS, fausse sécurité côté client, JSON corrompu, tri qui modifie la liste, ordre des scripts, noms globaux) et 9 questions ouvertes.
+**Gardé :** l'architecture complète, validée par le binôme. Ajout du fichier `utils.js`, que la structure de départ ne prévoyait pas. CLAUDE.md mis à jour et squelette des fichiers créé dans `src/`.
+**Rejeté :** le hachage du mot de passe proposé par l'IA, inutile pour une simple todo-list ; l'architecture en un seul `app.js` (tout est mélangé, conflits entre nous deux) et les modules ES ou MVC (ne marchent pas en `file://`, trop complexes pour la taille du projet).
+**À décider :** les 9 questions ouvertes (création du compte, durée du blocage, session, tâches par utilisateur, catégorie, description, échéance, mode de modification, user stories manquantes), notées dans CLAUDE.md.
+**Pourquoi :** une architecture simple mais séparée en rôles clairs ; les points non documentés sont signalés plutôt qu'inventés par l'IA.

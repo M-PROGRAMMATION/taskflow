@@ -37,6 +37,7 @@ Filières du binôme : **Informatique** et **Cybersécurité**. On implémente l
 - Contrôle de robustesse du mot de passe : au moins 8 caractères, une majuscule, un chiffre, un caractère spécial.
 - Jauge de robustesse : faible / moyen / fort.
 - Bonus : blocage après 3 échecs de connexion.
+- Pas de hachage du mot de passe : c'est une todo-list simple, le mot de passe est stocké tel quel (décision du binôme).
 - Pas de serveur : la connexion est simulée côté navigateur (`localStorage`). Ne jamais stocker de vrai mot de passe ni de données personnelles réelles ; utiliser des comptes de test fictifs. Signaler dans le README les limites de sécurité d'une connexion uniquement côté client.
 
 ### Hors périmètre
@@ -62,24 +63,45 @@ taskflow/
 ├── src/
 │   ├── index.html          # page unique : écran de connexion + écran des tâches
 │   ├── css/
-│   │   └── style.css
+│   │   └── style.css       # mise en page, couleurs priorité/catégorie, tâche barrée, jauge
 │   └── js/
-│       ├── storage.js      # lecture / écriture dans localStorage
-│       ├── auth.js         # Cybersécurité : connexion, robustesse du mot de passe, blocage
-│       ├── tasks.js        # CRUD des tâches, tri, filtres, catégories, recherche
-│       ├── ui.js           # affichage (DOM) : liste, formulaire, jauge
-│       └── app.js          # point d'entrée : branche les événements
+│       ├── utils.js        # Utils : id, format de date, nettoyage des saisies
+│       ├── storage.js      # Stockage : lecture / écriture JSON dans localStorage
+│       ├── auth.js         # Auth : robustesse du mot de passe, connexion, blocage
+│       ├── tasks.js        # Taches : validation, CRUD, filtre, tri, recherche (fonctions pures)
+│       ├── ui.js           # Interface : tout l'accès au DOM (affichage, lecture du formulaire)
+│       └── app.js          # point d'entrée : état, événements, orchestration
 ├── docs/                   # supports de cours (PDF)
 ├── CLAUDE.md
 ├── README.md               # cahier des charges + user stories (reste à la racine pour GitHub)
 └── PROMPTS.md              # journal de prompts
 ```
 
-Règles de structure :
+Règles de structure (architecture validée par le binôme, voir PROMPTS.md, prompt 5) :
 - Tout le code de l'application va dans `src/`. La documentation reste à la racine.
-- Un fichier JS = une responsabilité. Pas de logique métier dans `ui.js`, pas d'accès DOM dans `tasks.js`, `auth.js` ou `storage.js`.
-- Les scripts sont chargés avec des balises `<script>` classiques à la fin de `index.html`, dans l'ordre des dépendances : `storage.js`, `auth.js`, `tasks.js`, `ui.js`, puis `app.js`. Pas de `type="module"` : les modules ES ne marchent pas en ouvrant le fichier directement (`file://`), et le projet n'a pas de serveur.
+- Un fichier JS = une responsabilité, et chaque fichier expose **un seul objet** : `Utils`, `Stockage`, `Auth`, `Taches`, `Interface`. Pas d'autre variable globale. Ne pas nommer un objet `Storage` (conflit avec `window.Storage`).
+- Accès au DOM uniquement dans `ui.js`. Accès à `localStorage` uniquement dans `storage.js`. Règles métier uniquement dans `tasks.js` et `auth.js`.
+- `tasks.js` contient des fonctions pures : elles reçoivent une liste et renvoient une nouvelle liste, sans modifier l'originale (trier une copie).
+- Principe « état → affichage » : `app.js` garde l'état (tâches, filtre, tri, recherche, utilisateur connecté). Après chaque action : modifier l'état → sauvegarder → tout réafficher (une seule fonction `rafraichir`).
+- Dépendances à sens unique : `app.js` → `Interface`, `Taches`, `Auth`, `Stockage` → `Utils`. `Taches`, `Auth` et `Stockage` ne s'appellent pas entre eux.
+- Les validations renvoient un résultat (valide ou message d'erreur) ; seule `Interface` affiche les erreurs.
+- Clics dans la liste : un seul écouteur sur le conteneur (délégation d'événements), la tâche est retrouvée par son id.
+- Sécurité : afficher les textes saisis avec `textContent` / `createElement`, jamais `innerHTML` (XSS). Lecture de `localStorage` protégée par `try/catch`.
+- Clés `localStorage` préfixées : `taskflow_taches`, `taskflow_utilisateurs`.
+- Les scripts sont chargés avec des balises `<script>` classiques à la fin de `index.html`, dans l'ordre : `utils.js`, `storage.js`, `auth.js`, `tasks.js`, `ui.js`, puis `app.js`. Pas de `type="module"` : les modules ES ne marchent pas en ouvrant le fichier directement (`file://`), et le projet n'a pas de serveur.
 - L'application s'ouvre en double-cliquant sur `src/index.html` (ou avec l'extension Live Server de VS Code).
+- Ordre d'implémentation : sprint 1 = base (CRUD + sauvegarde), sprint 2 = Informatique (filtre, tri, catégories, recherche), sprint 3 = Cybersécurité (connexion, jauge, blocage).
+
+### Questions encore ouvertes (à trancher par le binôme, ne pas inventer)
+1. Création du compte : écran d'inscription ou compte de test créé au premier lancement ?
+2. Blocage après 3 échecs : durée et moyen de débloquer.
+3. Session : se reconnecter à chaque rechargement, ou `sessionStorage` ? Bouton de déconnexion ?
+4. Tâches propres à chaque utilisateur ou communes ?
+5. Champ `categorie` et modèle utilisateur : à confirmer.
+6. Description : présente dans le formulaire et modifiable ?
+7. Échéance : obligatoire ? date passée acceptée ? place des tâches sans date dans le tri ?
+8. Modification : dans la liste, ou en réutilisant le formulaire d'ajout ?
+9. README : ajouter les user stories des catégories et de la Cybersécurité.
 
 ## Modèle de données d'une tâche (base du cours)
 
@@ -97,7 +119,7 @@ Règles de structure :
 - `priorite` : `"haute"` | `"moyenne"` | `"basse"`
 - `statut` : `"a_faire"` | `"terminee"`
 - `echeance` : date ISO `AAAA-MM-JJ`
-- Le cours demande de se poser la question : « Qu'est-ce qui manque à ce modèle pour ma fonctionnalité filière ? ». Pistes : un champ `categorie` (`"cours"` | `"perso"` | `"projet"`) pour l'Informatique ; un modèle utilisateur séparé (identifiant, mot de passe haché, compteur d'échecs) pour la Cybersécurité. Toute modification du modèle est une décision du binôme.
+- Le cours demande de se poser la question : « Qu'est-ce qui manque à ce modèle pour ma fonctionnalité filière ? ». Pistes : un champ `categorie` (`"cours"` | `"perso"` | `"projet"`) pour l'Informatique ; un modèle utilisateur séparé (identifiant, mot de passe, compteur d'échecs) pour la Cybersécurité. Toute modification du modèle est une décision du binôme.
 
 ## Planning et livrables
 
