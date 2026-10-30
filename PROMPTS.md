@@ -240,3 +240,11 @@ Format : l'arborescence mise à jour et les règles d'utilisation (emplacement, 
 **Modifié :** la catégorie devient facultative (`""` si aucune), alors que l'IA proposait « Cours » par défaut. Le modèle de données est mis à jour.
 **Rejeté :** ignorer les accents dans la recherche avec `normalize`.
 **Pourquoi :** comme au sprint 1, les critères disent quand une story est terminée. Ils ont aussi révélé une contradiction avec la story 4 et le cas des tâches sans catégorie. Une catégorie imposée par défaut classerait des tâches au hasard, d'où le choix de la laisser vide. `normalize` a été rejeté pour garder une recherche simple.
+
+## Prompt 12 · User stories du sprint 3 : critères d'acceptation (Claude Code)
+**Prompt :** maintenant fais pareil pour le sprint 3
+**Résultat :** critères d'acceptation pour les stories 12 à 16, modèle utilisateur, section sur les limites de sécurité d'une connexion côté client, et 7 points à trancher.
+**Gardé :** le modèle utilisateur, la jauge (Fort avec les 4 règles), le refus des messages qui révèlent si un compte existe.
+**Modifié :** le blocage passe de 1 minute à 20 secondes. La session reste active au rechargement avec `sessionStorage`. Une lettre accentuée ne compte pas comme caractère spécial.
+**Rejeté :** l'écran d'inscription et les tâches propres à chaque utilisateur (clé `owner`).
+**Pourquoi :** un seul compte de test suffit pour une application de démonstration sans serveur, et on garde un modèle de tâche inchangé. Les critères ont aussi montré que les stories 13 et 14 avaient besoin d'un écran pour choisir le mot de passe, d'où l'écran du premier lancement, encore à valider.

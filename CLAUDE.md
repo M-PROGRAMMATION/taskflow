@@ -84,29 +84,27 @@ Règles de structure (architecture validée par le binôme, voir PROMPTS.md, pro
 - Tout le code de l'application va dans `src/`. La documentation reste à la racine.
 - Les images et icônes vont dans `src/assets/` et sont référencées par des chemins relatifs (ex. `assets/icones/corbeille.svg`). Fichiers locaux uniquement : pas de lien vers un CDN ni de bibliothèque d'icônes (Font Awesome, etc.). Préférer le SVG pour les icônes. Noms de fichiers en minuscules, sans espace ni accent.
 - Un fichier JS = une responsabilité, et chaque fichier expose **un seul objet** : `Utils`, `Stockage`, `Auth`, `Taches`, `Interface`. Pas d'autre variable globale. Ne pas nommer un objet `Storage` (conflit avec `window.Storage`).
-- Accès au DOM uniquement dans `ui.js`. Accès à `localStorage` uniquement dans `storage.js`. Règles métier uniquement dans `tasks.js` et `auth.js`.
+- Accès au DOM uniquement dans `ui.js`. Accès à `localStorage` et `sessionStorage` uniquement dans `storage.js`. Règles métier uniquement dans `tasks.js` et `auth.js`.
 - `tasks.js` contient des fonctions pures : elles reçoivent une liste et renvoient une nouvelle liste, sans modifier l'originale (trier une copie).
 - Principe « état → affichage » : `app.js` garde l'état (tâches, filtre, tri, recherche, utilisateur connecté). Après chaque action : modifier l'état → sauvegarder → tout réafficher (une seule fonction `rafraichir`).
 - Dépendances à sens unique : `app.js` → `Interface`, `Taches`, `Auth`, `Stockage` → `Utils`. `Taches`, `Auth` et `Stockage` ne s'appellent pas entre eux.
 - Les validations renvoient un résultat (valide ou message d'erreur) ; seule `Interface` affiche les erreurs.
 - Clics dans la liste : un seul écouteur sur le conteneur (délégation d'événements), la tâche est retrouvée par son id.
 - Sécurité : afficher les textes saisis avec `textContent` / `createElement`, jamais `innerHTML` (XSS). Lecture de `localStorage` protégée par `try/catch`.
-- Clés `localStorage` préfixées : `taskflow_tasks`, `taskflow_users`.
+- Clés `localStorage` préfixées : `taskflow_tasks`, `taskflow_users`. Clé `sessionStorage` : `taskflow_session`.
 - Les scripts sont chargés avec des balises `<script>` classiques à la fin de `index.html`, dans l'ordre : `utils.js`, `storage.js`, `auth.js`, `tasks.js`, `ui.js`, puis `app.js`. Pas de `type="module"` : les modules ES ne marchent pas en ouvrant le fichier directement (`file://`), et le projet n'a pas de serveur.
 - L'application s'ouvre en double-cliquant sur `src/index.html` (ou avec l'extension Live Server de VS Code).
 - Ordre d'implémentation : sprint 1 = base (CRUD + sauvegarde), sprint 2 = Informatique (filtre, tri, catégories, recherche), sprint 3 = Cybersécurité (connexion, jauge, blocage).
 - Décisions du sprint 2 (détail dans les critères d'acceptation du README) : tâches sans date à la fin du tri par échéance ; filtre, tri et recherche non sauvegardés ; après un ajout, filtre remis sur « Toutes » et recherche vidée ; recherche sensible aux accents (pas de `normalize`).
+- Décisions du sprint 3 (détail dans les critères d'acceptation du README) : compte de test créé au premier lancement, pas d'écran d'inscription ; pas de déconnexion au rechargement, session dans `sessionStorage` ; tâches communes, pas de clé `owner` ; une lettre accentuée n'est pas un caractère spécial ; jauge Faible (0 à 2 règles), Moyen (3), Fort (4), seul Fort est accepté ; blocage de 20 secondes, levé automatiquement.
 
 ### Questions encore ouvertes (à trancher par le binôme, ne pas inventer)
-1. Création du compte : écran d'inscription ou compte de test créé au premier lancement ?
-2. Blocage après 3 échecs : durée et moyen de débloquer.
-3. Session : se reconnecter à chaque rechargement, ou `sessionStorage` ? Bouton de déconnexion ?
-4. Tâches propres à chaque utilisateur ou communes ?
-5. Modèle utilisateur : à confirmer.
-6. Description : présente dans le formulaire et modifiable ?
-7. Échéance : obligatoire ? date passée acceptée ?
-8. Modification : dans la liste, ou en réutilisant le formulaire d'ajout ?
-9. README : ajouter les user stories des catégories et de la Cybersécurité.
+1. Compte de test : mot de passe choisi au premier lancement, et identifiant `test` ?
+2. Bouton de déconnexion : gardé ?
+3. Description : présente dans le formulaire et modifiable ?
+4. Échéance : obligatoire ? date passée acceptée ?
+5. Modification : dans la liste, ou en réutilisant le formulaire d'ajout ?
+6. Couleurs des catégories : bleu, violet, turquoise ?
 
 ## Modèle de données d'une tâche
 
@@ -129,7 +127,8 @@ Décision du binôme (PROMPTS.md, prompt 10) : les clés et les valeurs enregist
 - `dueDate` : date ISO `YYYY-MM-DD`, ou `""` si aucune (affichée jj/mm/aaaa)
 - `category` (sprint 2) : `"school"` | `"personal"` | `"project"` (affiché Cours / Perso / Projet), ou `""` si aucune. Facultative, pas de catégorie par défaut.
 - Correspondance avec le modèle du cours : `titre` → `title`, `priorite` → `priority`, `echeance` → `dueDate`, `statut` → `status`, `categorie` → `category`, `a_faire` → `todo`, `terminee` → `done`.
-- Modèle utilisateur (Cybersécurité) : à définir avant le sprint 3, clés en anglais aussi. Toute modification du modèle est une décision du binôme.
+- Modèle utilisateur (Cybersécurité), sous `taskflow_users` : tableau d'objets `{ "username", "passwordHash", "failedAttempts", "lockedUntil" }`. `passwordHash` : SHA-256 en hexadécimal ; `lockedUntil` : heure de fin du blocage en millisecondes, `0` si aucun blocage.
+- Toute modification du modèle est une décision du binôme.
 
 ## Planning et livrables
 
