@@ -98,13 +98,13 @@ Règles de structure (architecture validée par le binôme, voir PROMPTS.md, pro
 - Décisions du sprint 2 (détail dans les critères d'acceptation du README) : tâches sans date à la fin du tri par échéance ; filtre, tri et recherche non sauvegardés ; après un ajout, filtre remis sur « Toutes » et recherche vidée ; recherche sensible aux accents (pas de `normalize`).
 - Décisions du sprint 3 (détail dans les critères d'acceptation du README) : compte de test créé au premier lancement, pas d'écran d'inscription ; pas de déconnexion au rechargement, session dans `sessionStorage` ; tâches communes, pas de clé `owner` ; une lettre accentuée n'est pas un caractère spécial ; jauge Faible (0 à 2 règles), Moyen (3), Fort (4), seul Fort est accepté ; blocage de 20 secondes, levé automatiquement.
 
-### Questions encore ouvertes (à trancher par le binôme, ne pas inventer)
-1. Compte de test : mot de passe choisi au premier lancement, et identifiant `test` ?
-2. Bouton de déconnexion : gardé ?
-3. Description : présente dans le formulaire et modifiable ?
-4. Échéance : obligatoire ? date passée acceptée ?
-5. Modification : dans la liste, ou en réutilisant le formulaire d'ajout ?
-6. Couleurs des catégories : bleu, violet, turquoise ?
+- Décisions du binôme sur les dernières questions ouvertes (détail dans les critères d'acceptation du README) :
+  1. Compte de test : identifiant `test` imposé ; mot de passe choisi au premier lancement, sur un écran avec contrôle de robustesse et jauge (stories 13 et 14).
+  2. Bouton « Se déconnecter » gardé.
+  3. Description présente dans le formulaire d'ajout et modifiable (facultative, `""` par défaut).
+  4. Échéance facultative ; une date passée est acceptée, avec le badge « En retard » comme avertissement.
+  5. Modification directement dans la liste : la ligne devient un petit formulaire (Enregistrer / Annuler).
+  6. Couleurs des catégories : Cours bleu, Perso violet, Projet turquoise.
 
 ## Modèle de données d'une tâche
 

@@ -247,4 +247,11 @@ Format : l'arborescence mise à jour et les règles d'utilisation (emplacement, 
 **Gardé :** le modèle utilisateur, la jauge (Fort avec les 4 règles), le refus des messages qui révèlent si un compte existe.
 **Modifié :** le blocage passe de 1 minute à 20 secondes. La session reste active au rechargement avec `sessionStorage`. Une lettre accentuée ne compte pas comme caractère spécial.
 **Rejeté :** l'écran d'inscription et les tâches propres à chaque utilisateur (clé `owner`).
-**Pourquoi :** un seul compte de test suffit pour une application de démonstration sans serveur, et on garde un modèle de tâche inchangé. Les critères ont aussi montré que les stories 13 et 14 avaient besoin d'un écran pour choisir le mot de passe, d'où l'écran du premier lancement, encore à valider.
+**Pourquoi :** un seul compte de test suffit pour une application de démonstration sans serveur, et on garde un modèle de tâche inchangé. Les critères ont aussi montré que les stories 13 et 14 avaient besoin d'un écran pour choisir le mot de passe, d'où l'écran du premier lancement.
+
+## Prompt 13 · Dernières questions ouvertes (Claude Code)
+**Prompt :** réponses du binôme aux 6 questions ouvertes de CLAUDE.md
+**Résultat :** Claude a relevé que le mot de passe « test » contredisait la story 13.
+**Gardé :** identifiant `test`, bouton de déconnexion, description modifiable, date passée acceptée avec badge « En retard », couleurs des catégories.
+**Modifié :** le mot de passe n'est pas fixé à « test » : il est choisi au premier lancement, avec la jauge.
+**Pourquoi :** sans écran pour choisir le mot de passe, la jauge et le contrôle de robustesse (filière Cybersécurité) n'auraient pas pu être testés.

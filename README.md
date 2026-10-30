@@ -59,7 +59,9 @@ Chaque story a des **critères d'acceptation** : la liste des vérifications à 
 
 **1. Ajouter une tâche**
 En tant qu'utilisateur, je veux ajouter une tâche en renseignant son titre, sa priorité et sa date d'échéance afin de noter ce que j'ai à faire.
-- [ ] Le formulaire contient un champ titre, une liste déroulante priorité (Haute, Moyenne, Basse), un sélecteur de date pour l'échéance et un bouton « Ajouter ».
+- [ ] Le formulaire contient un champ titre, un champ description, une liste déroulante priorité (Haute, Moyenne, Basse), un sélecteur de date pour l'échéance et un bouton « Ajouter ».
+- [ ] La description est facultative : laissée vide, elle est enregistrée comme `""`.
+- [ ] L'échéance est facultative. Une date déjà passée est acceptée : la tâche affiche alors le badge « En retard » (story 3).
 - [ ] Un titre vide ou composé uniquement d'espaces est refusé : un message d'erreur s'affiche sous le champ et aucune tâche n'est créée.
 - [ ] Les espaces au début et à la fin du titre sont retirés avant l'enregistrement.
 - [ ] Le titre fait au maximum 100 caractères.
@@ -83,10 +85,11 @@ En tant qu'utilisateur, je veux voir au premier coup d'œil les tâches en retar
 - [ ] Une tâche à faire dont l'échéance est aujourd'hui affiche un badge orange « Aujourd'hui ».
 - [ ] Une tâche terminée n'affiche jamais de badge de retard.
 - [ ] La comparaison se fait sur la date du jour, sans tenir compte de l'heure.
+- [ ] Une échéance passée n'est jamais refusée, ni à l'ajout ni à la modification : le badge « En retard » sert d'avertissement.
 
 **4. Modifier une tâche**
-En tant qu'utilisateur, je veux modifier le titre, la priorité ou l'échéance d'une tâche existante afin de corriger une erreur ou de tenir compte d'un changement.
-- [ ] Le bouton modifier (crayon) ouvre la modification de la tâche, avec les valeurs actuelles déjà remplies. Où se fait la modification (dans la liste ou dans le formulaire d'ajout).
+En tant qu'utilisateur, je veux modifier le titre, la description, la priorité ou l'échéance d'une tâche existante afin de corriger une erreur ou de tenir compte d'un changement.
+- [ ] Le bouton modifier (crayon) ouvre la modification directement dans la liste : la ligne de la tâche devient un petit formulaire (titre, description, priorité, échéance), avec les valeurs actuelles déjà remplies. Le formulaire d'ajout ne change pas.
 - [ ] Les règles de l'ajout s'appliquent aussi : un titre vide est refusé avec un message d'erreur.
 - [ ] Un bouton « Enregistrer » valide les changements ; un bouton « Annuler » (ou la touche Échap) referme sans rien changer.
 - [ ] Une seule tâche peut être en cours de modification à la fois.
@@ -141,7 +144,7 @@ En tant qu'utilisateur, je veux classer mes tâches dans une catégorie (cours, 
 - [ ] Le formulaire d'ajout contient une liste déroulante « Catégorie » : Aucune, Cours, Perso, Projet.
 - [ ] Il n'y a pas de catégorie par défaut : « Aucune » est sélectionné au départ et la tâche est enregistrée avec `""`.
 - [ ] La catégorie se change aussi dans la modification de la tâche (story 4), avec la valeur actuelle déjà sélectionnée.
-- [ ] Chaque tâche affiche un badge de catégorie avec une couleur (Cours : bleu, Perso : violet, Projet : turquoise) **et** le mot, pour rester lisible sans distinguer les couleurs. *(couleurs à valider)*
+- [ ] Chaque tâche affiche un badge de catégorie avec une couleur (Cours : bleu, Perso : violet, Projet : turquoise) **et** le mot, pour rester lisible sans distinguer les couleurs.
 - [ ] Les couleurs des catégories sont différentes de celles des priorités (rouge, orange, vert), pour ne pas confondre les deux badges.
 - [ ] Une tâche sans catégorie n'affiche aucun badge de catégorie.
 - [ ] Toute autre valeur que `"school"`, `"personal"`, `"project"` ou `""` est refusée à l'enregistrement.
@@ -164,11 +167,7 @@ En tant qu'utilisateur, je veux rechercher une tâche par un mot-clé de son tit
 - [ ] Le filtre, le tri et la recherche ne sont pas sauvegardés : au rechargement de la page, on repart de « Toutes », « Plus récentes » et d'un champ vide.
 - [ ] Après l'ajout d'une tâche, le filtre revient sur « Toutes » et la recherche est vidée, pour que la nouvelle tâche soit visible. Le tri ne change pas.
 
-> À trancher avant le sprint 2 : les couleurs proposées pour les catégories conviennent-elles ?
-
 ### Sprint 3 · Cybersécurité
-
-Les critères marqués *(à valider)* sont des propositions : le binôme doit encore les confirmer ou les changer (voir la liste à la fin du sprint).
 
 **12. Se connecter**
 En tant qu'utilisateur, je veux me connecter avec un identifiant et un mot de passe avant d'accéder à mes tâches afin qu'une autre personne utilisant le même navigateur ne les voie pas directement.
@@ -179,10 +178,10 @@ En tant qu'utilisateur, je veux me connecter avec un identifiant et un mot de pa
 - [ ] Après une connexion réussie, l'écran des tâches s'affiche et le champ mot de passe est vidé.
 - [ ] L'écran rappelle qu'il s'agit d'un compte de test : « Application de démonstration : n'utilisez pas un vrai mot de passe. ».
 - [ ] Le compte de test est créé au premier lancement, quand aucun compte n'est enregistré. Il n'y a pas d'écran d'inscription.
-- [ ] Au premier lancement, l'identifiant du compte est `test` et un écran demande de choisir son mot de passe, avec sa confirmation. Deux mots de passe différents sont refusés. *(à valider)*
+- [ ] Au premier lancement, l'identifiant du compte est `test` et un écran demande de choisir son mot de passe, avec sa confirmation. Deux mots de passe différents sont refusés. Ce mot de passe passe par le contrôle de robustesse (story 13) et la jauge (story 14).
 - [ ] Une fois le compte créé, cet écran ne réapparaît plus : les ouvertures suivantes affichent l'écran de connexion.
 - [ ] Recharger la page ne déconnecte pas : la session est gardée dans `sessionStorage` jusqu'à la fermeture de l'onglet. Seul l'identifiant y est enregistré, jamais le mot de passe ni son empreinte.
-- [ ] Un bouton « Se déconnecter » efface la session et ramène à l'écran de connexion. *(à valider)*
+- [ ] Un bouton « Se déconnecter » efface la session et ramène à l'écran de connexion.
 - [ ] Les tâches sont communes : le modèle de données d'une tâche ne change pas.
 
 **13. Exiger un mot de passe robuste**
@@ -241,6 +240,3 @@ Ces limites sont connues et ne se corrigent pas sans serveur :
 - Un mot de passe oublié ne peut pas être récupéré, puisque seule l'empreinte est enregistrée. Il faut vider les données du site, ce qui efface aussi les tâches.
 - Pour toutes ces raisons, l'application n'accepte que des comptes de test fictifs : jamais de vrai mot de passe ni de données personnelles réelles.
 
-> À trancher avant le sprint 3 :
-> 1. Le mot de passe du compte de test est-il choisi au premier lancement (proposé, pour que les stories 13 et 14 aient un écran) ? L'identifiant `test` convient-il ?
-> 2. Le bouton « Se déconnecter » est-il gardé ? Sans lui, il faut fermer l'onglet pour se déconnecter.
