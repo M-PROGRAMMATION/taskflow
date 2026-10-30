@@ -11,7 +11,7 @@
 **Prompt :** On fait pas l'ia data, uniquement informatique et cybersécurité.
 **Résultat :** CLAUDE.md mis à jour avec le détail des fonctionnalités Informatique (tri, filtres, catégories, recherche) et Cybersécurité (connexion, robustesse du mot de passe, jauge, blocage après 3 échecs).
 **Gardé :** les deux listes de fonctionnalités, la règle « pas de bibliothèque externe ».
-**À décider :** les pistes proposées par l'IA pour le modèle de données (champ `categorie`, modèle utilisateur avec mot de passe et compteur d'échecs).
+**À décider :** les pistes proposées par l'IA pour le modèle de données (champ `categorie`, modèle utilisateur avec mot de passe haché et compteur d'échecs).
 **Pourquoi :** l'IA ne devait pas deviner notre filière ; on a rectifié son hypothèse.
 
 ## Prompt 3 · Structure des fichiers (Claude Code)
@@ -181,9 +181,9 @@ IMPORTANT :
 À la fin, présente une architecture complète que nous pourrons valider avant de passer à l'implémentation.
 ```
 
-**Résultat :** comparaison de 3 architectures (un seul `app.js` / un fichier par rôle avec scripts classiques / modules ES ou MVC). Recommandation : un fichier par rôle, chacun exposant un seul objet (`Utils`, `Stockage`, `Auth`, `Taches`, `Interface`), et `app.js` qui garde l'état avec la boucle « modifier l'état → sauvegarder → réafficher ». Le reste : modèle tâche + utilisateur, schéma des dépendances, flux, ordre des 3 sprints, risques (XSS, fausse sécurité côté client, JSON corrompu, tri qui modifie la liste, ordre des scripts, noms globaux) et 9 questions ouvertes.
+**Résultat :** comparaison de 3 architectures (un seul `app.js` / un fichier par rôle avec scripts classiques / modules ES ou MVC). Recommandation : un fichier par rôle, chacun exposant un seul objet (`Utils`, `Stockage`, `Auth`, `Taches`, `Interface`), et `app.js` qui garde l'état avec la boucle « modifier l'état → sauvegarder → réafficher ». Le reste : modèle tâche + utilisateur, schéma des dépendances, flux, ordre des 3 sprints, risques (XSS, fausse sécurité côté client, hachage asynchrone, JSON corrompu, tri qui modifie la liste, ordre des scripts, noms globaux) et 9 questions ouvertes.
 **Gardé :** l'architecture complète, validée par le binôme. Ajout du fichier `utils.js`, que la structure de départ ne prévoyait pas. CLAUDE.md mis à jour et squelette des fichiers créé dans `src/`.
-**Rejeté :** le hachage du mot de passe proposé par l'IA, inutile pour une simple todo-list ; l'architecture en un seul `app.js` (tout est mélangé, conflits entre nous deux) et les modules ES ou MVC (ne marchent pas en `file://`, trop complexes pour la taille du projet).
+**Rejeté :** l'architecture en un seul `app.js` (tout est mélangé, conflits entre nous deux) et les modules ES ou MVC (ne marchent pas en `file://`, trop complexes pour la taille du projet).
 **À décider :** les 9 questions ouvertes (création du compte, durée du blocage, session, tâches par utilisateur, catégorie, description, échéance, mode de modification, user stories manquantes), notées dans CLAUDE.md.
 **Pourquoi :** une architecture simple mais séparée en rôles clairs ; les points non documentés sont signalés plutôt qu'inventés par l'IA.
 
@@ -203,3 +203,12 @@ Format : l'arborescence mise à jour et les règles d'utilisation (emplacement, 
 **Gardé :** `src/assets/` avec `images/` et `icones/`. Un fichier `.gitkeep` dans chaque dossier, parce que Git ne suit pas les dossiers vides.
 **Rejeté :** utiliser une bibliothèque d'icônes en ligne (Font Awesome ou Bootstrap Icons, chargée depuis un CDN) au lieu de fichiers locaux.
 **Pourquoi :** CLAUDE.md interdit toute bibliothèque externe, et l'application ne doit dépendre d'aucune connexion internet. Quelques icônes SVG locales suffisent pour une todo-list.
+
+## Prompt 7 · User stories, 2e itération : découpage en 3 sprints (Claude Code)
+**Prompt :** Et du coup dans le README.md et dans le PROMPTS.md, modifie et fait le User Storie, pour les 3 sprints.
+**Contexte :** l'IA venait d'expliquer le découpage des sprints (sprint 1 = base, sprint 2 = Informatique, sprint 3 = Cybersécurité) et avait signalé que la 1re itération (prompt 4) oubliait les catégories et toute la Cybersécurité.
+**Résultat :** 15 user stories rangées par sprint dans le README : 6 pour la base, 4 pour l'Informatique (dont la recherche en bonus), 5 pour la Cybersécurité (dont le blocage en bonus).
+**Gardé :** les 8 stories de la 1re itération, légèrement reformulées (priorité en couleur, icône corbeille). Ajoutées : catégories colorées, connexion, robustesse du mot de passe, jauge, mot de passe haché, blocage après 3 échecs.
+**Modifié :** la description a été retirée de la story « modifier » pour coller au cahier des charges du cours (titre, priorité, date). La recherche passe du titre ou de la description au titre seul. Elle n'est plus une fonctionnalité complémentaire à part mais le bonus du sprint 2.
+**Rejeté :** une story « créer un compte » : le cours ne parle que d'un écran de connexion, et le mode de création du compte n'est pas encore décidé.
+**Pourquoi :** chaque sprint a maintenant ses user stories, et ce sont elles qui servent à vérifier que le sprint est terminé. Le cours demande au moins 3 itérations sur les user stories : celle-ci est la 2e.

@@ -37,7 +37,7 @@ Filières du binôme : **Informatique** et **Cybersécurité**. On implémente l
 - Contrôle de robustesse du mot de passe : au moins 8 caractères, une majuscule, un chiffre, un caractère spécial.
 - Jauge de robustesse : faible / moyen / fort.
 - Bonus : blocage après 3 échecs de connexion.
-- Pas de hachage du mot de passe : c'est une todo-list simple, le mot de passe est stocké tel quel (décision du binôme).
+- Mot de passe haché (SHA-256 avec l'API native `crypto.subtle.digest`) : ne jamais stocker le mot de passe en clair.
 - Pas de serveur : la connexion est simulée côté navigateur (`localStorage`). Ne jamais stocker de vrai mot de passe ni de données personnelles réelles ; utiliser des comptes de test fictifs. Signaler dans le README les limites de sécurité d'une connexion uniquement côté client.
 
 ### Hors périmètre
@@ -70,7 +70,7 @@ taskflow/
 │   └── js/
 │       ├── utils.js        # Utils : id, format de date, nettoyage des saisies
 │       ├── storage.js      # Stockage : lecture / écriture JSON dans localStorage
-│       ├── auth.js         # Auth : robustesse du mot de passe, connexion, blocage
+│       ├── auth.js         # Auth : robustesse du mot de passe, hachage, connexion, blocage
 │       ├── tasks.js        # Taches : validation, CRUD, filtre, tri, recherche (fonctions pures)
 │       ├── ui.js           # Interface : tout l'accès au DOM (affichage, lecture du formulaire)
 │       └── app.js          # point d'entrée : état, événements, orchestration
@@ -123,7 +123,7 @@ Règles de structure (architecture validée par le binôme, voir PROMPTS.md, pro
 - `priorite` : `"haute"` | `"moyenne"` | `"basse"`
 - `statut` : `"a_faire"` | `"terminee"`
 - `echeance` : date ISO `AAAA-MM-JJ`
-- Le cours demande de se poser la question : « Qu'est-ce qui manque à ce modèle pour ma fonctionnalité filière ? ». Pistes : un champ `categorie` (`"cours"` | `"perso"` | `"projet"`) pour l'Informatique ; un modèle utilisateur séparé (identifiant, mot de passe, compteur d'échecs) pour la Cybersécurité. Toute modification du modèle est une décision du binôme.
+- Le cours demande de se poser la question : « Qu'est-ce qui manque à ce modèle pour ma fonctionnalité filière ? ». Pistes : un champ `categorie` (`"cours"` | `"perso"` | `"projet"`) pour l'Informatique ; un modèle utilisateur séparé (identifiant, mot de passe haché, compteur d'échecs) pour la Cybersécurité. Toute modification du modèle est une décision du binôme.
 
 ## Planning et livrables
 
