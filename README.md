@@ -28,7 +28,7 @@ Une tâche est un objet JavaScript. Les clés et les valeurs enregistrées sont 
 | `priority` | texte | `"high"`, `"medium"`, `"low"` | Haute, Moyenne, Basse | Toute autre valeur est refusée. | Cours |
 | `dueDate` | texte | date `"YYYY-MM-DD"`, ou `""` si aucune | jj/mm/aaaa | Stockée au format ISO. Obligatoire ou non. | Cours |
 | `status` | texte | `"todo"`, `"done"` | À faire, Terminée | Vaut `"todo"` à la création. | Cours |
-| `category` | texte | `"school"`, `"personal"`, `"project"` | Cours, Perso, Projet | Ajouté au sprint 2. Valeur par défaut. | Proposé (filière Informatique) |
+| `category` | texte | `"school"`, `"personal"`, `"project"`, ou `""` si aucune | Cours, Perso, Projet, ou rien si aucune | Ajouté au sprint 2. Facultative : `""` par défaut. | Proposé (filière Informatique) |
 
 Pourquoi ces choix :
 - **Données en anglais, affichage en français** : les clés et les valeurs sont des codes internes, sans accent ni espace (`"done"` et non `"Terminée"`), donc pas de faute de frappe possible. C'est `ui.js` qui traduit chaque code en texte français pour l'écran.
@@ -114,10 +114,57 @@ En tant qu'utilisateur, je veux retrouver mes tâches après avoir fermé puis r
 
 ### Sprint 2 · Informatique
 
-8. En tant qu'utilisateur, je veux filtrer mes tâches par statut (toutes, à faire, terminées) afin de me concentrer sur ce qui reste à faire.
-9. En tant qu'utilisateur, je veux trier mes tâches par priorité ou par date d'échéance afin de savoir quoi faire en premier.
-10. En tant qu'utilisateur, je veux classer chaque tâche dans une catégorie (cours, perso, projet) affichée avec sa propre couleur afin de distinguer d'un coup d'œil les différents domaines de ma vie.
-11. *(Bonus)* En tant qu'utilisateur, je veux rechercher une tâche par un mot-clé de son titre afin de la retrouver rapidement quand la liste est longue.
+**8. Filtrer par statut**
+En tant qu'utilisateur, je veux filtrer mes tâches par statut (toutes, à faire, terminées) afin de me concentrer sur ce qui reste à faire.
+- [ ] Trois boutons sont affichés au-dessus de la liste : « Toutes », « À faire », « Terminées ». Le filtre actif est mis en évidence.
+- [ ] Le filtre « Toutes » est actif à l'ouverture de l'application.
+- [ ] Un clic sur un filtre met la liste à jour tout de suite, sans recharger la page.
+- [ ] Filtrer ne supprime rien : en revenant sur « Toutes », toutes les tâches sont là.
+- [ ] Une tâche cochée pendant que le filtre « À faire » est actif disparaît aussitôt de la liste. De même, une tâche décochée disparaît du filtre « Terminées ».
+- [ ] Le compteur de la story 2 compte toujours toutes les tâches à faire, quel que soit le filtre.
+- [ ] Si le filtre ne donne aucun résultat, un message l'indique : « Aucune tâche à faire. » ou « Aucune tâche terminée. ». Le message de la story 2 reste réservé au cas où il n'existe aucune tâche.
+
+**9. Trier les tâches**
+En tant qu'utilisateur, je veux trier mes tâches par priorité ou par date d'échéance afin de savoir quoi faire en premier.
+- [ ] Une liste déroulante « Trier par » propose : « Plus récentes », « Priorité », « Échéance ».
+- [ ] « Plus récentes » est le tri par défaut : c'est l'ordre de la story 2.
+- [ ] « Priorité » affiche les tâches dans l'ordre Haute, Moyenne, Basse.
+- [ ] « Échéance » affiche la date la plus proche en premier, les tâches en retard arrivent donc en tête.
+- [ ] Avec le tri « Échéance », les tâches sans date sont placées à la fin.
+- [ ] Deux tâches à égalité (même priorité ou même date) gardent entre elles l'ordre « Plus récentes ».
+- [ ] Les tâches terminées sont triées comme les autres, sans traitement à part.
+- [ ] Le tri ne change que l'affichage : l'ordre enregistré ne bouge pas, et revenir à « Plus récentes » redonne l'ordre de départ.
+- [ ] Le tri reste actif après une action : une tâche ajoutée ou modifiée se place selon le tri choisi. C'est la seule exception à la story 4, où la modification ne change pas la place de la tâche.
+
+**10. Classer par catégorie**
+En tant qu'utilisateur, je veux classer mes tâches dans une catégorie (cours, perso, projet) affichée avec sa propre couleur afin de distinguer d'un coup d'œil les différents domaines de ma vie.
+- [ ] Le formulaire d'ajout contient une liste déroulante « Catégorie » : Aucune, Cours, Perso, Projet.
+- [ ] Il n'y a pas de catégorie par défaut : « Aucune » est sélectionné au départ et la tâche est enregistrée avec `""`.
+- [ ] La catégorie se change aussi dans la modification de la tâche (story 4), avec la valeur actuelle déjà sélectionnée.
+- [ ] Chaque tâche affiche un badge de catégorie avec une couleur (Cours : bleu, Perso : violet, Projet : turquoise) **et** le mot, pour rester lisible sans distinguer les couleurs. *(couleurs à valider)*
+- [ ] Les couleurs des catégories sont différentes de celles des priorités (rouge, orange, vert), pour ne pas confondre les deux badges.
+- [ ] Une tâche sans catégorie n'affiche aucun badge de catégorie.
+- [ ] Toute autre valeur que `"school"`, `"personal"`, `"project"` ou `""` est refusée à l'enregistrement.
+- [ ] Une tâche enregistrée avant le sprint 2, donc sans champ `category`, s'affiche quand même, sans badge de catégorie et sans planter.
+
+**11. Rechercher une tâche** *(bonus)*
+En tant qu'utilisateur, je veux rechercher une tâche par un mot-clé de son titre afin de la retrouver rapidement quand la liste est longue.
+- [ ] Un champ « Rechercher » est affiché au-dessus de la liste. La liste se met à jour à chaque caractère tapé, sans bouton à cliquer.
+- [ ] La recherche porte sur le titre uniquement, pas sur la description.
+- [ ] Une partie de mot suffit : « css » trouve « Réviser le CSS ».
+- [ ] Les majuscules et les minuscules sont ignorées.
+- [ ] Les accents comptent : « revision » ne trouve pas « Révision ».
+- [ ] Les espaces au début et à la fin du mot-clé sont ignorés. Un champ vide affiche à nouveau toutes les tâches.
+- [ ] Si rien ne correspond, un message l'indique : « Aucune tâche ne correspond à « xyz ». ».
+- [ ] Un mot-clé contenant du HTML (ex. `<b>test</b>`) s'affiche tel quel dans ce message, sans être interprété.
+- [ ] Le compteur de la story 2 ne change pas pendant une recherche.
+
+**Règles communes aux stories 8, 9 et 11**
+- [ ] Le filtre, la recherche et le tri se combinent : avec « À faire », « css » et le tri « Priorité », on voit uniquement les tâches à faire dont le titre contient « css », triées par priorité.
+- [ ] Le filtre, le tri et la recherche ne sont pas sauvegardés : au rechargement de la page, on repart de « Toutes », « Plus récentes » et d'un champ vide.
+- [ ] Après l'ajout d'une tâche, le filtre revient sur « Toutes » et la recherche est vidée, pour que la nouvelle tâche soit visible. Le tri ne change pas.
+
+> À trancher avant le sprint 2 : les couleurs proposées pour les catégories conviennent-elles ?
 
 ### Sprint 3 · Cybersécurité
 

@@ -95,15 +95,16 @@ Règles de structure (architecture validée par le binôme, voir PROMPTS.md, pro
 - Les scripts sont chargés avec des balises `<script>` classiques à la fin de `index.html`, dans l'ordre : `utils.js`, `storage.js`, `auth.js`, `tasks.js`, `ui.js`, puis `app.js`. Pas de `type="module"` : les modules ES ne marchent pas en ouvrant le fichier directement (`file://`), et le projet n'a pas de serveur.
 - L'application s'ouvre en double-cliquant sur `src/index.html` (ou avec l'extension Live Server de VS Code).
 - Ordre d'implémentation : sprint 1 = base (CRUD + sauvegarde), sprint 2 = Informatique (filtre, tri, catégories, recherche), sprint 3 = Cybersécurité (connexion, jauge, blocage).
+- Décisions du sprint 2 (détail dans les critères d'acceptation du README) : tâches sans date à la fin du tri par échéance ; filtre, tri et recherche non sauvegardés ; après un ajout, filtre remis sur « Toutes » et recherche vidée ; recherche sensible aux accents (pas de `normalize`).
 
 ### Questions encore ouvertes (à trancher par le binôme, ne pas inventer)
 1. Création du compte : écran d'inscription ou compte de test créé au premier lancement ?
 2. Blocage après 3 échecs : durée et moyen de débloquer.
 3. Session : se reconnecter à chaque rechargement, ou `sessionStorage` ? Bouton de déconnexion ?
 4. Tâches propres à chaque utilisateur ou communes ?
-5. Valeur par défaut de `category` et modèle utilisateur : à confirmer.
+5. Modèle utilisateur : à confirmer.
 6. Description : présente dans le formulaire et modifiable ?
-7. Échéance : obligatoire ? date passée acceptée ? place des tâches sans date dans le tri ?
+7. Échéance : obligatoire ? date passée acceptée ?
 8. Modification : dans la liste, ou en réutilisant le formulaire d'ajout ?
 9. README : ajouter les user stories des catégories et de la Cybersécurité.
 
@@ -126,7 +127,7 @@ Décision du binôme (PROMPTS.md, prompt 10) : les clés et les valeurs enregist
 - `priority` : `"high"` | `"medium"` | `"low"` (affiché Haute / Moyenne / Basse)
 - `status` : `"todo"` | `"done"` (affiché À faire / Terminée)
 - `dueDate` : date ISO `YYYY-MM-DD`, ou `""` si aucune (affichée jj/mm/aaaa)
-- `category` (sprint 2) : `"school"` | `"personal"` | `"project"` (affiché Cours / Perso / Projet)
+- `category` (sprint 2) : `"school"` | `"personal"` | `"project"` (affiché Cours / Perso / Projet), ou `""` si aucune. Facultative, pas de catégorie par défaut.
 - Correspondance avec le modèle du cours : `titre` → `title`, `priorite` → `priority`, `echeance` → `dueDate`, `statut` → `status`, `categorie` → `category`, `a_faire` → `todo`, `terminee` → `done`.
 - Modèle utilisateur (Cybersécurité) : à définir avant le sprint 3, clés en anglais aussi. Toute modification du modèle est une décision du binôme.
 

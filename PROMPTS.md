@@ -232,3 +232,11 @@ Format : l'arborescence mise à jour et les règles d'utilisation (emplacement, 
 **Prompt :** Il faut que tout le taskflow_taches, le json passe en anglais, et qu'on est pas des keys comme "titre".
 **Résultat :** les clés et les valeurs du modèle de tâche passent en anglais : `title`, `description`, `priority` (`high` / `medium` / `low`), `dueDate`, `status` (`todo` / `done`), `category` (`school` / `personal` / `project`). Les clés `localStorage` deviennent `taskflow_tasks` et `taskflow_users`. README.md, CLAUDE.md et le commentaire de `storage.js` sont mis à jour. Le texte affiché à l'écran reste en français ; `ui.js` fera la traduction (ex. `"high"` → « Haute »).
 **Pourquoi :** des clés en anglais suivent les conventions habituelles du JavaScript (camelCase, `task.dueDate`). On sépare les codes internes, qui ne changent pas, du texte affiché, qui reste en français. Le modèle du cours (`titre`, `priorite`…) est donc adapté : c'est une décision du binôme, notée dans CLAUDE.md.
+
+## Prompt 11 · User stories du sprint 2 : critères d'acceptation (Claude Code)
+**Prompt :** comme le sprint 1 à deja été fait, je souhaite que tu affines le sprit 2
+**Résultat :** critères d'acceptation pour les stories 8 à 11, règles communes au filtre, au tri et à la recherche, et 5 points à trancher.
+**Gardé :** tâches sans date à la fin du tri, filtre et tri non conservés, retour sur « Toutes » et recherche vidée après un ajout.
+**Modifié :** la catégorie devient facultative (`""` si aucune), alors que l'IA proposait « Cours » par défaut. Le modèle de données est mis à jour.
+**Rejeté :** ignorer les accents dans la recherche avec `normalize`.
+**Pourquoi :** comme au sprint 1, les critères disent quand une story est terminée. Ils ont aussi révélé une contradiction avec la story 4 et le cas des tâches sans catégorie. Une catégorie imposée par défaut classerait des tâches au hasard, d'où le choix de la laisser vide. `normalize` a été rejeté pour garder une recherche simple.
