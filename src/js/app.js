@@ -29,9 +29,36 @@
     Interface.afficherCompteur(Taches.compterAFaire(etat.taches));
   }
 
-  // Démarrage : on recharge les tâches enregistrées (story 7).
+  // Remplace la liste des tâches, la sauvegarde tout de suite (story 7), puis réaffiche.
+  // Toutes les actions passent par ici : état → sauvegarde → affichage.
+  function mettreAJour(nouvellesTaches) {
+    etat.taches = nouvellesTaches;
+    Stockage.sauverTaches(etat.taches);
+    rafraichir();
+  }
+
+  // ---------- Actions ----------
+
+  // Story 1 : ajout d'une tâche depuis le formulaire.
+  function ajouterTache(donnees) {
+    const resultat = Taches.valider(donnees);
+    if (!resultat.valide) {
+      Interface.afficherErreurAjout(resultat.message);
+      return; // aucune tâche n'est créée
+    }
+    mettreAJour(Taches.creer(etat.taches, donnees));
+    Interface.viderFormulaireAjout();
+  }
+
+  // ---------- Démarrage ----------
+
   function demarrer() {
+    // On recharge les tâches enregistrées (story 7)
     etat.taches = Taches.nettoyerListe(Stockage.chargerTaches());
+
+    // On branche les événements
+    Interface.surAjout(ajouterTache);
+
     rafraichir();
   }
 

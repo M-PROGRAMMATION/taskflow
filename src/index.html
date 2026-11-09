@@ -23,6 +23,41 @@
       <p id="compteur" class="compteur" aria-live="polite"></p>
     </header>
 
+    <!-- Formulaire d'ajout (story 1) -->
+    <!-- novalidate : la validation est faite par Taches.valider, avec nos propres messages -->
+    <section class="carte" aria-labelledby="titre-ajout">
+      <h2 id="titre-ajout">Nouvelle tâche</h2>
+      <form id="formulaire-ajout" class="formulaire" novalidate>
+        <div class="champ champ-large">
+          <label for="ajout-titre">Titre</label>
+          <input type="text" id="ajout-titre" maxlength="100" autocomplete="off"
+                 placeholder="Ex. Réviser le CSS" aria-describedby="erreur-ajout">
+          <p id="erreur-ajout" class="message-erreur" role="alert" hidden></p>
+        </div>
+
+        <div class="champ champ-large">
+          <label for="ajout-description">Description <span class="facultatif">(facultative)</span></label>
+          <input type="text" id="ajout-description" autocomplete="off" placeholder="Ex. Flexbox">
+        </div>
+
+        <div class="champ">
+          <label for="ajout-priorite">Priorité</label>
+          <select id="ajout-priorite">
+            <option value="high">Haute</option>
+            <option value="medium" selected>Moyenne</option>
+            <option value="low">Basse</option>
+          </select>
+        </div>
+
+        <div class="champ">
+          <label for="ajout-echeance">Échéance <span class="facultatif">(facultative)</span></label>
+          <input type="date" id="ajout-echeance">
+        </div>
+
+        <button type="submit" class="bouton bouton-principal">Ajouter</button>
+      </form>
+    </section>
+
     <!-- Liste des tâches -->
     <section class="carte" aria-labelledby="titre-liste">
       <h2 id="titre-liste">Mes tâches</h2>
