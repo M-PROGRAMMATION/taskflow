@@ -4,6 +4,24 @@ Application web de gestion de tâches en HTML, CSS et JavaScript natif, sans fra
 
 Filières du binôme : Informatique et Cybersécurité.
 
+## Lancer l'application
+
+Ouvrir `src/index.html` par double-clic (ou avec l'extension Live Server de VS Code). Aucune installation n'est nécessaire.
+
+## Avancement
+
+Chaque fonctionnalité est développée sur sa propre branche `feature/...`, puis fusionnée dans la branche du sprint. Une case cochée = fusionnée dans le sprint. Le détail est coché dans les critères d'acceptation des user stories, plus bas.
+
+### Sprint 1 · La base (branche `sprint1`)
+
+- [x] `feature/utils-stockage` : objets `Utils` (id, date, nettoyage) et `Stockage` (lecture / écriture protégée de `localStorage`)
+- [ ] `feature/afficher-taches` : liste, badges de priorité et d'échéance, compteur, message de liste vide (stories 2 et 3)
+- [ ] `feature/ajouter-tache` : formulaire d'ajout et validation du titre (story 1)
+- [ ] `feature/terminer-tache` : case à cocher, tâche barrée (story 5)
+- [ ] `feature/supprimer-tache` : corbeille avec confirmation (story 6)
+- [ ] `feature/modifier-tache` : modification directement dans la liste (story 4)
+- [ ] Sauvegarde après chaque action et démarrage avec des données abîmées (story 7), vérifiée sur toutes les features
+
 ## Modèle de données d'une tâche
 
 Une tâche est un objet JavaScript. Les clés et les valeurs enregistrées sont en anglais ; seul le texte affiché à l'écran est en français. Exemple :
