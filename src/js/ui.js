@@ -137,6 +137,12 @@ const Interface = {
     }
   },
 
+  // Demande confirmation avant une suppression (story 6).
+  // confirm() est une fonction standard du navigateur : elle renvoie true (OK) ou false (Annuler).
+  confirmerSuppression: function (titre) {
+    return window.confirm("Supprimer la tâche « " + titre + " » ?");
+  },
+
   // ---------- Formulaire d'ajout (story 1) ----------
 
   // Lit les valeurs du formulaire d'ajout, telles que saisies (Taches les vérifie).

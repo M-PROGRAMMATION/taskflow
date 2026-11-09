@@ -18,7 +18,7 @@ Chaque fonctionnalité est développée sur sa propre branche `feature/...`, pui
 - [x] `feature/afficher-taches` : liste, badges de priorité et d'échéance, compteur, message de liste vide (stories 2 et 3)
 - [x] `feature/ajouter-tache` : formulaire d'ajout et validation du titre (story 1)
 - [x] `feature/terminer-tache` : case à cocher, tâche barrée (story 5)
-- [ ] `feature/supprimer-tache` : corbeille avec confirmation (story 6)
+- [x] `feature/supprimer-tache` : corbeille avec confirmation (story 6)
 - [ ] `feature/modifier-tache` : modification directement dans la liste (story 4)
 - [ ] Sauvegarde après chaque action et démarrage avec des données abîmées (story 7), vérifiée sur toutes les features
 
@@ -121,10 +121,10 @@ En tant qu'utilisateur, je veux cocher une tâche pour la marquer comme terminé
 
 **6. Supprimer une tâche**
 En tant qu'utilisateur, je veux supprimer une tâche avec l'icône corbeille afin de retirer de ma liste celles qui ne sont plus utiles.
-- [ ] Un clic sur la corbeille demande une confirmation qui rappelle le titre : « Supprimer la tâche « Réviser le CSS » ? ».
-- [ ] Si l'utilisateur annule, rien ne change.
-- [ ] Si l'utilisateur confirme, la tâche disparaît de la liste et le compteur se met à jour.
-- [ ] La suppression est définitive : il n'y a pas de corbeille pour récupérer une tâche.
+- [x] Un clic sur la corbeille demande une confirmation qui rappelle le titre : « Supprimer la tâche « Réviser le CSS » ? ».
+- [x] Si l'utilisateur annule, rien ne change.
+- [x] Si l'utilisateur confirme, la tâche disparaît de la liste et le compteur se met à jour.
+- [x] La suppression est définitive : il n'y a pas de corbeille pour récupérer une tâche.
 
 **7. Retrouver ses tâches**
 En tant qu'utilisateur, je veux retrouver mes tâches après avoir fermé puis rouvert mon navigateur afin de ne pas perdre mon travail.
