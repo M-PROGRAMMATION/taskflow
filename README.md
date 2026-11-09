@@ -16,7 +16,7 @@ Chaque fonctionnalité est développée sur sa propre branche `feature/...`, pui
 
 - [x] `feature/utils-stockage` : objets `Utils` (id, date, nettoyage) et `Stockage` (lecture / écriture protégée de `localStorage`)
 - [x] `feature/afficher-taches` : liste, badges de priorité et d'échéance, compteur, message de liste vide (stories 2 et 3)
-- [ ] `feature/ajouter-tache` : formulaire d'ajout et validation du titre (story 1)
+- [x] `feature/ajouter-tache` : formulaire d'ajout et validation du titre (story 1)
 - [ ] `feature/terminer-tache` : case à cocher, tâche barrée (story 5)
 - [ ] `feature/supprimer-tache` : corbeille avec confirmation (story 6)
 - [ ] `feature/modifier-tache` : modification directement dans la liste (story 4)
@@ -77,23 +77,23 @@ Chaque story a des **critères d'acceptation** : la liste des vérifications à 
 
 **1. Ajouter une tâche**
 En tant qu'utilisateur, je veux ajouter une tâche en renseignant son titre, sa priorité et sa date d'échéance afin de noter ce que j'ai à faire.
-- [ ] Le formulaire contient un champ titre, un champ description, une liste déroulante priorité (Haute, Moyenne, Basse), un sélecteur de date pour l'échéance et un bouton « Ajouter ».
-- [ ] La description est facultative : laissée vide, elle est enregistrée comme `""`.
-- [ ] L'échéance est facultative. Une date déjà passée est acceptée : la tâche affiche alors le badge « En retard » (story 3).
-- [ ] Un titre vide ou composé uniquement d'espaces est refusé : un message d'erreur s'affiche sous le champ et aucune tâche n'est créée.
-- [ ] Les espaces au début et à la fin du titre sont retirés avant l'enregistrement.
-- [ ] Le titre fait au maximum 100 caractères.
-- [ ] La priorité est « Moyenne » par défaut.
-- [ ] La touche Entrée valide le formulaire, comme le bouton « Ajouter ».
-- [ ] Après l'ajout, la tâche apparaît dans la liste avec le statut « à faire », le formulaire est vidé et le curseur revient dans le champ titre.
-- [ ] Un titre contenant du HTML (ex. `<b>test</b>`) s'affiche tel quel, en texte, sans être interprété.
+- [x] Le formulaire contient un champ titre, un champ description, une liste déroulante priorité (Haute, Moyenne, Basse), un sélecteur de date pour l'échéance et un bouton « Ajouter ».
+- [x] La description est facultative : laissée vide, elle est enregistrée comme `""`.
+- [x] L'échéance est facultative. Une date déjà passée est acceptée : la tâche affiche alors le badge « En retard » (story 3).
+- [x] Un titre vide ou composé uniquement d'espaces est refusé : un message d'erreur s'affiche sous le champ et aucune tâche n'est créée.
+- [x] Les espaces au début et à la fin du titre sont retirés avant l'enregistrement.
+- [x] Le titre fait au maximum 100 caractères.
+- [x] La priorité est « Moyenne » par défaut.
+- [x] La touche Entrée valide le formulaire, comme le bouton « Ajouter ».
+- [x] Après l'ajout, la tâche apparaît dans la liste avec le statut « à faire », le formulaire est vidé et le curseur revient dans le champ titre.
+- [x] Un titre contenant du HTML (ex. `<b>test</b>`) s'affiche tel quel, en texte, sans être interprété.
 
 **2. Voir toutes ses tâches**
 En tant qu'utilisateur, je veux voir la liste de toutes mes tâches avec leur titre, leur priorité et leur échéance afin d'avoir une vue d'ensemble de mon travail.
 - [x] Chaque tâche affiche : une case à cocher, son titre, un badge de priorité, son échéance au format jj/mm/aaaa, un bouton modifier et un bouton corbeille.
 - [x] Le badge de priorité a une couleur (Haute : rouge, Moyenne : orange, Basse : vert) **et** contient le mot, pour rester lisible sans distinguer les couleurs.
 - [x] Une tâche sans échéance affiche « Sans date ».
-- [ ] Les tâches les plus récentes apparaissent en haut de la liste.
+- [x] Les tâches les plus récentes apparaissent en haut de la liste.
 - [x] Quand la liste est vide, un message l'indique : « Aucune tâche pour le moment. Ajoutez-en une avec le formulaire. »
 - [x] Un compteur indique le nombre de tâches restantes, par exemple « 3 tâches à faire » (« 1 tâche à faire » au singulier).
 

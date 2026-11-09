@@ -10,6 +10,50 @@ const Taches = {
   // Valeurs autorisées (voir le modèle de données dans le README)
   PRIORITES: ["high", "medium", "low"],
   STATUTS: ["todo", "done"],
+  TITRE_MAX: 100,
+
+  // Vérifie les données d'un formulaire (ajout ou modification).
+  // donnees : { title, description, priority, dueDate }, telles que saisies.
+  // Renvoie { valide: true } ou { valide: false, message: "..." }.
+  // C'est Interface qui affichera le message : ici on ne touche pas à l'écran.
+  valider: function (donnees) {
+    const titre = Utils.nettoyerTexte(donnees.title);
+    if (titre === "") {
+      return { valide: false, message: "Le titre est obligatoire." };
+    }
+    if (titre.length > Taches.TITRE_MAX) {
+      return {
+        valide: false,
+        message: "Le titre doit faire au maximum " + Taches.TITRE_MAX + " caractères.",
+      };
+    }
+    if (!Taches.PRIORITES.includes(donnees.priority)) {
+      return { valide: false, message: "La priorité choisie n'existe pas." };
+    }
+    // Échéance facultative : "" ou une date "YYYY-MM-DD".
+    // Une date passée est acceptée (story 3 : le badge « En retard » sert d'avertissement).
+    const echeance = Utils.nettoyerTexte(donnees.dueDate);
+    if (echeance !== "" && !/^\d{4}-\d{2}-\d{2}$/.test(echeance)) {
+      return { valide: false, message: "La date d'échéance n'est pas valide." };
+    }
+    return { valide: true };
+  },
+
+  // Crée une tâche et renvoie une NOUVELLE liste, avec la tâche en premier
+  // (les plus récentes en haut, story 2). La liste reçue n'est pas modifiée.
+  // À appeler seulement si Taches.valider(donnees) a renvoyé valide: true.
+  creer: function (liste, donnees) {
+    const nouvelleTache = {
+      id: Utils.genererId(),
+      title: Utils.nettoyerTexte(donnees.title),
+      description: Utils.nettoyerTexte(donnees.description),
+      priority: donnees.priority,
+      dueDate: Utils.nettoyerTexte(donnees.dueDate),
+      status: "todo",
+      category: "", // les catégories arrivent au sprint 2
+    };
+    return [nouvelleTache].concat(liste);
+  },
 
   // Garde seulement les tâches lisibles d'une liste venue du stockage
   // (story 7 : des données modifiées à la main ne doivent pas faire planter l'application).

@@ -114,6 +114,56 @@ const Interface = {
     });
   },
 
+  // ---------- Formulaire d'ajout (story 1) ----------
+
+  // Lit les valeurs du formulaire d'ajout, telles que saisies (Taches les vérifie).
+  lireFormulaireAjout: function () {
+    return {
+      title: document.getElementById("ajout-titre").value,
+      description: document.getElementById("ajout-description").value,
+      priority: document.getElementById("ajout-priorite").value,
+      dueDate: document.getElementById("ajout-echeance").value,
+    };
+  },
+
+  // Affiche le message d'erreur sous le champ titre.
+  afficherErreurAjout: function (message) {
+    const erreur = document.getElementById("erreur-ajout");
+    erreur.textContent = message;
+    erreur.hidden = false;
+    const champTitre = document.getElementById("ajout-titre");
+    champTitre.setAttribute("aria-invalid", "true");
+    champTitre.focus();
+  },
+
+  // Cache le message d'erreur du formulaire d'ajout.
+  effacerErreurAjout: function () {
+    const erreur = document.getElementById("erreur-ajout");
+    erreur.textContent = "";
+    erreur.hidden = true;
+    document.getElementById("ajout-titre").removeAttribute("aria-invalid");
+  },
+
+  // Vide le formulaire (la priorité revient sur « Moyenne ») et remet le curseur dans le titre.
+  viderFormulaireAjout: function () {
+    document.getElementById("formulaire-ajout").reset();
+    Interface.effacerErreurAjout();
+    document.getElementById("ajout-titre").focus();
+  },
+
+  // Branche le formulaire d'ajout : traiter(donnees) est appelée à chaque envoi
+  // (bouton « Ajouter » ou touche Entrée dans un champ).
+  surAjout: function (traiter) {
+    document.getElementById("formulaire-ajout").addEventListener("submit", function (evenement) {
+      evenement.preventDefault(); // empêche le navigateur de recharger la page
+      traiter(Interface.lireFormulaireAjout());
+    });
+    // L'erreur disparaît dès que l'utilisateur corrige le titre
+    document.getElementById("ajout-titre").addEventListener("input", Interface.effacerErreurAjout);
+  },
+
+  // ---------- Compteur ----------
+
   // Affiche « 3 tâches à faire », « 1 tâche à faire » ou « 0 tâche à faire »
   // (en français, 0 et 1 sont au singulier).
   afficherCompteur: function (nombre) {
