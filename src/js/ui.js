@@ -252,6 +252,21 @@ const Interface = {
     });
   },
 
+  // ---------- Tri (story 9) ----------
+
+  // Sélectionne le tri actif dans la liste « Trier par ».
+  afficherTri: function (tri) {
+    document.getElementById("tri").value = tri;
+  },
+
+  // traiter(tri) reçoit "recent", "priority" ou "dueDate" à chaque changement de choix.
+  surTri: function (traiter) {
+    const liste = document.getElementById("tri");
+    liste.addEventListener("change", function () {
+      traiter(liste.value);
+    });
+  },
+
   // ---------- Formulaire de modification (story 4) ----------
 
   // Lit les valeurs du formulaire de modification.
