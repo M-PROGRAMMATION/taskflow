@@ -19,7 +19,7 @@ Chaque fonctionnalité est développée sur sa propre branche `feature/...`, pui
 - [x] `feature/ajouter-tache` : formulaire d'ajout et validation du titre (story 1)
 - [x] `feature/terminer-tache` : case à cocher, tâche barrée (story 5)
 - [x] `feature/supprimer-tache` : corbeille avec confirmation (story 6)
-- [ ] `feature/modifier-tache` : modification directement dans la liste (story 4)
+- [x] `feature/modifier-tache` : modification directement dans la liste (story 4)
 - [ ] Sauvegarde après chaque action et démarrage avec des données abîmées (story 7), vérifiée sur toutes les features
 
 ## Modèle de données d'une tâche
@@ -103,15 +103,15 @@ En tant qu'utilisateur, je veux voir au premier coup d'œil les tâches en retar
 - [x] Une tâche à faire dont l'échéance est aujourd'hui affiche un badge orange « Aujourd'hui ».
 - [x] Une tâche terminée n'affiche jamais de badge de retard.
 - [x] La comparaison se fait sur la date du jour, sans tenir compte de l'heure.
-- [ ] Une échéance passée n'est jamais refusée, ni à l'ajout ni à la modification : le badge « En retard » sert d'avertissement.
+- [x] Une échéance passée n'est jamais refusée, ni à l'ajout ni à la modification : le badge « En retard » sert d'avertissement.
 
 **4. Modifier une tâche**
 En tant qu'utilisateur, je veux modifier le titre, la description, la priorité ou l'échéance d'une tâche existante afin de corriger une erreur ou de tenir compte d'un changement.
-- [ ] Le bouton modifier (crayon) ouvre la modification directement dans la liste : la ligne de la tâche devient un petit formulaire (titre, description, priorité, échéance), avec les valeurs actuelles déjà remplies. Le formulaire d'ajout ne change pas.
-- [ ] Les règles de l'ajout s'appliquent aussi : un titre vide est refusé avec un message d'erreur.
-- [ ] Un bouton « Enregistrer » valide les changements ; un bouton « Annuler » (ou la touche Échap) referme sans rien changer.
-- [ ] Une seule tâche peut être en cours de modification à la fois.
-- [ ] La modification ne change ni l'identifiant, ni le statut, ni la place de la tâche dans la liste.
+- [x] Le bouton modifier (crayon) ouvre la modification directement dans la liste : la ligne de la tâche devient un petit formulaire (titre, description, priorité, échéance), avec les valeurs actuelles déjà remplies. Le formulaire d'ajout ne change pas.
+- [x] Les règles de l'ajout s'appliquent aussi : un titre vide est refusé avec un message d'erreur.
+- [x] Un bouton « Enregistrer » valide les changements ; un bouton « Annuler » (ou la touche Échap) referme sans rien changer.
+- [x] Une seule tâche peut être en cours de modification à la fois.
+- [x] La modification ne change ni l'identifiant, ni le statut, ni la place de la tâche dans la liste.
 
 **5. Terminer une tâche**
 En tant qu'utilisateur, je veux cocher une tâche pour la marquer comme terminée afin de voir clairement ce que j'ai déjà accompli.

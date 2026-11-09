@@ -100,9 +100,83 @@ const Interface = {
     return ligne;
   },
 
+  // Crée un champ (libellé + élément de saisie) pour le formulaire de modification.
+  creerChamp: function (classe, libelle, champ) {
+    const bloc = Interface.creerElement("div", classe);
+    const etiquette = Interface.creerElement("label", "", libelle);
+    etiquette.htmlFor = champ.id; // relie le libellé au champ (clic sur le libellé = focus)
+    bloc.appendChild(etiquette);
+    bloc.appendChild(champ);
+    return bloc;
+  },
+
+  // Construit la ligne d'une tâche en cours de modification (story 4) :
+  // un petit formulaire déjà rempli avec les valeurs actuelles.
+  // Une seule tâche est modifiée à la fois, les id des champs sont donc uniques.
+  creerLigneModification: function (tache) {
+    const ligne = Interface.creerElement("li", "tache tache-en-modification");
+    ligne.dataset.id = tache.id;
+
+    const formulaire = Interface.creerElement("form", "formulaire formulaire-modification");
+    formulaire.noValidate = true; // validation faite par Taches.valider
+
+    const titre = document.createElement("input");
+    titre.type = "text";
+    titre.id = "modif-titre";
+    titre.maxLength = 100;
+    titre.autocomplete = "off";
+    titre.value = tache.title; // value, comme textContent, n'interprète pas le HTML
+    titre.setAttribute("aria-describedby", "erreur-modif");
+    const blocTitre = Interface.creerChamp("champ champ-large", "Titre", titre);
+    const erreur = Interface.creerElement("p", "message-erreur");
+    erreur.id = "erreur-modif";
+    erreur.setAttribute("role", "alert");
+    erreur.hidden = true;
+    blocTitre.appendChild(erreur);
+    formulaire.appendChild(blocTitre);
+
+    const description = document.createElement("input");
+    description.type = "text";
+    description.id = "modif-description";
+    description.autocomplete = "off";
+    description.value = tache.description;
+    formulaire.appendChild(Interface.creerChamp("champ champ-large", "Description", description));
+
+    const priorite = document.createElement("select");
+    priorite.id = "modif-priorite";
+    // Object.keys donne ["high", "medium", "low"], dans l'ordre où elles sont écrites
+    Object.keys(Interface.LIBELLES_PRIORITE).forEach(function (code) {
+      const option = Interface.creerElement("option", "", Interface.LIBELLES_PRIORITE[code]);
+      option.value = code;
+      priorite.appendChild(option);
+    });
+    priorite.value = tache.priority; // sélectionne la priorité actuelle
+    formulaire.appendChild(Interface.creerChamp("champ", "Priorité", priorite));
+
+    const echeance = document.createElement("input");
+    echeance.type = "date";
+    echeance.id = "modif-echeance";
+    echeance.value = tache.dueDate;
+    formulaire.appendChild(Interface.creerChamp("champ", "Échéance", echeance));
+
+    const boutons = Interface.creerElement("div", "boutons-modification");
+    const enregistrer = Interface.creerElement("button", "bouton bouton-principal", "Enregistrer");
+    enregistrer.type = "submit";
+    const annuler = Interface.creerElement("button", "bouton", "Annuler");
+    annuler.type = "button";
+    annuler.dataset.action = "annuler"; // traité par la délégation de clic, comme la corbeille
+    boutons.appendChild(enregistrer);
+    boutons.appendChild(annuler);
+    formulaire.appendChild(boutons);
+
+    ligne.appendChild(formulaire);
+    return ligne;
+  },
+
   // Réaffiche toute la liste.
   // echeances : objet { id: "late" | "today" | "" } préparé par app.js.
-  afficherTaches: function (taches, echeances) {
+  // idEnModification : id de la tâche affichée en formulaire, ou null.
+  afficherTaches: function (taches, echeances, idEnModification) {
     const liste = document.getElementById("liste-taches");
     liste.textContent = ""; // vide la liste avant de la reconstruire
 
@@ -110,7 +184,58 @@ const Interface = {
     document.getElementById("message-vide").hidden = taches.length > 0;
 
     taches.forEach(function (tache) {
-      liste.appendChild(Interface.creerLigneTache(tache, echeances[tache.id]));
+      if (tache.id === idEnModification) {
+        liste.appendChild(Interface.creerLigneModification(tache));
+      } else {
+        liste.appendChild(Interface.creerLigneTache(tache, echeances[tache.id]));
+      }
+    });
+  },
+
+  // ---------- Formulaire de modification (story 4) ----------
+
+  // Lit les valeurs du formulaire de modification.
+  lireFormulaireModification: function () {
+    return {
+      title: document.getElementById("modif-titre").value,
+      description: document.getElementById("modif-description").value,
+      priority: document.getElementById("modif-priorite").value,
+      dueDate: document.getElementById("modif-echeance").value,
+    };
+  },
+
+  // Met le curseur dans le titre du formulaire de modification.
+  focaliserModification: function () {
+    const titre = document.getElementById("modif-titre");
+    if (titre !== null) {
+      titre.focus();
+    }
+  },
+
+  // Affiche le message d'erreur sous le titre du formulaire de modification.
+  afficherErreurModification: function (message) {
+    const erreur = document.getElementById("erreur-modif");
+    erreur.textContent = message;
+    erreur.hidden = false;
+    const titre = document.getElementById("modif-titre");
+    titre.setAttribute("aria-invalid", "true");
+    titre.focus();
+  },
+
+  // Branche le formulaire de modification. Il est recréé à chaque affichage :
+  // on écoute donc la liste, qui reçoit les événements de ses enfants (délégation).
+  //   enregistrer(donnees) : bouton « Enregistrer » ou touche Entrée
+  //   annuler()            : touche Échap (le bouton « Annuler » passe par surActionListe)
+  surModification: function (enregistrer, annuler) {
+    const liste = document.getElementById("liste-taches");
+    liste.addEventListener("submit", function (evenement) {
+      evenement.preventDefault(); // empêche le rechargement de la page
+      enregistrer(Interface.lireFormulaireModification());
+    });
+    liste.addEventListener("keydown", function (evenement) {
+      if (evenement.key === "Escape" && evenement.target.closest(".formulaire-modification")) {
+        annuler();
+      }
     });
   },
 

@@ -82,6 +82,23 @@ const Taches = {
     });
   },
 
+  // Modifie le titre, la description, la priorité et l'échéance d'une tâche (story 4).
+  // L'id, le statut, la catégorie et la place dans la liste ne changent pas.
+  // À appeler seulement si Taches.valider(donnees) a renvoyé valide: true.
+  modifier: function (liste, id, donnees) {
+    return liste.map(function (tache) {
+      if (tache.id !== id) {
+        return tache;
+      }
+      const copie = { ...tache };
+      copie.title = Utils.nettoyerTexte(donnees.title);
+      copie.description = Utils.nettoyerTexte(donnees.description);
+      copie.priority = donnees.priority;
+      copie.dueDate = Utils.nettoyerTexte(donnees.dueDate);
+      return copie;
+    });
+  },
+
   // Passe une tâche de "todo" à "done", ou de "done" à "todo" (story 5).
   // Renvoie une nouvelle liste : map crée un nouveau tableau, et la tâche
   // changée est une copie ({ ...tache }), l'originale n'est pas modifiée.
