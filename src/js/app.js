@@ -255,7 +255,11 @@
     }
     // Le mot de passe saisi est haché, puis comparé à l'empreinte enregistrée (story 15)
     const empreinte = await Auth.hacher(donnees.motDePasse);
-    const connexion = Auth.connecter(chargerUtilisateurs(), donnees.identifiant, empreinte);
+    // Date.now() : l'heure actuelle, pour le blocage après 3 échecs (story 16)
+    const connexion = Auth.connecter(chargerUtilisateurs(), donnees.identifiant, empreinte, Date.now());
+    // Compteur d'échecs et heure de fin du blocage enregistrés : le blocage
+    // continue après un rechargement de la page.
+    Stockage.sauverUtilisateurs(connexion.utilisateurs);
     Interface.viderMotDePasseConnexion(); // le mot de passe ne reste pas dans le champ
     if (!connexion.reussi) {
       Interface.afficherErreurConnexion(connexion.message);

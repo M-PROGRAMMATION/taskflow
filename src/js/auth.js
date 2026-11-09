@@ -1,7 +1,8 @@
 /*
  * auth.js — objet Auth (Cybersécurité, sprint 3)
  * Règles du mot de passe (8 caractères, majuscule, chiffre, caractère spécial),
- * niveau de la jauge (faible / moyen / fort), hachage SHA-256, création du compte de test, vérification de la connexion.
+ * niveau de la jauge (faible / moyen / fort), hachage SHA-256, création du compte de test,
+ * vérification de la connexion, blocage après 3 échecs.
  * Dépend de : Utils.
  * Pas d'accès au DOM ni à localStorage : les fonctions reçoivent la liste des comptes
  * et renvoient une nouvelle liste, c'est app.js qui la sauvegarde.
@@ -10,6 +11,9 @@ const Auth = {
   // Identifiant du compte de test, imposé (décision du binôme, story 12)
   IDENTIFIANT_TEST: "test",
   LONGUEUR_MIN: 8,
+  MAX_ECHECS: 3, // échecs de suite avant le blocage (story 16)
+  DUREE_BLOCAGE: 20000, // 20 secondes, en millisecondes (décision du binôme)
+  MESSAGE_INCORRECT: "Identifiant ou mot de passe incorrect.",
 
   // Les 4 règles de la story 13. Chaque règle a un test et le texte affiché quand elle manque.
   REGLES: [
@@ -187,15 +191,69 @@ const Auth = {
     return { valide: true };
   },
 
-  // Vérifie une connexion. empreinte : le mot de passe saisi, déjà haché par Auth.hacher.
-  // Renvoie { reussi: true, identifiant: "test" } ou { reussi: false, message: "..." }.
-  // Identifiant inconnu ou mot de passe faux : le même message,
-  // pour ne pas révéler quels comptes existent.
-  connecter: function (utilisateurs, identifiant, empreinte) {
-    const compte = Auth.trouver(utilisateurs, Utils.nettoyerTexte(identifiant));
-    if (compte === undefined || compte.passwordHash !== empreinte) {
-      return { reussi: false, message: "Identifiant ou mot de passe incorrect." };
+  // Message affiché pendant un blocage. resteMs : temps restant en millisecondes.
+  // Math.ceil arrondit au-dessus : 19,2 secondes restantes s'affichent « 20 secondes ».
+  messageBlocage: function (resteMs) {
+    const secondes = Math.ceil(resteMs / 1000);
+    const unite = secondes > 1 ? "secondes" : "seconde";
+    return "Compte bloqué. Réessayez dans " + secondes + " " + unite + ".";
+  },
+
+  // Remplace un compte (même identifiant) dans la liste. Renvoie une NOUVELLE liste.
+  remplacer: function (utilisateurs, compteModifie) {
+    return utilisateurs.map(function (compte) {
+      return compte.username === compteModifie.username ? compteModifie : compte;
+    });
+  },
+
+  // Vérifie une connexion (stories 12 et 16).
+  //   empreinte  : le mot de passe saisi, déjà haché par Auth.hacher
+  //   maintenant : l'heure actuelle en millisecondes (Date.now()), donnée par app.js :
+  //                la fonction reste pure et se teste avec n'importe quelle heure.
+  // Renvoie { reussi, message, identifiant, utilisateurs }, où utilisateurs est
+  // la NOUVELLE liste des comptes (compteur d'échecs, blocage), à sauvegarder par app.js.
+  connecter: function (utilisateurs, identifiant, empreinte, maintenant) {
+    const trouve = Auth.trouver(utilisateurs, Utils.nettoyerTexte(identifiant));
+    if (trouve === undefined) {
+      // Identifiant inconnu : même message qu'un mauvais mot de passe, pour ne pas
+      // révéler quels comptes existent. Pas d'échec compté : il n'y a pas de compte à bloquer.
+      return { reussi: false, message: Auth.MESSAGE_INCORRECT, utilisateurs: utilisateurs };
     }
-    return { reussi: true, identifiant: compte.username };
+    const compte = { ...trouve }; // copie : la liste reçue n'est pas modifiée
+
+    // Blocage terminé : il se lève tout seul et le compteur repart de 0
+    if (compte.lockedUntil !== 0 && compte.lockedUntil <= maintenant) {
+      compte.failedAttempts = 0;
+      compte.lockedUntil = 0;
+    }
+
+    // Compte encore bloqué : refusé, même avec le bon mot de passe
+    if (compte.lockedUntil > maintenant) {
+      return {
+        reussi: false,
+        message: Auth.messageBlocage(compte.lockedUntil - maintenant),
+        utilisateurs: Auth.remplacer(utilisateurs, compte),
+      };
+    }
+
+    // Mauvais mot de passe : un échec de plus ; au 3e de suite, le compte est bloqué
+    if (compte.passwordHash !== empreinte) {
+      compte.failedAttempts = compte.failedAttempts + 1;
+      let message = Auth.MESSAGE_INCORRECT;
+      if (compte.failedAttempts >= Auth.MAX_ECHECS) {
+        compte.lockedUntil = maintenant + Auth.DUREE_BLOCAGE; // heure de fin, enregistrée
+        message = Auth.messageBlocage(Auth.DUREE_BLOCAGE);
+      }
+      return { reussi: false, message: message, utilisateurs: Auth.remplacer(utilisateurs, compte) };
+    }
+
+    // Connexion réussie : le compteur d'échecs repart de 0
+    compte.failedAttempts = 0;
+    compte.lockedUntil = 0;
+    return {
+      reussi: true,
+      identifiant: compte.username,
+      utilisateurs: Auth.remplacer(utilisateurs, compte),
+    };
   },
 };
