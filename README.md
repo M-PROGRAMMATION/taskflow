@@ -15,7 +15,7 @@ Chaque fonctionnalité est développée sur sa propre branche `feature/...`, pui
 ### Sprint 1 · La base (branche `sprint1`)
 
 - [x] `feature/utils-stockage` : objets `Utils` (id, date, nettoyage) et `Stockage` (lecture / écriture protégée de `localStorage`)
-- [ ] `feature/afficher-taches` : liste, badges de priorité et d'échéance, compteur, message de liste vide (stories 2 et 3)
+- [x] `feature/afficher-taches` : liste, badges de priorité et d'échéance, compteur, message de liste vide (stories 2 et 3)
 - [ ] `feature/ajouter-tache` : formulaire d'ajout et validation du titre (story 1)
 - [ ] `feature/terminer-tache` : case à cocher, tâche barrée (story 5)
 - [ ] `feature/supprimer-tache` : corbeille avec confirmation (story 6)
@@ -90,19 +90,19 @@ En tant qu'utilisateur, je veux ajouter une tâche en renseignant son titre, sa 
 
 **2. Voir toutes ses tâches**
 En tant qu'utilisateur, je veux voir la liste de toutes mes tâches avec leur titre, leur priorité et leur échéance afin d'avoir une vue d'ensemble de mon travail.
-- [ ] Chaque tâche affiche : une case à cocher, son titre, un badge de priorité, son échéance au format jj/mm/aaaa, un bouton modifier et un bouton corbeille.
-- [ ] Le badge de priorité a une couleur (Haute : rouge, Moyenne : orange, Basse : vert) **et** contient le mot, pour rester lisible sans distinguer les couleurs.
-- [ ] Une tâche sans échéance affiche « Sans date ».
+- [x] Chaque tâche affiche : une case à cocher, son titre, un badge de priorité, son échéance au format jj/mm/aaaa, un bouton modifier et un bouton corbeille.
+- [x] Le badge de priorité a une couleur (Haute : rouge, Moyenne : orange, Basse : vert) **et** contient le mot, pour rester lisible sans distinguer les couleurs.
+- [x] Une tâche sans échéance affiche « Sans date ».
 - [ ] Les tâches les plus récentes apparaissent en haut de la liste.
-- [ ] Quand la liste est vide, un message l'indique : « Aucune tâche pour le moment. Ajoutez-en une avec le formulaire. »
-- [ ] Un compteur indique le nombre de tâches restantes, par exemple « 3 tâches à faire » (« 1 tâche à faire » au singulier).
+- [x] Quand la liste est vide, un message l'indique : « Aucune tâche pour le moment. Ajoutez-en une avec le formulaire. »
+- [x] Un compteur indique le nombre de tâches restantes, par exemple « 3 tâches à faire » (« 1 tâche à faire » au singulier).
 
 **3. Repérer les échéances proches**
 En tant qu'utilisateur, je veux voir au premier coup d'œil les tâches en retard ou à faire aujourd'hui afin de ne pas rater une échéance.
-- [ ] Une tâche à faire dont l'échéance est dépassée affiche un badge rouge « En retard ».
-- [ ] Une tâche à faire dont l'échéance est aujourd'hui affiche un badge orange « Aujourd'hui ».
-- [ ] Une tâche terminée n'affiche jamais de badge de retard.
-- [ ] La comparaison se fait sur la date du jour, sans tenir compte de l'heure.
+- [x] Une tâche à faire dont l'échéance est dépassée affiche un badge rouge « En retard ».
+- [x] Une tâche à faire dont l'échéance est aujourd'hui affiche un badge orange « Aujourd'hui ».
+- [x] Une tâche terminée n'affiche jamais de badge de retard.
+- [x] La comparaison se fait sur la date du jour, sans tenir compte de l'heure.
 - [ ] Une échéance passée n'est jamais refusée, ni à l'ajout ni à la modification : le badge « En retard » sert d'avertissement.
 
 **4. Modifier une tâche**
