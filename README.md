@@ -31,7 +31,9 @@ Chaque fonctionnalité est développée sur sa propre branche `feature/...`, cr�
 - [x] `feature/filtrer-statut` : filtres Toutes / À faire / Terminées (story 8)
 - [x] `feature/trier-taches` : tri par date d'ajout, priorité ou échéance (story 9)
 - [x] `feature/rechercher-tache` : recherche par mot-clé dans le titre (story 11, bonus)
-- [ ] `feature/bilan-sprint2` : règles communes aux stories 8, 9 et 11, note de vérification, entrée de PROMPTS.md
+- [x] `feature/bilan-sprint2` : règles communes aux stories 8, 9 et 11, note de vérification, entrée de PROMPTS.md
+
+**Vérification du sprint 2** : les nouvelles fonctions pures de `Taches` (`filtrerParStatut`, `trier`, `rechercher`, validation de la catégorie) ont été testées avec Node (31 vérifications), puis l'application complète dans Chrome, avec un script qui simule les actions : catégories à l'ajout et à la modification, couleurs des badges, tâches enregistrées avant le sprint 2, chaque filtre et ses messages, chaque tri et les égalités, recherche (casse, accents, espaces, HTML dans le mot-clé), combinaison des trois, retour sur « Toutes » après un ajout, et modification en cours pendant un changement de filtre, de tri ou de recherche. Les 68 vérifications passent. Reste à faire à la main par le binôme : un rechargement (F5) sur Firefox et Safari pour vérifier qu'on repart bien de « Toutes », « Plus récentes » et d'une recherche vide, et un essai sur téléphone.
 
 ## Modèle de données d'une tâche
 
@@ -193,9 +195,9 @@ En tant qu'utilisateur, je veux rechercher une tâche par un mot-clé de son tit
 - [x] Le compteur de la story 2 ne change pas pendant une recherche.
 
 **Règles communes aux stories 8, 9 et 11**
-- [ ] Le filtre, la recherche et le tri se combinent : avec « À faire », « css » et le tri « Priorité », on voit uniquement les tâches à faire dont le titre contient « css », triées par priorité.
-- [ ] Le filtre, le tri et la recherche ne sont pas sauvegardés : au rechargement de la page, on repart de « Toutes », « Plus récentes » et d'un champ vide.
-- [ ] Après l'ajout d'une tâche, le filtre revient sur « Toutes » et la recherche est vidée, pour que la nouvelle tâche soit visible. Le tri ne change pas.
+- [x] Le filtre, la recherche et le tri se combinent : avec « À faire », « css » et le tri « Priorité », on voit uniquement les tâches à faire dont le titre contient « css », triées par priorité.
+- [x] Le filtre, le tri et la recherche ne sont pas sauvegardés : au rechargement de la page, on repart de « Toutes », « Plus récentes » et d'un champ vide.
+- [x] Après l'ajout d'une tâche, le filtre revient sur « Toutes » et la recherche est vidée, pour que la nouvelle tâche soit visible. Le tri ne change pas.
 
 ### Sprint 3 · Cybersécurité
 
