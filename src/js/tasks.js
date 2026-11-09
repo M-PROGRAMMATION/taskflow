@@ -82,6 +82,20 @@ const Taches = {
     });
   },
 
+  // Passe une tâche de "todo" à "done", ou de "done" à "todo" (story 5).
+  // Renvoie une nouvelle liste : map crée un nouveau tableau, et la tâche
+  // changée est une copie ({ ...tache }), l'originale n'est pas modifiée.
+  basculerStatut: function (liste, id) {
+    return liste.map(function (tache) {
+      if (tache.id !== id) {
+        return tache;
+      }
+      const copie = { ...tache };
+      copie.status = tache.status === "done" ? "todo" : "done";
+      return copie;
+    });
+  },
+
   // Nombre de tâches encore à faire (pour le compteur de la story 2).
   compterAFaire: function (liste) {
     return liste.filter(function (tache) {

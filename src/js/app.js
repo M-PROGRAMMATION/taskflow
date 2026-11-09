@@ -50,6 +50,15 @@
     Interface.viderFormulaireAjout();
   }
 
+  // Clics dans la liste : action vaut la valeur data-action de l'élément cliqué.
+  function traiterActionListe(action, id) {
+    if (action === "terminer") {
+      // Story 5 : cocher ou décocher la case
+      mettreAJour(Taches.basculerStatut(etat.taches, id));
+      Interface.remettreFocus(id, "terminer");
+    }
+  }
+
   // ---------- Démarrage ----------
 
   function demarrer() {
@@ -58,6 +67,7 @@
 
     // On branche les événements
     Interface.surAjout(ajouterTache);
+    Interface.surActionListe(traiterActionListe);
 
     rafraichir();
   }

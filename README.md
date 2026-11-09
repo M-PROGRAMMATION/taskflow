@@ -17,7 +17,7 @@ Chaque fonctionnalité est développée sur sa propre branche `feature/...`, pui
 - [x] `feature/utils-stockage` : objets `Utils` (id, date, nettoyage) et `Stockage` (lecture / écriture protégée de `localStorage`)
 - [x] `feature/afficher-taches` : liste, badges de priorité et d'échéance, compteur, message de liste vide (stories 2 et 3)
 - [x] `feature/ajouter-tache` : formulaire d'ajout et validation du titre (story 1)
-- [ ] `feature/terminer-tache` : case à cocher, tâche barrée (story 5)
+- [x] `feature/terminer-tache` : case à cocher, tâche barrée (story 5)
 - [ ] `feature/supprimer-tache` : corbeille avec confirmation (story 6)
 - [ ] `feature/modifier-tache` : modification directement dans la liste (story 4)
 - [ ] Sauvegarde après chaque action et démarrage avec des données abîmées (story 7), vérifiée sur toutes les features
@@ -115,9 +115,9 @@ En tant qu'utilisateur, je veux modifier le titre, la description, la priorité 
 
 **5. Terminer une tâche**
 En tant qu'utilisateur, je veux cocher une tâche pour la marquer comme terminée afin de voir clairement ce que j'ai déjà accompli.
-- [ ] Cocher la case passe la tâche au statut « terminée » : son titre apparaît barré et grisé.
-- [ ] Décocher la case la remet « à faire », pour corriger un clic par erreur.
-- [ ] Le compteur de tâches restantes se met à jour tout de suite.
+- [x] Cocher la case passe la tâche au statut « terminée » : son titre apparaît barré et grisé.
+- [x] Décocher la case la remet « à faire », pour corriger un clic par erreur.
+- [x] Le compteur de tâches restantes se met à jour tout de suite.
 
 **6. Supprimer une tâche**
 En tant qu'utilisateur, je veux supprimer une tâche avec l'icône corbeille afin de retirer de ma liste celles qui ne sont plus utiles.
