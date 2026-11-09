@@ -32,8 +32,8 @@
 
   // Remplace la liste des tâches, la sauvegarde tout de suite (story 7), puis réaffiche.
   // Toutes les actions passent par ici : état → sauvegarde → affichage.
-  // Toute action sur les tâches referme aussi une modification en cours,
-  // sans l'enregistrer (comme « Annuler »).
+  // La ligne en modification est refermée : avant d'arriver ici, elle a déjà
+  // été enregistrée (enregistrerModificationEnCours) ou annulée.
   function mettreAJour(nouvellesTaches) {
     etat.taches = nouvellesTaches;
     etat.idEnModification = null;
@@ -41,10 +41,31 @@
     rafraichir();
   }
 
+  // Si une tâche est en cours de modification, on l'enregistre avant de faire
+  // une autre action (cocher, supprimer, ajouter, modifier une autre tâche).
+  // Renvoie true si on peut continuer, false si le titre saisi est refusé :
+  // dans ce cas l'erreur s'affiche et l'autre action n'est pas faite.
+  function enregistrerModificationEnCours() {
+    if (etat.idEnModification === null) {
+      return true; // rien en cours de modification
+    }
+    const donnees = Interface.lireFormulaireModification();
+    const resultat = Taches.valider(donnees);
+    if (!resultat.valide) {
+      Interface.afficherErreurModification(resultat.message);
+      return false;
+    }
+    mettreAJour(Taches.modifier(etat.taches, etat.idEnModification, donnees));
+    return true;
+  }
+
   // ---------- Actions ----------
 
   // Story 1 : ajout d'une tâche depuis le formulaire.
   function ajouterTache(donnees) {
+    if (!enregistrerModificationEnCours()) {
+      return;
+    }
     const resultat = Taches.valider(donnees);
     if (!resultat.valide) {
       Interface.afficherErreurAjout(resultat.message);
@@ -55,7 +76,16 @@
   }
 
   // Clics dans la liste : action vaut la valeur data-action de l'élément cliqué.
+  // Renvoie false si l'action est refusée (Interface annule alors le clic,
+  // pour que la case ne se coche pas toute seule à l'écran).
   function traiterActionListe(action, id) {
+    if (action === "annuler") {
+      annulerModification(); // « Annuler » ne doit surtout pas enregistrer
+      return true;
+    }
+    if (!enregistrerModificationEnCours()) {
+      return false;
+    }
     if (action === "terminer") {
       // Story 5 : cocher ou décocher la case
       mettreAJour(Taches.basculerStatut(etat.taches, id));
@@ -68,13 +98,12 @@
       }
     } else if (action === "modifier") {
       commencerModification(id);
-    } else if (action === "annuler") {
-      annulerModification();
     }
+    return true;
   }
 
   // Story 4 : la ligne devient un formulaire. Une seule à la fois :
-  // ouvrir une autre tâche referme la précédente sans l'enregistrer.
+  // la tâche précédente a déjà été enregistrée par traiterActionListe.
   function commencerModification(id) {
     etat.idEnModification = id;
     rafraichir();
@@ -90,15 +119,11 @@
   }
 
   // Bouton « Enregistrer » ou touche Entrée : mêmes règles que l'ajout.
-  function enregistrerModification(donnees) {
-    const resultat = Taches.valider(donnees);
-    if (!resultat.valide) {
-      Interface.afficherErreurModification(resultat.message);
-      return; // la tâche n'est pas modifiée, le formulaire reste ouvert
-    }
+  function enregistrerModification() {
     const id = etat.idEnModification;
-    mettreAJour(Taches.modifier(etat.taches, id, donnees));
-    Interface.remettreFocus(id, "modifier");
+    if (enregistrerModificationEnCours()) {
+      Interface.remettreFocus(id, "modifier");
+    }
   }
 
   // ---------- Démarrage ----------

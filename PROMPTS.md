@@ -287,3 +287,16 @@ Le README a une nouvelle section « Avancement » avec une case par branche, et 
 - Les événements sont branchés par des fonctions d'`Interface` (`surAjout`, `surActionListe`, `surModification`), pour que `app.js` ne touche jamais au DOM.
 **Pourquoi :** une branche par fonctionnalité permet de relire et de tester chaque morceau séparément, et l'historique montre l'avancement pas à pas. `sprint1` n'est pas fusionnée dans `main` : c'est au binôme de relire le code, de tester à la main, puis de décider de la fusion et du tag `v0.1.0`.
 **Points de vigilance :** tester sur Firefox et Safari ; l'id `Date.now()` suppose qu'on ne crée jamais deux tâches dans la même milliseconde ; `confirm()` a l'apparence du navigateur et ne se personnalise pas.
+
+## Prompt 16 · Retours du binôme sur le sprint 1 (Claude Code)
+**Prompt :** "Cocher, supprimer ou ajouter une tâche referme une modification en cours sans l'enregistrer." Non on doit enregistrer. "Les tâches abîmées dans le stockage sont ignorées une par une, au lieu de vider toute la liste.". Pas grave, tqt. "Le compteur affiche « 0 tâche à faire », au singulier.", met (s) comme ça au cas ou. "J'ai fait un commit par fonctionnalité, à ta demande, au lieu du « un commit par sprint » prévu dans CLAUDE.md.", laisse comme je t'ai dit sur le prompt du dessus, et met à jour ton claude.md pour suivre ma nouvelle logique.
+**Contexte :** réponse du binôme aux 4 choix proposés par l'IA à la fin du prompt 15.
+**Résultat :** une branche `feature/retours-binome-sprint1`, créée depuis `sprint1` puis fusionnée dedans.
+- Une autre action faite pendant une modification (cocher, supprimer, ajouter, ouvrir une autre tâche) enregistre d'abord la modification en cours (`enregistrerModificationEnCours` dans `app.js`). Seuls « Annuler » et Échap referment sans enregistrer.
+- Le compteur affiche « 0 tâche(s) à faire » ; « 1 tâche à faire » et « 3 tâches à faire » ne changent pas.
+- CLAUDE.md : nouvelle section « Organisation Git » (branche par sprint, branches `feature/...`, fusion dans le sprint, pas de fusion dans `main` sans le binôme), qui remplace « un commit par sprint ».
+- README : nouveau critère d'acceptation dans la story 4, critère du compteur mis à jour.
+**Gardé :** les tâches illisibles ignorées une par une.
+**Choix de l'IA (à valider) :** si le titre de la modification en cours est vide, l'autre action n'est pas faite et l'erreur s'affiche sous le titre (la case cochée revient à son état d'avant). Enregistrer un titre vide aurait contredit la story 4, et l'effacer aurait perdu la saisie. « (s) » n'est utilisé que pour 0 : pour 1 et plus, l'accord est sûr.
+**Tests :** 8 vérifications ajoutées au script de test dans Chrome, 37 sur 37 passent.
+**Pourquoi :** le binôme préfère ne jamais perdre une saisie sans le vouloir. L'organisation en branches remplace la consigne du cours, et elle est écrite dans CLAUDE.md pour que l'IA la suive aux sprints 2 et 3.

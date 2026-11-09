@@ -224,13 +224,13 @@ const Interface = {
 
   // Branche le formulaire de modification. Il est recréé à chaque affichage :
   // on écoute donc la liste, qui reçoit les événements de ses enfants (délégation).
-  //   enregistrer(donnees) : bouton « Enregistrer » ou touche Entrée
+  //   enregistrer() : bouton « Enregistrer » ou touche Entrée (app.js relit le formulaire)
   //   annuler()            : touche Échap (le bouton « Annuler » passe par surActionListe)
   surModification: function (enregistrer, annuler) {
     const liste = document.getElementById("liste-taches");
     liste.addEventListener("submit", function (evenement) {
       evenement.preventDefault(); // empêche le rechargement de la page
-      enregistrer(Interface.lireFormulaireModification());
+      enregistrer();
     });
     liste.addEventListener("keydown", function (evenement) {
       if (evenement.key === "Escape" && evenement.target.closest(".formulaire-modification")) {
@@ -242,6 +242,7 @@ const Interface = {
   // Branche UN SEUL écouteur de clic sur toute la liste (délégation d'événements).
   // Un clic sur un élément qui a un data-action (case, crayon, corbeille…) appelle
   // traiter(action, id), où id est l'identifiant de la tâche de la ligne cliquée.
+  // Si traiter renvoie false, le clic est annulé (la case à cocher ne change pas).
   surActionListe: function (traiter) {
     document.getElementById("liste-taches").addEventListener("click", function (evenement) {
       const element = evenement.target.closest("[data-action]");
@@ -249,7 +250,10 @@ const Interface = {
         return; // clic ailleurs que sur un bouton ou une case
       }
       const ligne = element.closest("li[data-id]");
-      traiter(element.dataset.action, Number(ligne.dataset.id)); // dataset donne du texte
+      const accepte = traiter(element.dataset.action, Number(ligne.dataset.id)); // dataset donne du texte
+      if (accepte === false) {
+        evenement.preventDefault(); // remet la case dans son état d'avant le clic
+      }
     });
   },
 
@@ -318,10 +322,15 @@ const Interface = {
 
   // ---------- Compteur ----------
 
-  // Affiche « 3 tâches à faire », « 1 tâche à faire » ou « 0 tâche à faire »
-  // (en français, 0 et 1 sont au singulier).
+  // Affiche « 3 tâches à faire », « 1 tâche à faire » ou « 0 tâche(s) à faire »
+  // (décision du binôme : « (s) » pour 0, l'accord n'étant pas évident).
   afficherCompteur: function (nombre) {
-    const mot = nombre <= 1 ? "tâche" : "tâches";
+    let mot = "tâches";
+    if (nombre === 0) {
+      mot = "tâche(s)";
+    } else if (nombre === 1) {
+      mot = "tâche";
+    }
     document.getElementById("compteur").textContent = nombre + " " + mot + " à faire";
   },
 };
