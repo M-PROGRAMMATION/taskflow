@@ -56,6 +56,12 @@
       // Story 5 : cocher ou décocher la case
       mettreAJour(Taches.basculerStatut(etat.taches, id));
       Interface.remettreFocus(id, "terminer");
+    } else if (action === "supprimer") {
+      // Story 6 : corbeille, avec confirmation qui rappelle le titre
+      const tache = Taches.trouver(etat.taches, id);
+      if (tache !== undefined && Interface.confirmerSuppression(tache.title)) {
+        mettreAJour(Taches.supprimer(etat.taches, id));
+      }
     }
   }
 

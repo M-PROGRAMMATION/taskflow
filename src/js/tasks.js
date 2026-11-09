@@ -96,6 +96,21 @@ const Taches = {
     });
   },
 
+  // Retire une tâche (story 6). filter renvoie une nouvelle liste
+  // qui garde toutes les tâches sauf celle qui a cet id.
+  supprimer: function (liste, id) {
+    return liste.filter(function (tache) {
+      return tache.id !== id;
+    });
+  },
+
+  // Retrouve une tâche par son id. Renvoie undefined si elle n'existe pas.
+  trouver: function (liste, id) {
+    return liste.find(function (tache) {
+      return tache.id === id;
+    });
+  },
+
   // Nombre de tâches encore à faire (pour le compteur de la story 2).
   compterAFaire: function (liste) {
     return liste.filter(function (tache) {
