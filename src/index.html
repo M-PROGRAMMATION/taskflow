@@ -90,7 +90,8 @@
         <!-- Tri (story 9) -->
         <div class="champ champ-tri">
           <label for="tri">Trier par</label>
-          <select id="tri">
+          <!-- autocomplete="off" : au rechargement, le navigateur ne remet pas l'ancien tri -->
+          <select id="tri" autocomplete="off">
             <option value="recent" selected>Plus récentes</option>
             <option value="priority">Priorité</option>
             <option value="dueDate">Échéance</option>
