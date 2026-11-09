@@ -11,6 +11,12 @@ const Interface = {
   LIBELLES_PRIORITE: { high: "Haute", medium: "Moyenne", low: "Basse" },
   LIBELLES_ECHEANCE: { late: "En retard", today: "Aujourd'hui" },
   LIBELLES_CATEGORIE: { school: "Cours", personal: "Perso", project: "Projet" },
+  // Messages de liste vide : aucune tâche du tout (story 2), ou filtre sans résultat (story 8)
+  MESSAGES_VIDE: {
+    aucune: "Aucune tâche pour le moment. Ajoutez-en une avec le formulaire.",
+    todo: "Aucune tâche à faire.",
+    done: "Aucune tâche terminée.",
+  },
 
   // Crée un élément HTML avec une classe et un texte.
   // Le texte passe par textContent : du HTML tapé par l'utilisateur s'affiche tel quel.
@@ -208,14 +214,40 @@ const Interface = {
     const liste = document.getElementById("liste-taches");
     liste.textContent = ""; // vide la liste avant de la reconstruire
 
-    // Message affiché seulement quand il n'existe aucune tâche
-    document.getElementById("message-vide").hidden = taches.length > 0;
-
     taches.forEach(function (tache) {
       if (tache.id === idEnModification) {
         liste.appendChild(Interface.creerLigneModification(tache));
       } else {
         liste.appendChild(Interface.creerLigneTache(tache, echeances[tache.id]));
+      }
+    });
+  },
+
+  // Affiche le message de liste vide qui correspond à cas
+  // ("aucune", "todo", "done"), ou le cache si cas vaut "".
+  afficherMessageVide: function (cas) {
+    const message = document.getElementById("message-vide");
+    message.hidden = cas === "";
+    message.textContent = cas === "" ? "" : Interface.MESSAGES_VIDE[cas];
+  },
+
+  // ---------- Filtres (story 8) ----------
+
+  // Met en évidence le bouton du filtre actif. aria-pressed indique aussi
+  // aux lecteurs d'écran quel bouton est enfoncé ; le CSS s'en sert pour la couleur.
+  afficherFiltre: function (filtre) {
+    document.querySelectorAll("#filtres [data-filtre]").forEach(function (bouton) {
+      bouton.setAttribute("aria-pressed", String(bouton.dataset.filtre === filtre));
+    });
+  },
+
+  // Un seul écouteur sur le groupe de boutons : traiter(filtre) reçoit
+  // "all", "todo" ou "done", lu dans le data-filtre du bouton cliqué.
+  surFiltre: function (traiter) {
+    document.getElementById("filtres").addEventListener("click", function (evenement) {
+      const bouton = evenement.target.closest("[data-filtre]");
+      if (bouton !== null) {
+        traiter(bouton.dataset.filtre);
       }
     });
   },

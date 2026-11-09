@@ -28,7 +28,7 @@ Chaque fonctionnalité est développée sur sa propre branche `feature/...`, cr�
 ### Sprint 2 · Informatique (branche `sprint2`)
 
 - [x] `feature/categories` : catégorie facultative (Cours, Perso, Projet) à l'ajout et à la modification, badge en couleur (story 10)
-- [ ] `feature/filtrer-statut` : filtres Toutes / À faire / Terminées (story 8)
+- [x] `feature/filtrer-statut` : filtres Toutes / À faire / Terminées (story 8)
 - [ ] `feature/trier-taches` : tri par date d'ajout, priorité ou échéance (story 9)
 - [ ] `feature/rechercher-tache` : recherche par mot-clé dans le titre (story 11, bonus)
 - [ ] `feature/bilan-sprint2` : règles communes aux stories 8, 9 et 11, note de vérification, entrée de PROMPTS.md
@@ -149,13 +149,13 @@ En tant qu'utilisateur, je veux retrouver mes tâches après avoir fermé puis r
 
 **8. Filtrer par statut**
 En tant qu'utilisateur, je veux filtrer mes tâches par statut (toutes, à faire, terminées) afin de me concentrer sur ce qui reste à faire.
-- [ ] Trois boutons sont affichés au-dessus de la liste : « Toutes », « À faire », « Terminées ». Le filtre actif est mis en évidence.
-- [ ] Le filtre « Toutes » est actif à l'ouverture de l'application.
-- [ ] Un clic sur un filtre met la liste à jour tout de suite, sans recharger la page.
-- [ ] Filtrer ne supprime rien : en revenant sur « Toutes », toutes les tâches sont là.
-- [ ] Une tâche cochée pendant que le filtre « À faire » est actif disparaît aussitôt de la liste. De même, une tâche décochée disparaît du filtre « Terminées ».
-- [ ] Le compteur de la story 2 compte toujours toutes les tâches à faire, quel que soit le filtre.
-- [ ] Si le filtre ne donne aucun résultat, un message l'indique : « Aucune tâche à faire. » ou « Aucune tâche terminée. ». Le message de la story 2 reste réservé au cas où il n'existe aucune tâche.
+- [x] Trois boutons sont affichés au-dessus de la liste : « Toutes », « À faire », « Terminées ». Le filtre actif est mis en évidence.
+- [x] Le filtre « Toutes » est actif à l'ouverture de l'application.
+- [x] Un clic sur un filtre met la liste à jour tout de suite, sans recharger la page.
+- [x] Filtrer ne supprime rien : en revenant sur « Toutes », toutes les tâches sont là.
+- [x] Une tâche cochée pendant que le filtre « À faire » est actif disparaît aussitôt de la liste. De même, une tâche décochée disparaît du filtre « Terminées ».
+- [x] Le compteur de la story 2 compte toujours toutes les tâches à faire, quel que soit le filtre.
+- [x] Si le filtre ne donne aucun résultat, un message l'indique : « Aucune tâche à faire. » ou « Aucune tâche terminée. ». Le message de la story 2 reste réservé au cas où il n'existe aucune tâche.
 
 **9. Trier les tâches**
 En tant qu'utilisateur, je veux trier mes tâches par priorité ou par date d'échéance afin de savoir quoi faire en premier.
