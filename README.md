@@ -38,7 +38,7 @@ Chaque fonctionnalité est développée sur sa propre branche `feature/...`, cr�
 ### Sprint 3 · Cybersécurité (branche `sprint3`)
 
 - [x] `feature/auth-stockage` : objet `Auth` (règles du mot de passe, hachage SHA-256, comptes) et `Stockage` des comptes (`taskflow_users`) et de la session (`taskflow_session`)
-- [ ] `feature/connexion` : écran du premier lancement (choix du mot de passe), écran de connexion, session, bouton « Se déconnecter » (stories 12, 13 et 15)
+- [x] `feature/connexion` : écran du premier lancement (choix du mot de passe), écran de connexion, session, bouton « Se déconnecter » (stories 12, 13 et 15)
 - [ ] `feature/jauge-robustesse` : jauge Faible / Moyen / Fort pendant la saisie du mot de passe (story 14)
 - [ ] `feature/blocage-connexion` : blocage de 20 secondes après 3 échecs (story 16, bonus)
 - [ ] `feature/bilan-sprint3` : note de vérification, entrée de PROMPTS.md
@@ -214,25 +214,25 @@ En tant qu'utilisateur, je veux rechercher une tâche par un mot-clé de son tit
 
 **12. Se connecter**
 En tant qu'utilisateur, je veux me connecter avec un identifiant et un mot de passe avant d'accéder à mes tâches afin qu'une autre personne utilisant le même navigateur ne les voie pas directement.
-- [ ] Tant que l'utilisateur n'est pas connecté, seul l'écran de connexion est visible : les tâches ne sont pas affichées.
-- [ ] L'écran contient un champ identifiant, un champ mot de passe dont la saisie est masquée et un bouton « Se connecter ». La touche Entrée valide comme le bouton.
-- [ ] Un identifiant ou un mot de passe vide est refusé avec un message d'erreur, sans tentative de connexion.
-- [ ] Si l'identifiant n'existe pas ou si le mot de passe est faux, le message est le même : « Identifiant ou mot de passe incorrect. », pour ne pas révéler quels comptes existent.
-- [ ] Après une connexion réussie, l'écran des tâches s'affiche et le champ mot de passe est vidé.
-- [ ] L'écran rappelle qu'il s'agit d'un compte de test : « Application de démonstration : n'utilisez pas un vrai mot de passe. ».
-- [ ] Le compte de test est créé au premier lancement, quand aucun compte n'est enregistré. Il n'y a pas d'écran d'inscription.
-- [ ] Au premier lancement, l'identifiant du compte est `test` et un écran demande de choisir son mot de passe, avec sa confirmation. Deux mots de passe différents sont refusés. Ce mot de passe passe par le contrôle de robustesse (story 13) et la jauge (story 14).
-- [ ] Une fois le compte créé, cet écran ne réapparaît plus : les ouvertures suivantes affichent l'écran de connexion.
-- [ ] Recharger la page ne déconnecte pas : la session est gardée dans `sessionStorage` jusqu'à la fermeture de l'onglet. Seul l'identifiant y est enregistré, jamais le mot de passe ni son empreinte.
-- [ ] Un bouton « Se déconnecter » efface la session et ramène à l'écran de connexion.
-- [ ] Les tâches sont communes : le modèle de données d'une tâche ne change pas.
+- [x] Tant que l'utilisateur n'est pas connecté, seul l'écran de connexion est visible : les tâches ne sont pas affichées.
+- [x] L'écran contient un champ identifiant, un champ mot de passe dont la saisie est masquée et un bouton « Se connecter ». La touche Entrée valide comme le bouton.
+- [x] Un identifiant ou un mot de passe vide est refusé avec un message d'erreur, sans tentative de connexion.
+- [x] Si l'identifiant n'existe pas ou si le mot de passe est faux, le message est le même : « Identifiant ou mot de passe incorrect. », pour ne pas révéler quels comptes existent.
+- [x] Après une connexion réussie, l'écran des tâches s'affiche et le champ mot de passe est vidé.
+- [x] L'écran rappelle qu'il s'agit d'un compte de test : « Application de démonstration : n'utilisez pas un vrai mot de passe. ».
+- [x] Le compte de test est créé au premier lancement, quand aucun compte n'est enregistré. Il n'y a pas d'écran d'inscription.
+- [x] Au premier lancement, l'identifiant du compte est `test` et un écran demande de choisir son mot de passe, avec sa confirmation. Deux mots de passe différents sont refusés. Ce mot de passe passe par le contrôle de robustesse (story 13) et la jauge (story 14).
+- [x] Une fois le compte créé, cet écran ne réapparaît plus : les ouvertures suivantes affichent l'écran de connexion.
+- [x] Recharger la page ne déconnecte pas : la session est gardée dans `sessionStorage` jusqu'à la fermeture de l'onglet. Seul l'identifiant y est enregistré, jamais le mot de passe ni son empreinte.
+- [x] Un bouton « Se déconnecter » efface la session et ramène à l'écran de connexion.
+- [x] Les tâches sont communes : le modèle de données d'une tâche ne change pas.
 
 **13. Exiger un mot de passe robuste**
 En tant qu'utilisateur, je veux que mon mot de passe soit refusé s'il ne contient pas au moins 8 caractères, une majuscule, un chiffre et un caractère spécial afin d'être obligé de choisir un mot de passe robuste.
-- [ ] Le contrôle se fait quand le mot de passe est choisi, pas à la connexion.
+- [x] Le contrôle se fait quand le mot de passe est choisi, pas à la connexion.
 - [x] Les 4 règles sont vérifiées : au moins 8 caractères, une majuscule (A à Z), un chiffre (0 à 9), un caractère spécial.
 - [x] Un caractère spécial est tout ce qui n'est ni une lettre ni un chiffre : `!`, `?`, `#` ou un espace. Une lettre accentuée (`é`, `è`, `à`…) n'en est pas un.
-- [ ] Si une règle n'est pas respectée, le compte n'est pas créé et le message indique chaque règle manquante, par exemple « Il manque : une majuscule, un chiffre. ».
+- [x] Si une règle n'est pas respectée, le compte n'est pas créé et le message indique chaque règle manquante, par exemple « Il manque : une majuscule, un chiffre. ».
 - [x] Exemples à tester : `Abcdef1!` est accepté ; `abcdef1!` (pas de majuscule), `Abcdefg!` (pas de chiffre), `Abcdefg1` et `Abcdefé1` (pas de caractère spécial) et `Abc1!` (trop court) sont refusés.
 
 **14. Voir la jauge de robustesse**
@@ -246,11 +246,11 @@ En tant qu'utilisateur, je veux voir une jauge faible / moyen / fort se mettre �
 
 **15. Protéger le mot de passe par hachage**
 En tant qu'utilisateur, je veux que mon mot de passe soit enregistré sous forme hachée et jamais en clair afin qu'il ne soit pas lisible par quelqu'un qui consulte le stockage du navigateur.
-- [ ] Le mot de passe est haché en SHA-256 avec `crypto.subtle.digest` avant l'enregistrement, et l'empreinte est enregistrée en texte de 64 caractères hexadécimaux.
-- [ ] Dans les outils de développement du navigateur, `taskflow_users` ne contient jamais le mot de passe en clair.
-- [ ] À la connexion, le mot de passe saisi est haché, puis l'empreinte est comparée à celle enregistrée.
-- [ ] Le mot de passe n'apparaît nulle part ailleurs : ni dans la console, ni dans le code, ni dans l'état gardé par `app.js`.
-- [ ] Si `crypto.subtle` n'est pas disponible dans le navigateur, le compte n'est pas créé et un message l'indique. Le mot de passe n'est jamais enregistré en clair à la place.
+- [x] Le mot de passe est haché en SHA-256 avec `crypto.subtle.digest` avant l'enregistrement, et l'empreinte est enregistrée en texte de 64 caractères hexadécimaux.
+- [x] Dans les outils de développement du navigateur, `taskflow_users` ne contient jamais le mot de passe en clair.
+- [x] À la connexion, le mot de passe saisi est haché, puis l'empreinte est comparée à celle enregistrée.
+- [x] Le mot de passe n'apparaît nulle part ailleurs : ni dans la console, ni dans le code, ni dans l'état gardé par `app.js`.
+- [x] Si `crypto.subtle` n'est pas disponible dans le navigateur, le compte n'est pas créé et un message l'indique. Le mot de passe n'est jamais enregistré en clair à la place.
 - [ ] Vérifier le hachage en ouvrant `src/index.html` par double-clic, et sur le site GitHub Pages, dans les navigateurs utilisés pour la démonstration.
 
 **16. Bloquer après 3 échecs** *(bonus)*
