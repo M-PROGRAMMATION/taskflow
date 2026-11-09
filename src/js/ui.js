@@ -114,6 +114,29 @@ const Interface = {
     });
   },
 
+  // Branche UN SEUL écouteur de clic sur toute la liste (délégation d'événements).
+  // Un clic sur un élément qui a un data-action (case, crayon, corbeille…) appelle
+  // traiter(action, id), où id est l'identifiant de la tâche de la ligne cliquée.
+  surActionListe: function (traiter) {
+    document.getElementById("liste-taches").addEventListener("click", function (evenement) {
+      const element = evenement.target.closest("[data-action]");
+      if (element === null) {
+        return; // clic ailleurs que sur un bouton ou une case
+      }
+      const ligne = element.closest("li[data-id]");
+      traiter(element.dataset.action, Number(ligne.dataset.id)); // dataset donne du texte
+    });
+  },
+
+  // Après un réaffichage, la ligne est recréée et le focus clavier est perdu :
+  // on le remet sur l'élément action de la tâche id (utile pour la touche Tab).
+  remettreFocus: function (id, action) {
+    const element = document.querySelector('li[data-id="' + id + '"] [data-action="' + action + '"]');
+    if (element !== null) {
+      element.focus();
+    }
+  },
+
   // ---------- Formulaire d'ajout (story 1) ----------
 
   // Lit les valeurs du formulaire d'ajout, telles que saisies (Taches les vérifie).
