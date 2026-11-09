@@ -14,6 +14,7 @@
   // État de l'application : la seule source de vérité.
   const etat = {
     taches: [],
+    idEnModification: null, // id de la tâche en cours de modification, ou null (story 4)
   };
 
   // Réaffiche tout l'écran à partir de l'état.
@@ -25,14 +26,17 @@
       echeances[tache.id] = Taches.etatEcheance(tache, aujourdhui);
     });
 
-    Interface.afficherTaches(etat.taches, echeances);
+    Interface.afficherTaches(etat.taches, echeances, etat.idEnModification);
     Interface.afficherCompteur(Taches.compterAFaire(etat.taches));
   }
 
   // Remplace la liste des tâches, la sauvegarde tout de suite (story 7), puis réaffiche.
   // Toutes les actions passent par ici : état → sauvegarde → affichage.
+  // Toute action sur les tâches referme aussi une modification en cours,
+  // sans l'enregistrer (comme « Annuler »).
   function mettreAJour(nouvellesTaches) {
     etat.taches = nouvellesTaches;
+    etat.idEnModification = null;
     Stockage.sauverTaches(etat.taches);
     rafraichir();
   }
@@ -62,7 +66,39 @@
       if (tache !== undefined && Interface.confirmerSuppression(tache.title)) {
         mettreAJour(Taches.supprimer(etat.taches, id));
       }
+    } else if (action === "modifier") {
+      commencerModification(id);
+    } else if (action === "annuler") {
+      annulerModification();
     }
+  }
+
+  // Story 4 : la ligne devient un formulaire. Une seule à la fois :
+  // ouvrir une autre tâche referme la précédente sans l'enregistrer.
+  function commencerModification(id) {
+    etat.idEnModification = id;
+    rafraichir();
+    Interface.focaliserModification();
+  }
+
+  // Bouton « Annuler » ou touche Échap : on referme sans rien changer.
+  function annulerModification() {
+    const id = etat.idEnModification;
+    etat.idEnModification = null;
+    rafraichir();
+    Interface.remettreFocus(id, "modifier");
+  }
+
+  // Bouton « Enregistrer » ou touche Entrée : mêmes règles que l'ajout.
+  function enregistrerModification(donnees) {
+    const resultat = Taches.valider(donnees);
+    if (!resultat.valide) {
+      Interface.afficherErreurModification(resultat.message);
+      return; // la tâche n'est pas modifiée, le formulaire reste ouvert
+    }
+    const id = etat.idEnModification;
+    mettreAJour(Taches.modifier(etat.taches, id, donnees));
+    Interface.remettreFocus(id, "modifier");
   }
 
   // ---------- Démarrage ----------
@@ -74,6 +110,7 @@
     // On branche les événements
     Interface.surAjout(ajouterTache);
     Interface.surActionListe(traiterActionListe);
+    Interface.surModification(enregistrerModification, annulerModification);
 
     rafraichir();
   }
