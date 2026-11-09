@@ -1,0 +1,77 @@
+name: Créer une release TaskFlow
+
+# Se lance quand on pousse un tag de version, par exemple :
+#   git tag -a v0.1.0 -m "Sprint 1 : CRUD et sauvegarde"
+#   git push origin v0.1.0
+on:
+  push:
+    tags:
+      - "v*.*.*"
+
+permissions:
+  contents: write    # nécessaire pour créer la release et y joindre le zip
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0   # tout l'historique, pour lister les commits depuis le tag précédent
+
+      # checkout peut remplacer le tag annoté par une copie sans message : on le récupère à nouveau
+      - name: Récupérer les tags
+        run: git fetch --force --tags
+
+      - name: Rédiger les notes de version
+        env:
+          TAG: ${{ github.ref_name }}
+        run: |
+          # Tag précédent (vide si c'est la première version)
+          PREVIOUS=$(git describe --tags --abbrev=0 "${TAG}^" 2>/dev/null || echo "")
+
+          {
+            echo "## TaskFlow ${TAG}"
+            echo
+            # Message écrit dans le tag annoté (git tag -a ... -m "...")
+            git tag -l --format='%(contents)' "$TAG"
+            echo
+            echo "### Contenu de cette version"
+            echo
+            if [ -n "$PREVIOUS" ]; then
+              git log --pretty=format:'- %s (%h)' --no-merges "${PREVIOUS}..${TAG}"
+              echo
+              echo
+              echo "Changements depuis ${PREVIOUS} : https://github.com/${{ github.repository }}/compare/${PREVIOUS}...${TAG}"
+            else
+              git log --pretty=format:'- %s (%h)' --no-merges "$TAG"
+              echo
+              echo
+              echo "Première version publiée."
+            fi
+            echo
+            echo "### Utilisation"
+            echo
+            echo "- En ligne : https://m-programmation.github.io/taskflow/"
+            echo "- Hors ligne : télécharger \`taskflow-${TAG}.zip\`, le décompresser et ouvrir \`index.html\`."
+          } > notes.md
+
+          cat notes.md
+
+      - name: Préparer le zip de l'application
+        env:
+          TAG: ${{ github.ref_name }}
+        run: |
+          # On ne livre que le dossier src/ (pas les PDF du cours ni la documentation)
+          cd src
+          zip -r "../taskflow-${TAG}.zip" . -x "*.gitkeep"
+
+      - name: Créer la release sur GitHub
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ github.ref_name }}
+        run: |
+          # gh est déjà installé sur les machines GitHub : aucune action externe en plus
+          gh release create "$TAG" "taskflow-${TAG}.zip" \
+            --title "TaskFlow ${TAG}" \
+            --notes-file notes.md

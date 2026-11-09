@@ -255,3 +255,13 @@ Format : l'arborescence mise à jour et les règles d'utilisation (emplacement, 
 **Gardé :** identifiant `test`, bouton de déconnexion, description modifiable, date passée acceptée avec badge « En retard », couleurs des catégories.
 **Modifié :** le mot de passe n'est pas fixé à « test » : il est choisi au premier lancement, avec la jauge.
 **Pourquoi :** sans écran pour choisir le mot de passe, la jauge et le contrôle de robustesse (filière Cybersécurité) n'auraient pas pu être testés.
+
+## Prompt 14 · Versionnage avec les tags et release automatique (Claude Code)
+**Prompt :** Dans le workflows github, je voudrais que tu rajoutes un système de versionning avec les tags. et qui créer une release, avec une explication de ce qu'il y a dedans. et met le dans PROMPTS.md
+**Résultat :** un second workflow, `.github/workflows/release.yml`, séparé de `page.yml`. Il se lance quand on pousse un tag de la forme `vX.Y.Z`. Il rédige les notes de version : le message du tag, la liste des commits depuis le tag précédent et un lien de comparaison. Il joint un zip du dossier `src/` et crée la release sur GitHub avec `gh`, déjà installé sur les machines GitHub.
+**Utilisation :** `git tag -a v0.1.0 -m "Sprint 1 : CRUD et sauvegarde"` puis `git push origin v0.1.0`.
+**Proposition de numéros :** `v0.1.0` après le sprint 1, `v0.2.0` après le sprint 2, `v0.3.0` après le sprint 3, `v1.0.0` pour la version finale de la séance 3 (versionnage sémantique : `MAJEUR.MINEUR.CORRECTIF`).
+**Gardé :** un workflow à part, pour que la mise en ligne (`page.yml`) continue à chaque push sur `main` sans dépendre des tags.
+**Rejeté :** une action externe pour créer la release (par exemple `softprops/action-gh-release`) et un outil qui calcule la version tout seul à partir des messages de commit (`semantic-release`).
+**Pourquoi :** le binôme choisit lui-même quand une version est prête (une par sprint, comme les commits demandés par le cours). Le message du tag et la liste des commits suffisent à expliquer le contenu de chaque version. Le zip ne contient que `src/` : ni les PDF du cours, ni la documentation.
+**Points de vigilance :** la qualité des notes dépend des messages de commit, il faut donc les écrire clairement. Un tag déjà poussé ne doit pas être réutilisé : si une release est ratée, on la supprime sur GitHub avec son tag avant de recommencer.
