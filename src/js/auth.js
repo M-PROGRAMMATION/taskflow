@@ -1,7 +1,7 @@
 /*
  * auth.js — objet Auth (Cybersécurité, sprint 3)
  * Règles du mot de passe (8 caractères, majuscule, chiffre, caractère spécial),
- * hachage SHA-256, création du compte de test, vérification de la connexion.
+ * niveau de la jauge (faible / moyen / fort), hachage SHA-256, création du compte de test, vérification de la connexion.
  * Dépend de : Utils.
  * Pas d'accès au DOM ni à localStorage : les fonctions reçoivent la liste des comptes
  * et renvoient une nouvelle liste, c'est app.js qui la sauvegarde.
@@ -62,6 +62,26 @@ const Auth = {
       return { valide: false, message: "Il manque : " + manquantes.join(", ") + "." };
     }
     return { valide: true };
+  },
+
+  // Story 14 : niveau de la jauge, selon le nombre de règles respectées parmi les 4.
+  //   ""       : champ vide (jauge vide, aucun mot)
+  //   "weak"   : 0 à 2 règles  → Faible
+  //   "medium" : 3 règles      → Moyen
+  //   "strong" : les 4 règles  → Fort, le seul niveau qui permet de créer le compte.
+  // Calculé à partir de reglesManquantes : la jauge et la story 13 ne peuvent pas se contredire.
+  niveauRobustesse: function (motDePasse) {
+    if (motDePasse === "") {
+      return "";
+    }
+    const respectees = Auth.REGLES.length - Auth.reglesManquantes(motDePasse).length;
+    if (respectees === 4) {
+      return "strong";
+    }
+    if (respectees === 3) {
+      return "medium";
+    }
+    return "weak";
   },
 
   // Vérifie le formulaire du premier lancement : mot de passe et confirmation (story 12).
