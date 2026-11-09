@@ -371,3 +371,21 @@ Les cases de la section « Avancement » et les critères d'acceptation des stor
 **Modifié :** le choix 2. L'IA appliquait la règle du prompt 16 (toute autre action enregistre d'abord la modification). Le binôme fait une exception pour la déconnexion.
 **Tests :** le script de connexion vérifie maintenant qu'une déconnexion pendant une modification n'enregistre rien, avec un titre vide comme avec un titre valide, et que le filtre, le tri et la recherche reviennent par défaut. 47 vérifications de connexion, 35 autres dans Chrome et 51 avec Node : toutes passent.
 **Pourquoi :** se déconnecter doit toujours marcher, sans être bloqué par une erreur dans une tâche. La limite sur le message « Compte bloqué » est notée pour être honnête sur ce que la connexion protège, ce que l'audit de la séance 3 pourra vérifier.
+
+## Prompt 21 · Nouveau design de l'interface (Claude Design, puis Claude Code)
+**Prompt :** Je t'ai mis un taskflow-design.zip, généré par Claude Design, il faudrait que tu mettes à jour tout le front, oublie pas de faire une branche pour, je la test, et ensuite je fais une pull requests moi-même, oublie pas aussi de me donner le nom et description PR.
+**Contexte :** la maquette (4 pages HTML statiques et une feuille de style, sans JavaScript) a été générée avec Claude Design : écran de connexion, écran du premier lancement, écran des tâches, et une planche des états (liste vide, badges, jauge, blocage, fenêtre de suppression).
+**Résultat :** une branche `feature/refonte-design`, créée depuis `main`, testée par le binôme puis fusionnée par une PR (#4).
+- `index.html` et `style.css` réécrits d'après la maquette. Les `id` lus par le JavaScript n'ont pas changé.
+- `ui.js` : nouvelles lignes de tâche, formulaire de modification encadré, fenêtre `<dialog>` de confirmation de suppression à la place de `confirm()`, jauge en trois barres, règles du mot de passe cochées pendant la frappe, bandeau « Compte bloqué » avec bouton désactivé, compteur « 0 / 100 » sous le titre.
+- `app.js` : suppression confirmée par la fenêtre, minuterie qui réactive le bouton à la fin du blocage, date du jour. `auth.js` : `reglesRespectees`, et `bloque` / `resteMs` dans le résultat de `connecter`. `utils.js` : `dateDuJourLongue`.
+- 18 icônes SVG ajoutées ou refaites dans `src/assets/icones/`.
+**Gardé :** les écrans, les couleurs, les badges, la jauge et les états de la maquette.
+**Modifié :**
+- Polices du système à la place de Google Fonts : CLAUDE.md interdit les liens vers un CDN.
+- Icônes en fichiers SVG locaux au lieu du SVG collé dans le HTML (règle du CLAUDE.md).
+- La description reste un champ d'une ligne et non une zone de texte : sinon la touche Entrée n'ajouterait plus la tâche (story 1).
+- La bordure du badge de catégorie est gardée (décision du prompt 18), alors que la maquette n'en avait pas.
+**Rejeté :** la page « États et composants » de la maquette, qui ne sert qu'à montrer les composants et ne fait pas partie de l'application.
+**Tests :** 106 vérifications dans Chrome en `file://` et 51 avec Node, toutes passent. Les tests ont trouvé un défaut, corrigé avant le commit : après une connexion réussie, le bandeau « Compte bloqué » pouvait rester affiché si le stockage avait été modifié à la main.
+**Pourquoi :** la maquette donne une interface plus soignée pour la présentation de la séance 3, sans toucher aux règles métier ni aux données enregistrées. Les écarts viennent des règles du projet (pas de CDN, fichiers locaux) et des décisions déjà prises par le binôme.
