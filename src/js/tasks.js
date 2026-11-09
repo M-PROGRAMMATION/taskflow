@@ -10,10 +10,11 @@ const Taches = {
   // Valeurs autorisées (voir le modèle de données dans le README)
   PRIORITES: ["high", "medium", "low"],
   STATUTS: ["todo", "done"],
+  CATEGORIES: ["school", "personal", "project"], // ou "" si aucune (story 10)
   TITRE_MAX: 100,
 
   // Vérifie les données d'un formulaire (ajout ou modification).
-  // donnees : { title, description, priority, dueDate }, telles que saisies.
+  // donnees : { title, description, priority, dueDate, category }, telles que saisies.
   // Renvoie { valide: true } ou { valide: false, message: "..." }.
   // C'est Interface qui affichera le message : ici on ne touche pas à l'écran.
   valider: function (donnees) {
@@ -29,6 +30,10 @@ const Taches = {
     }
     if (!Taches.PRIORITES.includes(donnees.priority)) {
       return { valide: false, message: "La priorité choisie n'existe pas." };
+    }
+    // Catégorie facultative : "" ou une des valeurs autorisées (story 10)
+    if (donnees.category !== "" && !Taches.CATEGORIES.includes(donnees.category)) {
+      return { valide: false, message: "La catégorie choisie n'existe pas." };
     }
     // Échéance facultative : "" ou une date "YYYY-MM-DD".
     // Une date passée est acceptée (story 3 : le badge « En retard » sert d'avertissement).
@@ -50,7 +55,7 @@ const Taches = {
       priority: donnees.priority,
       dueDate: Utils.nettoyerTexte(donnees.dueDate),
       status: "todo",
-      category: "", // les catégories arrivent au sprint 2
+      category: donnees.category,
     };
     return [nouvelleTache].concat(liste);
   },
@@ -77,13 +82,14 @@ const Taches = {
         priority: tache.priority,
         dueDate: typeof tache.dueDate === "string" ? tache.dueDate : "",
         status: tache.status,
-        category: typeof tache.category === "string" ? tache.category : "",
+        // Tâche d'avant le sprint 2 (sans category) ou catégorie inconnue : aucune catégorie
+        category: Taches.CATEGORIES.includes(tache.category) ? tache.category : "",
       };
     });
   },
 
-  // Modifie le titre, la description, la priorité et l'échéance d'une tâche (story 4).
-  // L'id, le statut, la catégorie et la place dans la liste ne changent pas.
+  // Modifie le titre, la description, la priorité, l'échéance et la catégorie
+  // d'une tâche (stories 4 et 10). L'id, le statut et la place dans la liste ne changent pas.
   // À appeler seulement si Taches.valider(donnees) a renvoyé valide: true.
   modifier: function (liste, id, donnees) {
     return liste.map(function (tache) {
@@ -95,6 +101,7 @@ const Taches = {
       copie.description = Utils.nettoyerTexte(donnees.description);
       copie.priority = donnees.priority;
       copie.dueDate = Utils.nettoyerTexte(donnees.dueDate);
+      copie.category = donnees.category;
       return copie;
     });
   },
@@ -126,6 +133,63 @@ const Taches = {
     return liste.find(function (tache) {
       return tache.id === id;
     });
+  },
+
+  // Garde les tâches qui correspondent au filtre de statut (story 8) :
+  //   "all" → toutes, "todo" → à faire, "done" → terminées.
+  // filter renvoie une nouvelle liste : rien n'est supprimé de la liste d'origine.
+  filtrerParStatut: function (liste, filtre) {
+    if (filtre === "all") {
+      return liste.slice(); // copie de la liste entière
+    }
+    return liste.filter(function (tache) {
+      return tache.status === filtre;
+    });
+  },
+
+  // Garde les tâches dont le titre contient le mot-clé (story 11).
+  // Majuscules et minuscules ignorées (toLowerCase), mais pas les accents :
+  // « revision » ne trouve pas « Révision » (décision du binôme, pas de normalize).
+  // Un mot-clé vide (ou fait d'espaces) garde toutes les tâches.
+  rechercher: function (liste, motCle) {
+    const mot = Utils.nettoyerTexte(motCle).toLowerCase();
+    if (mot === "") {
+      return liste.slice();
+    }
+    return liste.filter(function (tache) {
+      return tache.title.toLowerCase().includes(mot);
+    });
+  },
+
+  // Trie les tâches (story 9) et renvoie une NOUVELLE liste :
+  //   "recent"   → ordre enregistré (les plus récentes en haut, story 2),
+  //   "priority" → Haute, Moyenne, Basse,
+  //   "dueDate"  → date la plus proche en premier, tâches sans date à la fin.
+  // On trie une copie (slice) : sort modifie le tableau sur lequel il est appelé.
+  // sort est stable : deux tâches à égalité gardent leur ordre « plus récentes ».
+  trier: function (liste, tri) {
+    const copie = liste.slice();
+    if (tri === "priority") {
+      // indexOf donne 0 pour "high", 1 pour "medium", 2 pour "low"
+      copie.sort(function (a, b) {
+        return Taches.PRIORITES.indexOf(a.priority) - Taches.PRIORITES.indexOf(b.priority);
+      });
+    } else if (tri === "dueDate") {
+      copie.sort(function (a, b) {
+        if (a.dueDate === b.dueDate) {
+          return 0; // même date, ou toutes les deux sans date
+        }
+        if (a.dueDate === "") {
+          return 1; // a n'a pas de date : elle va après b
+        }
+        if (b.dueDate === "") {
+          return -1; // b n'a pas de date : a passe devant
+        }
+        // Deux dates ISO se comparent comme du texte
+        return a.dueDate < b.dueDate ? -1 : 1;
+      });
+    }
+    return copie; // "recent" : l'ordre enregistré ne change pas
   },
 
   // Nombre de tâches encore à faire (pour le compteur de la story 2).

@@ -23,6 +23,14 @@
   --basse: #1f7a37;
   --basse-fond: #e5f5ea;
 
+  /* Catégories (story 10) : bleu, violet, turquoise, différentes des priorités */
+  --cours: #1d4ed8;
+  --cours-fond: #e3ecfd;
+  --perso: #6d28d9;
+  --perso-fond: #efe7fc;
+  --projet: #0f766e;
+  --projet-fond: #dcf5f2;
+
   --rayon: 10px;
 }
 
@@ -85,6 +93,54 @@ h2 {
   border-radius: var(--rayon);
   padding: 20px;
   margin-bottom: 20px;
+}
+
+/* ---------- Filtre, tri et recherche (sprint 2) ---------- */
+.barre-outils {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 12px 16px;
+  margin-bottom: 12px;
+}
+
+.filtres {
+  display: flex;
+  gap: 4px;
+  padding: 3px;
+  border: 1px solid var(--bordure);
+  border-radius: 8px;
+  background: var(--fond);
+}
+
+.bouton-filtre {
+  padding: 6px 12px;
+  border: none;
+  border-radius: 6px;
+  background: transparent;
+  color: var(--texte-doux);
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.bouton-filtre:hover {
+  color: var(--texte);
+}
+
+/* La recherche prend toute la largeur, au-dessus des filtres et du tri */
+.champ-recherche {
+  flex-basis: 100%;
+}
+
+.champ-tri {
+  margin-left: auto; /* le tri se place à droite des filtres */
+}
+
+/* Filtre actif mis en évidence (story 8) */
+.bouton-filtre[aria-pressed="true"] {
+  background: var(--principal);
+  color: #ffffff;
 }
 
 /* ---------- Liste des tâches ---------- */
@@ -167,7 +223,7 @@ h2 {
   opacity: 0.7;
 }
 
-/* ---------- Badges (priorité et échéance) ---------- */
+/* ---------- Badges (priorité, catégorie et échéance) ---------- */
 /* Chaque badge a une couleur ET un mot, pour rester lisible sans distinguer les couleurs */
 .badge {
   display: inline-block;
@@ -190,6 +246,28 @@ h2 {
 .priorite-low {
   color: var(--basse);
   background: var(--basse-fond);
+}
+
+/* Badges de catégorie : bordure en plus, pour ne pas les confondre avec la priorité */
+.categorie-school,
+.categorie-personal,
+.categorie-project {
+  border: 1px solid currentColor;
+}
+
+.categorie-school {
+  color: var(--cours);
+  background: var(--cours-fond);
+}
+
+.categorie-personal {
+  color: var(--perso);
+  background: var(--perso-fond);
+}
+
+.categorie-project {
+  color: var(--projet);
+  background: var(--projet-fond);
 }
 
 /* Badges d'échéance en couleur pleine, pour les distinguer des priorités */
@@ -233,6 +311,7 @@ label {
 }
 
 input[type="text"],
+input[type="search"],
 input[type="date"],
 select {
   width: 100%;

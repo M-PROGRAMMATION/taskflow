@@ -15,7 +15,28 @@
   const etat = {
     taches: [],
     idEnModification: null, // id de la tâche en cours de modification, ou null (story 4)
+    filtre: "all", // "all", "todo" ou "done" (story 8), non sauvegardé
+    tri: "recent", // "recent", "priority" ou "dueDate" (story 9), non sauvegardé
+    recherche: "", // texte tapé dans le champ « Rechercher » (story 11), non sauvegardé
   };
+
+  // Indique quel message afficher quand la liste à l'écran est vide :
+  //   "aucune" s'il n'existe aucune tâche (story 2),
+  //   "recherche" si une recherche est en cours et ne trouve rien (story 11),
+  //   "todo" ou "done" si c'est le filtre qui ne donne rien (story 8),
+  //   "" si la liste n'est pas vide.
+  function casListeVide(tachesVisibles) {
+    if (etat.taches.length === 0) {
+      return "aucune";
+    }
+    if (tachesVisibles.length > 0) {
+      return "";
+    }
+    if (Utils.nettoyerTexte(etat.recherche) !== "") {
+      return "recherche";
+    }
+    return etat.filtre;
+  }
 
   // Réaffiche tout l'écran à partir de l'état.
   function rafraichir() {
@@ -26,7 +47,18 @@
       echeances[tache.id] = Taches.etatEcheance(tache, aujourdhui);
     });
 
-    Interface.afficherTaches(etat.taches, echeances, etat.idEnModification);
+    // Seules les tâches du filtre et de la recherche sont affichées, dans l'ordre du tri.
+    // etat.taches ne change pas : filtre, recherche et tri renvoient de nouvelles listes.
+    const tachesFiltrees = Taches.filtrerParStatut(etat.taches, etat.filtre);
+    const tachesTrouvees = Taches.rechercher(tachesFiltrees, etat.recherche);
+    const tachesVisibles = Taches.trier(tachesTrouvees, etat.tri);
+
+    Interface.afficherTaches(tachesVisibles, echeances, etat.idEnModification);
+    Interface.afficherMessageVide(casListeVide(tachesVisibles), Utils.nettoyerTexte(etat.recherche));
+    Interface.afficherFiltre(etat.filtre);
+    Interface.afficherTri(etat.tri);
+    Interface.afficherRecherche(etat.recherche);
+    // Le compteur compte toujours toutes les tâches à faire, quel que soit le filtre
     Interface.afficherCompteur(Taches.compterAFaire(etat.taches));
   }
 
@@ -71,6 +103,10 @@
       Interface.afficherErreurAjout(resultat.message);
       return; // aucune tâche n'est créée
     }
+    // Retour sur « Toutes » et recherche vidée, pour que la nouvelle tâche soit visible.
+    // Le tri, lui, ne change pas.
+    etat.filtre = "all";
+    etat.recherche = "";
     mettreAJour(Taches.creer(etat.taches, donnees));
     Interface.viderFormulaireAjout();
   }
@@ -126,6 +162,38 @@
     }
   }
 
+  // Story 8 : clic sur un bouton de filtre. Ne change que l'affichage, rien n'est sauvegardé.
+  // Comme les autres actions, une modification en cours est d'abord enregistrée.
+  function changerFiltre(filtre) {
+    if (!enregistrerModificationEnCours()) {
+      return;
+    }
+    etat.filtre = filtre;
+    rafraichir();
+  }
+
+  // Story 9 : choix dans la liste « Trier par ». Ne change que l'affichage.
+  // Si la modification en cours est refusée, la liste reprend le tri d'avant.
+  function changerTri(tri) {
+    if (!enregistrerModificationEnCours()) {
+      Interface.afficherTri(etat.tri);
+      return;
+    }
+    etat.tri = tri;
+    rafraichir();
+  }
+
+  // Story 11 : la liste se met à jour à chaque caractère tapé dans « Rechercher ».
+  // Si la modification en cours est refusée, le champ reprend le texte d'avant.
+  function changerRecherche(texte) {
+    if (!enregistrerModificationEnCours()) {
+      Interface.afficherRecherche(etat.recherche);
+      return;
+    }
+    etat.recherche = texte;
+    rafraichir();
+  }
+
   // ---------- Démarrage ----------
 
   function demarrer() {
@@ -136,6 +204,9 @@
     Interface.surAjout(ajouterTache);
     Interface.surActionListe(traiterActionListe);
     Interface.surModification(enregistrerModification, annulerModification);
+    Interface.surFiltre(changerFiltre);
+    Interface.surTri(changerTri);
+    Interface.surRecherche(changerRecherche);
 
     rafraichir();
   }

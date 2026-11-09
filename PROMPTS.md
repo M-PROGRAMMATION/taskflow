@@ -300,3 +300,37 @@ Le README a une nouvelle section « Avancement » avec une case par branche, et 
 **Choix de l'IA (à valider) :** si le titre de la modification en cours est vide, l'autre action n'est pas faite et l'erreur s'affiche sous le titre (la case cochée revient à son état d'avant). Enregistrer un titre vide aurait contredit la story 4, et l'effacer aurait perdu la saisie. « (s) » n'est utilisé que pour 0 : pour 1 et plus, l'accord est sûr.
 **Tests :** 8 vérifications ajoutées au script de test dans Chrome, 37 sur 37 passent.
 **Pourquoi :** le binôme préfère ne jamais perdre une saisie sans le vouloir. L'organisation en branches remplace la consigne du cours, et elle est écrite dans CLAUDE.md pour que l'IA la suive aux sprints 2 et 3.
+
+## Prompt 17 · Développement du sprint 2, une branche par fonctionnalité (Claude Code)
+**Prompt :** Développe entièrement le Sprint 2, petit à petit, met des "checks", dans le README.md pour savoir ce qui a été fait, etc.. créer une nouvelle branche pour ça, en suivant les bonnes conventions "feature/...", Il faut une branche "sprint2", et ensuite on créer des sous branches de "sprint2", avec "feature/...", et on découpe par feature, on fait des pr petit à petit, tu peux push, commit, créer des pr, etc.. juste à la fin je veux que tu me laisses "sprint2". Met ce prompt, dans PROMPTS.md aussi oublie, pas, fait le à la fin.
+**Résultat :** une branche `sprint2` créée depuis `main`, puis 5 branches `feature/...` créées depuis `sprint2`, chacune poussée sur GitHub et fusionnée dans `sprint2` avant de passer à la suivante :
+1. `feature/categories` (story 10) : liste « Catégorie » (Aucune, Cours, Perso, Projet) à l'ajout et à la modification, badge Cours bleu, Perso violet, Projet turquoise, validation dans `Taches.valider`.
+2. `feature/filtrer-statut` (story 8) : boutons Toutes / À faire / Terminées, `Taches.filtrerParStatut`, messages « Aucune tâche à faire. » et « Aucune tâche terminée. ».
+3. `feature/trier-taches` (story 9) : liste « Trier par », `Taches.trier` sur une copie de la liste, tâches sans date à la fin.
+4. `feature/rechercher-tache` (story 11, bonus) : champ « Rechercher », `Taches.rechercher` (titre seulement, sans tenir compte des majuscules, accents gardés).
+5. `feature/bilan-sprint2` : règles communes aux stories 8, 9 et 11 cochées, note de vérification et cette entrée.
+Les cases de la section « Avancement » et les critères d'acceptation des stories 8 à 11 sont cochés au fur et à mesure dans le README.
+**Tests :** 31 vérifications Node sur les fonctions pures et 68 vérifications dans Chrome sans fenêtre (headless), avec un script qui simule les clics et les saisies. Toutes passent. Le script de test ajoute les tâches à 2 ms d'écart : avec un id `Date.now()`, deux tâches créées dans la même milliseconde ont le même id (hypothèse déjà notée dans le README, impossible avec de vrais clics).
+**Modifié :** comme au sprint 1, `gh` n'est pas installé : chaque « PR » est une branche poussée sur GitHub puis fusionnée avec `git merge --no-ff` (un commit « Merge feature/... into sprint2 »). `sprint2` n'est pas fusionnée dans `main`.
+**Choix proposés par l'IA (à valider) :**
+- Changer de filtre, de tri ou de recherche pendant une modification enregistre d'abord la modification, comme les autres actions (prompt 16). Si le titre est refusé, le filtre, le tri ou la recherche ne change pas.
+- Une catégorie inconnue dans `localStorage` (modifiée à la main) est remplacée par « aucune catégorie » : la tâche reste affichée, sans badge.
+- Si une recherche et un filtre sont actifs et que rien ne s'affiche, c'est le message de la recherche qui est montré (« Aucune tâche ne correspond à « xyz ». »).
+- Le badge de catégorie a une bordure en plus de sa couleur, pour ne pas le confondre avec le badge de priorité.
+- Le champ de recherche est de type `search` : dans Chrome, une petite croix permet de le vider.
+- La liste « Trier par » a `autocomplete="off"`, pour que le navigateur ne remette pas l'ancien tri après un rechargement.
+**Pourquoi :** une branche par fonctionnalité, comme au sprint 1 (organisation Git du CLAUDE.md). Filtre, tri et recherche sont des fonctions pures de `Taches` qui renvoient une nouvelle liste : `app.js` les enchaîne dans `rafraichir`, et `etat.taches`, comme l'ordre enregistré, ne change jamais.
+**Points de vigilance :** tester le rechargement (F5) sur Firefox et Safari ; essayer l'affichage sur un vrai téléphone (la capture headless de Chrome ne descend pas sous 500 px de large).
+
+## Prompt 18 · Retours du binôme sur le sprint 2 (Claude Code)
+**Prompt :** 1. oui 2. oui 3. oui 4. oui carré bg
+**Contexte :** réponse du binôme aux 4 choix proposés par l'IA à la fin du prompt 17.
+**Résultat :** une branche `feature/retours-binome-sprint2`, créée depuis `sprint2` puis fusionnée dedans. Pas de changement de code : les 4 choix étaient déjà en place et testés.
+- README : 4 critères d'acceptation ajoutés (stories 10 et 11, règles communes), déjà cochés.
+- CLAUDE.md : les 4 décisions ajoutées à la liste des décisions du sprint 2, pour que l'IA les suive au sprint 3.
+**Gardé :** les 4 choix tels quels :
+1. Changer de filtre, de tri ou de recherche pendant une modification enregistre d'abord la modification ; si le titre est refusé, le changement n'est pas fait.
+2. Une catégorie inconnue dans `localStorage` devient « aucune catégorie », la tâche reste affichée.
+3. Recherche et filtre actifs sans résultat : c'est le message de la recherche qui est affiché.
+4. Le badge de catégorie a une bordure en plus de sa couleur.
+**Pourquoi :** le choix 1 suit la règle du prompt 16 (ne jamais perdre une saisie sans le vouloir). Les choix 2 à 4 gardent l'application stable et lisible. Une fois validés par le binôme, ils deviennent des critères d'acceptation, que l'audit de la séance 3 pourra vérifier.

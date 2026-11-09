@@ -10,6 +10,14 @@ const Interface = {
   // Traduction des codes enregistrés (anglais) en texte affiché (français)
   LIBELLES_PRIORITE: { high: "Haute", medium: "Moyenne", low: "Basse" },
   LIBELLES_ECHEANCE: { late: "En retard", today: "Aujourd'hui" },
+  LIBELLES_CATEGORIE: { school: "Cours", personal: "Perso", project: "Projet" },
+  // Messages de liste vide : aucune tâche du tout (story 2), ou filtre sans résultat (story 8).
+  // Le message de la recherche (story 11) contient le mot-clé : il est construit dans afficherMessageVide.
+  MESSAGES_VIDE: {
+    aucune: "Aucune tâche pour le moment. Ajoutez-en une avec le formulaire.",
+    todo: "Aucune tâche à faire.",
+    done: "Aucune tâche terminée.",
+  },
 
   // Crée un élément HTML avec une classe et un texte.
   // Le texte passe par textContent : du HTML tapé par l'utilisateur s'affiche tel quel.
@@ -73,6 +81,16 @@ const Interface = {
         Interface.LIBELLES_PRIORITE[tache.priority]
       )
     );
+    // Badge de catégorie (story 10), seulement si la tâche en a une
+    if (tache.category !== "") {
+      infos.appendChild(
+        Interface.creerElement(
+          "span",
+          "badge categorie-" + tache.category,
+          Interface.LIBELLES_CATEGORIE[tache.category]
+        )
+      );
+    }
     const texteDate = tache.dueDate === "" ? "Sans date" : Utils.formaterDate(tache.dueDate);
     infos.appendChild(Interface.creerElement("span", "tache-date", texteDate));
     if (etatEcheance !== "") {
@@ -110,6 +128,25 @@ const Interface = {
     return bloc;
   },
 
+  // Crée une liste déroulante <select> à partir d'un objet { code: libellé }.
+  // Si texteVide est donné, une première option de valeur "" est ajoutée (ex. « Aucune »).
+  creerListe: function (id, libelles, texteVide) {
+    const liste = document.createElement("select");
+    liste.id = id;
+    if (texteVide !== undefined) {
+      const optionVide = Interface.creerElement("option", "", texteVide);
+      optionVide.value = "";
+      liste.appendChild(optionVide);
+    }
+    // Object.keys donne les codes dans l'ordre où ils sont écrits (ex. high, medium, low)
+    Object.keys(libelles).forEach(function (code) {
+      const option = Interface.creerElement("option", "", libelles[code]);
+      option.value = code;
+      liste.appendChild(option);
+    });
+    return liste;
+  },
+
   // Construit la ligne d'une tâche en cours de modification (story 4) :
   // un petit formulaire déjà rempli avec les valeurs actuelles.
   // Une seule tâche est modifiée à la fois, les id des champs sont donc uniques.
@@ -142,16 +179,14 @@ const Interface = {
     description.value = tache.description;
     formulaire.appendChild(Interface.creerChamp("champ champ-large", "Description", description));
 
-    const priorite = document.createElement("select");
-    priorite.id = "modif-priorite";
-    // Object.keys donne ["high", "medium", "low"], dans l'ordre où elles sont écrites
-    Object.keys(Interface.LIBELLES_PRIORITE).forEach(function (code) {
-      const option = Interface.creerElement("option", "", Interface.LIBELLES_PRIORITE[code]);
-      option.value = code;
-      priorite.appendChild(option);
-    });
+    const priorite = Interface.creerListe("modif-priorite", Interface.LIBELLES_PRIORITE);
     priorite.value = tache.priority; // sélectionne la priorité actuelle
     formulaire.appendChild(Interface.creerChamp("champ", "Priorité", priorite));
+
+    // Catégorie (story 10) : « Aucune » en premier, puis Cours, Perso, Projet
+    const categorie = Interface.creerListe("modif-categorie", Interface.LIBELLES_CATEGORIE, "Aucune");
+    categorie.value = tache.category; // sélectionne la catégorie actuelle ("" = Aucune)
+    formulaire.appendChild(Interface.creerChamp("champ", "Catégorie", categorie));
 
     const echeance = document.createElement("input");
     echeance.type = "date";
@@ -180,15 +215,83 @@ const Interface = {
     const liste = document.getElementById("liste-taches");
     liste.textContent = ""; // vide la liste avant de la reconstruire
 
-    // Message affiché seulement quand il n'existe aucune tâche
-    document.getElementById("message-vide").hidden = taches.length > 0;
-
     taches.forEach(function (tache) {
       if (tache.id === idEnModification) {
         liste.appendChild(Interface.creerLigneModification(tache));
       } else {
         liste.appendChild(Interface.creerLigneTache(tache, echeances[tache.id]));
       }
+    });
+  },
+
+  // Affiche le message de liste vide qui correspond à cas
+  // ("aucune", "todo", "done", "recherche"), ou le cache si cas vaut "".
+  // motCle : le mot recherché, repris dans le message de la story 11.
+  afficherMessageVide: function (cas, motCle) {
+    const message = document.getElementById("message-vide");
+    message.hidden = cas === "";
+    if (cas === "") {
+      message.textContent = "";
+    } else if (cas === "recherche") {
+      // textContent : un mot-clé contenant du HTML s'affiche tel quel
+      message.textContent = "Aucune tâche ne correspond à « " + motCle + " ».";
+    } else {
+      message.textContent = Interface.MESSAGES_VIDE[cas];
+    }
+  },
+
+  // ---------- Filtres (story 8) ----------
+
+  // Met en évidence le bouton du filtre actif. aria-pressed indique aussi
+  // aux lecteurs d'écran quel bouton est enfoncé ; le CSS s'en sert pour la couleur.
+  afficherFiltre: function (filtre) {
+    document.querySelectorAll("#filtres [data-filtre]").forEach(function (bouton) {
+      bouton.setAttribute("aria-pressed", String(bouton.dataset.filtre === filtre));
+    });
+  },
+
+  // Un seul écouteur sur le groupe de boutons : traiter(filtre) reçoit
+  // "all", "todo" ou "done", lu dans le data-filtre du bouton cliqué.
+  surFiltre: function (traiter) {
+    document.getElementById("filtres").addEventListener("click", function (evenement) {
+      const bouton = evenement.target.closest("[data-filtre]");
+      if (bouton !== null) {
+        traiter(bouton.dataset.filtre);
+      }
+    });
+  },
+
+  // ---------- Tri (story 9) ----------
+
+  // Sélectionne le tri actif dans la liste « Trier par ».
+  afficherTri: function (tri) {
+    document.getElementById("tri").value = tri;
+  },
+
+  // traiter(tri) reçoit "recent", "priority" ou "dueDate" à chaque changement de choix.
+  surTri: function (traiter) {
+    const liste = document.getElementById("tri");
+    liste.addEventListener("change", function () {
+      traiter(liste.value);
+    });
+  },
+
+  // ---------- Recherche (story 11) ----------
+
+  // Remet dans le champ le texte de l'état (par exemple "" après un ajout).
+  // On ne réécrit que si le texte est différent, pour ne pas déplacer le curseur pendant la frappe.
+  afficherRecherche: function (texte) {
+    const champ = document.getElementById("recherche");
+    if (champ.value !== texte) {
+      champ.value = texte;
+    }
+  },
+
+  // traiter(texte) est appelée à chaque caractère tapé ou effacé (événement input).
+  surRecherche: function (traiter) {
+    const champ = document.getElementById("recherche");
+    champ.addEventListener("input", function () {
+      traiter(champ.value);
     });
   },
 
@@ -201,6 +304,7 @@ const Interface = {
       description: document.getElementById("modif-description").value,
       priority: document.getElementById("modif-priorite").value,
       dueDate: document.getElementById("modif-echeance").value,
+      category: document.getElementById("modif-categorie").value,
     };
   },
 
@@ -281,6 +385,7 @@ const Interface = {
       description: document.getElementById("ajout-description").value,
       priority: document.getElementById("ajout-priorite").value,
       dueDate: document.getElementById("ajout-echeance").value,
+      category: document.getElementById("ajout-categorie").value,
     };
   },
 
@@ -302,7 +407,8 @@ const Interface = {
     document.getElementById("ajout-titre").removeAttribute("aria-invalid");
   },
 
-  // Vide le formulaire (la priorité revient sur « Moyenne ») et remet le curseur dans le titre.
+  // Vide le formulaire (la priorité revient sur « Moyenne », la catégorie sur « Aucune »)
+  // et remet le curseur dans le titre.
   viderFormulaireAjout: function () {
     document.getElementById("formulaire-ajout").reset();
     Interface.effacerErreurAjout();

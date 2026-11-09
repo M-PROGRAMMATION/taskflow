@@ -54,6 +54,16 @@
           <input type="date" id="ajout-echeance">
         </div>
 
+        <div class="champ">
+          <label for="ajout-categorie">Catégorie <span class="facultatif">(facultative)</span></label>
+          <select id="ajout-categorie">
+            <option value="" selected>Aucune</option>
+            <option value="school">Cours</option>
+            <option value="personal">Perso</option>
+            <option value="project">Projet</option>
+          </select>
+        </div>
+
         <button type="submit" class="bouton bouton-principal">Ajouter</button>
       </form>
     </section>
@@ -61,9 +71,36 @@
     <!-- Liste des tâches -->
     <section class="carte" aria-labelledby="titre-liste">
       <h2 id="titre-liste">Mes tâches</h2>
-      <p id="message-vide" class="message-vide" hidden>
-        Aucune tâche pour le moment. Ajoutez-en une avec le formulaire.
-      </p>
+
+      <!-- Filtre, tri et recherche (sprint 2) : ne changent que l'affichage -->
+      <div class="barre-outils">
+        <!-- Recherche par mot-clé dans le titre (story 11) -->
+        <div class="champ champ-recherche">
+          <label for="recherche">Rechercher</label>
+          <input type="search" id="recherche" autocomplete="off" placeholder="Mot-clé du titre">
+        </div>
+
+        <!-- Filtres par statut (story 8) -->
+        <div id="filtres" class="filtres" role="group" aria-label="Filtrer par statut">
+          <button type="button" class="bouton-filtre" data-filtre="all" aria-pressed="true">Toutes</button>
+          <button type="button" class="bouton-filtre" data-filtre="todo" aria-pressed="false">À faire</button>
+          <button type="button" class="bouton-filtre" data-filtre="done" aria-pressed="false">Terminées</button>
+        </div>
+
+        <!-- Tri (story 9) -->
+        <div class="champ champ-tri">
+          <label for="tri">Trier par</label>
+          <!-- autocomplete="off" : au rechargement, le navigateur ne remet pas l'ancien tri -->
+          <select id="tri" autocomplete="off">
+            <option value="recent" selected>Plus récentes</option>
+            <option value="priority">Priorité</option>
+            <option value="dueDate">Échéance</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Texte rempli par Interface.afficherMessageVide -->
+      <p id="message-vide" class="message-vide" hidden></p>
       <ul id="liste-taches" class="liste-taches"></ul>
     </section>
   </main>
