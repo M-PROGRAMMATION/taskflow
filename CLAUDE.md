@@ -106,6 +106,8 @@ Règles de structure (architecture validée par le binôme, voir PROMPTS.md, pro
   5. Modification directement dans la liste : la ligne devient un petit formulaire (Enregistrer / Annuler).
   6. Couleurs des catégories : Cours bleu, Perso violet, Projet turquoise.
 
+- Décisions du sprint 1 (PROMPTS.md, prompt 16) : une autre action faite pendant une modification (cocher, supprimer, ajouter, ouvrir une autre tâche) enregistre d'abord la modification ; si le titre est refusé, l'autre action n'est pas faite ; seuls « Annuler » et Échap n'enregistrent pas. Compteur : « 0 tâche(s) à faire », « 1 tâche à faire », « 3 tâches à faire ». Les tâches illisibles dans `localStorage` sont ignorées une par une.
+
 ## Modèle de données d'une tâche
 
 Décision du binôme (PROMPTS.md, prompt 10) : les clés et les valeurs enregistrées sont **en anglais**. Le texte affiché à l'écran reste en français ; la traduction code → texte se fait dans `ui.js`.
@@ -135,7 +137,7 @@ Décision du binôme (PROMPTS.md, prompt 10) : les clés et les valeurs enregist
 | Séance | Travail | À rendre |
 |---|---|---|
 | 1 — Comprendre et cadrer | Cadrer le projet avec l'IA : user stories, structure de fichiers, modèle de données | `README.md` (cahier des charges, user stories) et `PROMPTS.md` |
-| 2 — Produire avec l'IA | Développer l'application en 3 sprints (Copilot, Cursor ou Claude) | Application fonctionnelle, **un commit par sprint**, `PROMPTS.md` à jour |
+| 2 — Produire avec l'IA | Développer l'application en 3 sprints (Copilot, Cursor ou Claude) | Application fonctionnelle, une branche par sprint et une branche `feature/...` par fonctionnalité (voir « Organisation Git »), `PROMPTS.md` à jour |
 | 3 — Critiquer et défendre | Auditer le projet d'un autre groupe, corriger le sien, le présenter | Rapport d'audit, version finale du dépôt, oral de 10 min |
 
 Exercice de la séance 1 :
@@ -166,8 +168,18 @@ Pour chaque prompt important : le prompt exact, l'outil utilisé, ce qui a été
 - **Lister les hypothèses** faites dans une réponse, et indiquer ce qui pourrait être faux (auto-critique).
 - **Poser des questions d'abord** quand la demande est ambiguë.
 - **Garder la trace** : après un échange important (user stories, architecture, sprint), rappeler d'ajouter une entrée dans `PROMPTS.md`, ou proposer le texte de l'entrée.
-- **Commits** : un commit par sprint en séance 2, seulement quand le binôme le demande.
+- **Commits** : voir « Organisation Git » ci-dessous. Commit, push et fusion des branches `feature/...` autorisés quand le binôme demande de développer un sprint ; jamais de fusion dans `main` sans demande explicite.
 - Clés et valeurs des données (JSON, `localStorage`) en anglais, cohérentes avec le modèle de données ci-dessus. Commentaires, textes affichés et documentation en français.
+
+## Organisation Git (décision du binôme, PROMPTS.md, prompts 15 et 16)
+
+Remplace la consigne du cours « un commit par sprint ».
+- Une branche par sprint, créée depuis `main` : `sprint1`, `sprint2`, `sprint3`.
+- Une branche par fonctionnalité, créée depuis la branche du sprint : `feature/<nom-court-en-francais>` (ex. `feature/ajouter-tache`). Un ou plusieurs commits par branche, messages au format `type(portée): description` (`feat`, `fix`, `docs`…).
+- Chaque branche `feature/...` est poussée sur GitHub puis fusionnée dans la branche du sprint par une PR, ou, si `gh` n'est pas disponible, par `git merge --no-ff` (un commit « Merge feature/... into sprintN »), avant de commencer la suivante.
+- Les cases de la section « Avancement » et des critères d'acceptation du README sont cochées au fur et à mesure, dans la branche de la fonctionnalité.
+- À la fin, on laisse le dépôt sur la branche du sprint : la fusion dans `main` et le tag de version (`v0.1.0`…) sont faits par le binôme, après relecture.
+- L'entrée de `PROMPTS.md` est ajoutée à la fin du sprint.
 
 ## Rappels du cours sur les LLM (utile pour l'oral et le README)
 

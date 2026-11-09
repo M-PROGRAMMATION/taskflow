@@ -4,6 +4,27 @@ Application web de gestion de tâches en HTML, CSS et JavaScript natif, sans fra
 
 Filières du binôme : Informatique et Cybersécurité.
 
+## Lancer l'application
+
+Ouvrir `src/index.html` par double-clic (ou avec l'extension Live Server de VS Code). Aucune installation n'est nécessaire.
+
+## Avancement
+
+Chaque fonctionnalité est développée sur sa propre branche `feature/...`, créée depuis la branche du sprint (`sprint1`, `sprint2`…), puis fusionnée dans cette branche. La branche du sprint n'est fusionnée dans `main` que quand le binôme l'a validée. Une case cochée = fusionnée dans le sprint. Le détail est coché dans les critères d'acceptation des user stories, plus bas.
+
+### Sprint 1 · La base (branche `sprint1`)
+
+- [x] `feature/utils-stockage` : objets `Utils` (id, date, nettoyage) et `Stockage` (lecture / écriture protégée de `localStorage`)
+- [x] `feature/afficher-taches` : liste, badges de priorité et d'échéance, compteur, message de liste vide (stories 2 et 3)
+- [x] `feature/ajouter-tache` : formulaire d'ajout et validation du titre (story 1)
+- [x] `feature/terminer-tache` : case à cocher, tâche barrée (story 5)
+- [x] `feature/supprimer-tache` : corbeille avec confirmation (story 6)
+- [x] `feature/modifier-tache` : modification directement dans la liste (story 4)
+- [x] Sauvegarde après chaque action et démarrage avec des données abîmées (story 7), vérifiée sur toutes les features
+- [x] `feature/retours-binome-sprint1` : modification enregistrée avant toute autre action, compteur « 0 tâche(s) à faire », nouvelle organisation Git dans CLAUDE.md
+
+**Vérification du sprint 1** : les fonctions pures (`Utils`, `Stockage`, `Taches`) ont été testées avec Node, puis l'application complète dans Chrome, avec un script qui simule les actions : ajout, titre vide, HTML dans le titre, cocher et décocher, modification avec Annuler, Échap et titre vide, suppression avec et sans confirmation, rechargement de la page, données abîmées dans `localStorage`. Les 37 vérifications passent. Reste à faire à la main par le binôme : un test sur Firefox et Safari, et sur le site GitHub Pages.
+
 ## Modèle de données d'une tâche
 
 Une tâche est un objet JavaScript. Les clés et les valeurs enregistrées sont en anglais ; seul le texte affiché à l'écran est en français. Exemple :
@@ -59,61 +80,62 @@ Chaque story a des **critères d'acceptation** : la liste des vérifications à 
 
 **1. Ajouter une tâche**
 En tant qu'utilisateur, je veux ajouter une tâche en renseignant son titre, sa priorité et sa date d'échéance afin de noter ce que j'ai à faire.
-- [ ] Le formulaire contient un champ titre, un champ description, une liste déroulante priorité (Haute, Moyenne, Basse), un sélecteur de date pour l'échéance et un bouton « Ajouter ».
-- [ ] La description est facultative : laissée vide, elle est enregistrée comme `""`.
-- [ ] L'échéance est facultative. Une date déjà passée est acceptée : la tâche affiche alors le badge « En retard » (story 3).
-- [ ] Un titre vide ou composé uniquement d'espaces est refusé : un message d'erreur s'affiche sous le champ et aucune tâche n'est créée.
-- [ ] Les espaces au début et à la fin du titre sont retirés avant l'enregistrement.
-- [ ] Le titre fait au maximum 100 caractères.
-- [ ] La priorité est « Moyenne » par défaut.
-- [ ] La touche Entrée valide le formulaire, comme le bouton « Ajouter ».
-- [ ] Après l'ajout, la tâche apparaît dans la liste avec le statut « à faire », le formulaire est vidé et le curseur revient dans le champ titre.
-- [ ] Un titre contenant du HTML (ex. `<b>test</b>`) s'affiche tel quel, en texte, sans être interprété.
+- [x] Le formulaire contient un champ titre, un champ description, une liste déroulante priorité (Haute, Moyenne, Basse), un sélecteur de date pour l'échéance et un bouton « Ajouter ».
+- [x] La description est facultative : laissée vide, elle est enregistrée comme `""`.
+- [x] L'échéance est facultative. Une date déjà passée est acceptée : la tâche affiche alors le badge « En retard » (story 3).
+- [x] Un titre vide ou composé uniquement d'espaces est refusé : un message d'erreur s'affiche sous le champ et aucune tâche n'est créée.
+- [x] Les espaces au début et à la fin du titre sont retirés avant l'enregistrement.
+- [x] Le titre fait au maximum 100 caractères.
+- [x] La priorité est « Moyenne » par défaut.
+- [x] La touche Entrée valide le formulaire, comme le bouton « Ajouter ».
+- [x] Après l'ajout, la tâche apparaît dans la liste avec le statut « à faire », le formulaire est vidé et le curseur revient dans le champ titre.
+- [x] Un titre contenant du HTML (ex. `<b>test</b>`) s'affiche tel quel, en texte, sans être interprété.
 
 **2. Voir toutes ses tâches**
 En tant qu'utilisateur, je veux voir la liste de toutes mes tâches avec leur titre, leur priorité et leur échéance afin d'avoir une vue d'ensemble de mon travail.
-- [ ] Chaque tâche affiche : une case à cocher, son titre, un badge de priorité, son échéance au format jj/mm/aaaa, un bouton modifier et un bouton corbeille.
-- [ ] Le badge de priorité a une couleur (Haute : rouge, Moyenne : orange, Basse : vert) **et** contient le mot, pour rester lisible sans distinguer les couleurs.
-- [ ] Une tâche sans échéance affiche « Sans date ».
-- [ ] Les tâches les plus récentes apparaissent en haut de la liste.
-- [ ] Quand la liste est vide, un message l'indique : « Aucune tâche pour le moment. Ajoutez-en une avec le formulaire. »
-- [ ] Un compteur indique le nombre de tâches restantes, par exemple « 3 tâches à faire » (« 1 tâche à faire » au singulier).
+- [x] Chaque tâche affiche : une case à cocher, son titre, un badge de priorité, son échéance au format jj/mm/aaaa, un bouton modifier et un bouton corbeille.
+- [x] Le badge de priorité a une couleur (Haute : rouge, Moyenne : orange, Basse : vert) **et** contient le mot, pour rester lisible sans distinguer les couleurs.
+- [x] Une tâche sans échéance affiche « Sans date ».
+- [x] Les tâches les plus récentes apparaissent en haut de la liste.
+- [x] Quand la liste est vide, un message l'indique : « Aucune tâche pour le moment. Ajoutez-en une avec le formulaire. »
+- [x] Un compteur indique le nombre de tâches restantes, par exemple « 3 tâches à faire », « 1 tâche à faire » au singulier, et « 0 tâche(s) à faire » quand il n'en reste aucune.
 
 **3. Repérer les échéances proches**
 En tant qu'utilisateur, je veux voir au premier coup d'œil les tâches en retard ou à faire aujourd'hui afin de ne pas rater une échéance.
-- [ ] Une tâche à faire dont l'échéance est dépassée affiche un badge rouge « En retard ».
-- [ ] Une tâche à faire dont l'échéance est aujourd'hui affiche un badge orange « Aujourd'hui ».
-- [ ] Une tâche terminée n'affiche jamais de badge de retard.
-- [ ] La comparaison se fait sur la date du jour, sans tenir compte de l'heure.
-- [ ] Une échéance passée n'est jamais refusée, ni à l'ajout ni à la modification : le badge « En retard » sert d'avertissement.
+- [x] Une tâche à faire dont l'échéance est dépassée affiche un badge rouge « En retard ».
+- [x] Une tâche à faire dont l'échéance est aujourd'hui affiche un badge orange « Aujourd'hui ».
+- [x] Une tâche terminée n'affiche jamais de badge de retard.
+- [x] La comparaison se fait sur la date du jour, sans tenir compte de l'heure.
+- [x] Une échéance passée n'est jamais refusée, ni à l'ajout ni à la modification : le badge « En retard » sert d'avertissement.
 
 **4. Modifier une tâche**
 En tant qu'utilisateur, je veux modifier le titre, la description, la priorité ou l'échéance d'une tâche existante afin de corriger une erreur ou de tenir compte d'un changement.
-- [ ] Le bouton modifier (crayon) ouvre la modification directement dans la liste : la ligne de la tâche devient un petit formulaire (titre, description, priorité, échéance), avec les valeurs actuelles déjà remplies. Le formulaire d'ajout ne change pas.
-- [ ] Les règles de l'ajout s'appliquent aussi : un titre vide est refusé avec un message d'erreur.
-- [ ] Un bouton « Enregistrer » valide les changements ; un bouton « Annuler » (ou la touche Échap) referme sans rien changer.
-- [ ] Une seule tâche peut être en cours de modification à la fois.
-- [ ] La modification ne change ni l'identifiant, ni le statut, ni la place de la tâche dans la liste.
+- [x] Le bouton modifier (crayon) ouvre la modification directement dans la liste : la ligne de la tâche devient un petit formulaire (titre, description, priorité, échéance), avec les valeurs actuelles déjà remplies. Le formulaire d'ajout ne change pas.
+- [x] Les règles de l'ajout s'appliquent aussi : un titre vide est refusé avec un message d'erreur.
+- [x] Un bouton « Enregistrer » valide les changements ; un bouton « Annuler » (ou la touche Échap) referme sans rien changer.
+- [x] Une seule tâche peut être en cours de modification à la fois.
+- [x] Une autre action faite pendant une modification (cocher, supprimer, ajouter, ouvrir une autre tâche) enregistre d'abord la modification en cours. Si le titre saisi est refusé, l'erreur s'affiche et l'autre action n'est pas faite. Seuls « Annuler » et Échap referment sans enregistrer.
+- [x] La modification ne change ni l'identifiant, ni le statut, ni la place de la tâche dans la liste.
 
 **5. Terminer une tâche**
 En tant qu'utilisateur, je veux cocher une tâche pour la marquer comme terminée afin de voir clairement ce que j'ai déjà accompli.
-- [ ] Cocher la case passe la tâche au statut « terminée » : son titre apparaît barré et grisé.
-- [ ] Décocher la case la remet « à faire », pour corriger un clic par erreur.
-- [ ] Le compteur de tâches restantes se met à jour tout de suite.
+- [x] Cocher la case passe la tâche au statut « terminée » : son titre apparaît barré et grisé.
+- [x] Décocher la case la remet « à faire », pour corriger un clic par erreur.
+- [x] Le compteur de tâches restantes se met à jour tout de suite.
 
 **6. Supprimer une tâche**
 En tant qu'utilisateur, je veux supprimer une tâche avec l'icône corbeille afin de retirer de ma liste celles qui ne sont plus utiles.
-- [ ] Un clic sur la corbeille demande une confirmation qui rappelle le titre : « Supprimer la tâche « Réviser le CSS » ? ».
-- [ ] Si l'utilisateur annule, rien ne change.
-- [ ] Si l'utilisateur confirme, la tâche disparaît de la liste et le compteur se met à jour.
-- [ ] La suppression est définitive : il n'y a pas de corbeille pour récupérer une tâche.
+- [x] Un clic sur la corbeille demande une confirmation qui rappelle le titre : « Supprimer la tâche « Réviser le CSS » ? ».
+- [x] Si l'utilisateur annule, rien ne change.
+- [x] Si l'utilisateur confirme, la tâche disparaît de la liste et le compteur se met à jour.
+- [x] La suppression est définitive : il n'y a pas de corbeille pour récupérer une tâche.
 
 **7. Retrouver ses tâches**
 En tant qu'utilisateur, je veux retrouver mes tâches après avoir fermé puis rouvert mon navigateur afin de ne pas perdre mon travail.
-- [ ] Chaque action (ajout, modification, case cochée, suppression) est sauvegardée immédiatement, sans bouton « Enregistrer » global.
-- [ ] Après fermeture et réouverture du navigateur, on retrouve les mêmes tâches, avec le même statut et dans le même ordre.
-- [ ] Si les données sauvegardées sont illisibles (abîmées ou modifiées à la main), l'application démarre quand même, avec une liste vide, sans planter.
-- [ ] Limite connue : les tâches sont liées à ce navigateur sur cet appareil. Elles ne sont pas visibles depuis un autre ordinateur, et vider les données du site les efface.
+- [x] Chaque action (ajout, modification, case cochée, suppression) est sauvegardée immédiatement, sans bouton « Enregistrer » global.
+- [x] Après fermeture et réouverture du navigateur, on retrouve les mêmes tâches, avec le même statut et dans le même ordre.
+- [x] Si les données sauvegardées sont illisibles (abîmées ou modifiées à la main), l'application démarre quand même, avec une liste vide, sans planter.
+- [x] Limite connue : les tâches sont liées à ce navigateur sur cet appareil. Elles ne sont pas visibles depuis un autre ordinateur, et vider les données du site les efface.
 
 ### Sprint 2 · Informatique
 

@@ -4,6 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>TaskFlow</title>
+  <link rel="icon" href="assets/icones/favicon.svg" type="image/svg+xml">
   <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
@@ -12,8 +13,59 @@
   </section>
 
   <!-- Écran des tâches (base, sprints 1 et 2) -->
-  <main id="ecran-taches">
-    <h1>TaskFlow</h1>
+  <main id="ecran-taches" class="conteneur">
+    <header class="entete">
+      <h1 class="logo">
+        <img src="assets/icones/favicon.svg" alt="" width="32" height="32">
+        TaskFlow
+      </h1>
+      <!-- aria-live : le lecteur d'écran annonce le nouveau nombre à chaque changement -->
+      <p id="compteur" class="compteur" aria-live="polite"></p>
+    </header>
+
+    <!-- Formulaire d'ajout (story 1) -->
+    <!-- novalidate : la validation est faite par Taches.valider, avec nos propres messages -->
+    <section class="carte" aria-labelledby="titre-ajout">
+      <h2 id="titre-ajout">Nouvelle tâche</h2>
+      <form id="formulaire-ajout" class="formulaire" novalidate>
+        <div class="champ champ-large">
+          <label for="ajout-titre">Titre</label>
+          <input type="text" id="ajout-titre" maxlength="100" autocomplete="off"
+                 placeholder="Ex. Réviser le CSS" aria-describedby="erreur-ajout">
+          <p id="erreur-ajout" class="message-erreur" role="alert" hidden></p>
+        </div>
+
+        <div class="champ champ-large">
+          <label for="ajout-description">Description <span class="facultatif">(facultative)</span></label>
+          <input type="text" id="ajout-description" autocomplete="off" placeholder="Ex. Flexbox">
+        </div>
+
+        <div class="champ">
+          <label for="ajout-priorite">Priorité</label>
+          <select id="ajout-priorite">
+            <option value="high">Haute</option>
+            <option value="medium" selected>Moyenne</option>
+            <option value="low">Basse</option>
+          </select>
+        </div>
+
+        <div class="champ">
+          <label for="ajout-echeance">Échéance <span class="facultatif">(facultative)</span></label>
+          <input type="date" id="ajout-echeance">
+        </div>
+
+        <button type="submit" class="bouton bouton-principal">Ajouter</button>
+      </form>
+    </section>
+
+    <!-- Liste des tâches -->
+    <section class="carte" aria-labelledby="titre-liste">
+      <h2 id="titre-liste">Mes tâches</h2>
+      <p id="message-vide" class="message-vide" hidden>
+        Aucune tâche pour le moment. Ajoutez-en une avec le formulaire.
+      </p>
+      <ul id="liste-taches" class="liste-taches"></ul>
+    </section>
   </main>
 
   <!-- Scripts classiques (pas de type="module"), dans l'ordre des dépendances -->
