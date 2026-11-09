@@ -25,6 +25,14 @@ Chaque fonctionnalité est développée sur sa propre branche `feature/...`, cr�
 
 **Vérification du sprint 1** : les fonctions pures (`Utils`, `Stockage`, `Taches`) ont été testées avec Node, puis l'application complète dans Chrome, avec un script qui simule les actions : ajout, titre vide, HTML dans le titre, cocher et décocher, modification avec Annuler, Échap et titre vide, suppression avec et sans confirmation, rechargement de la page, données abîmées dans `localStorage`. Les 37 vérifications passent. Reste à faire à la main par le binôme : un test sur Firefox et Safari, et sur le site GitHub Pages.
 
+### Sprint 2 · Informatique (branche `sprint2`)
+
+- [x] `feature/categories` : catégorie facultative (Cours, Perso, Projet) à l'ajout et à la modification, badge en couleur (story 10)
+- [ ] `feature/filtrer-statut` : filtres Toutes / À faire / Terminées (story 8)
+- [ ] `feature/trier-taches` : tri par date d'ajout, priorité ou échéance (story 9)
+- [ ] `feature/rechercher-tache` : recherche par mot-clé dans le titre (story 11, bonus)
+- [ ] `feature/bilan-sprint2` : règles communes aux stories 8, 9 et 11, note de vérification, entrée de PROMPTS.md
+
 ## Modèle de données d'une tâche
 
 Une tâche est un objet JavaScript. Les clés et les valeurs enregistrées sont en anglais ; seul le texte affiché à l'écran est en français. Exemple :
@@ -163,14 +171,14 @@ En tant qu'utilisateur, je veux trier mes tâches par priorité ou par date d'é
 
 **10. Classer par catégorie**
 En tant qu'utilisateur, je veux classer mes tâches dans une catégorie (cours, perso, projet) affichée avec sa propre couleur afin de distinguer d'un coup d'œil les différents domaines de ma vie.
-- [ ] Le formulaire d'ajout contient une liste déroulante « Catégorie » : Aucune, Cours, Perso, Projet.
-- [ ] Il n'y a pas de catégorie par défaut : « Aucune » est sélectionné au départ et la tâche est enregistrée avec `""`.
-- [ ] La catégorie se change aussi dans la modification de la tâche (story 4), avec la valeur actuelle déjà sélectionnée.
-- [ ] Chaque tâche affiche un badge de catégorie avec une couleur (Cours : bleu, Perso : violet, Projet : turquoise) **et** le mot, pour rester lisible sans distinguer les couleurs.
-- [ ] Les couleurs des catégories sont différentes de celles des priorités (rouge, orange, vert), pour ne pas confondre les deux badges.
-- [ ] Une tâche sans catégorie n'affiche aucun badge de catégorie.
-- [ ] Toute autre valeur que `"school"`, `"personal"`, `"project"` ou `""` est refusée à l'enregistrement.
-- [ ] Une tâche enregistrée avant le sprint 2, donc sans champ `category`, s'affiche quand même, sans badge de catégorie et sans planter.
+- [x] Le formulaire d'ajout contient une liste déroulante « Catégorie » : Aucune, Cours, Perso, Projet.
+- [x] Il n'y a pas de catégorie par défaut : « Aucune » est sélectionné au départ et la tâche est enregistrée avec `""`.
+- [x] La catégorie se change aussi dans la modification de la tâche (story 4), avec la valeur actuelle déjà sélectionnée.
+- [x] Chaque tâche affiche un badge de catégorie avec une couleur (Cours : bleu, Perso : violet, Projet : turquoise) **et** le mot, pour rester lisible sans distinguer les couleurs.
+- [x] Les couleurs des catégories sont différentes de celles des priorités (rouge, orange, vert), pour ne pas confondre les deux badges.
+- [x] Une tâche sans catégorie n'affiche aucun badge de catégorie.
+- [x] Toute autre valeur que `"school"`, `"personal"`, `"project"` ou `""` est refusée à l'enregistrement.
+- [x] Une tâche enregistrée avant le sprint 2, donc sans champ `category`, s'affiche quand même, sans badge de catégorie et sans planter.
 
 **11. Rechercher une tâche** *(bonus)*
 En tant qu'utilisateur, je veux rechercher une tâche par un mot-clé de son titre afin de la retrouver rapidement quand la liste est longue.
