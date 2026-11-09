@@ -30,6 +30,11 @@
           <label for="creation-mdp">Mot de passe</label>
           <input type="password" id="creation-mdp" autocomplete="new-password"
                  aria-describedby="creation-regles erreur-creation">
+          <!-- Jauge de robustesse (story 14) : remplie par Interface.afficherJauge -->
+          <div id="jauge" class="jauge" data-niveau="">
+            <div class="jauge-barre"></div>
+          </div>
+          <p id="jauge-texte" class="jauge-texte" aria-live="polite"></p>
           <p id="creation-regles" class="aide">
             Au moins 8 caractères, une majuscule, un chiffre et un caractère spécial.
           </p>

@@ -11,6 +11,7 @@ const Interface = {
   LIBELLES_PRIORITE: { high: "Haute", medium: "Moyenne", low: "Basse" },
   LIBELLES_ECHEANCE: { late: "En retard", today: "Aujourd'hui" },
   LIBELLES_CATEGORIE: { school: "Cours", personal: "Perso", project: "Projet" },
+  LIBELLES_JAUGE: { weak: "Faible", medium: "Moyen", strong: "Fort" },
   // Messages de liste vide : aucune tâche du tout (story 2), ou filtre sans résultat (story 8).
   // Le message de la recherche (story 11) contient le mot-clé : il est construit dans afficherMessageVide.
   // Message affiché si le compte n'a pas pu être enregistré (stockage bloqué ou plein)
@@ -511,6 +512,23 @@ const Interface = {
   viderFormulaireCreation: function () {
     document.getElementById("formulaire-creation").reset();
     Interface.effacerErreurCreation();
+    Interface.afficherJauge(""); // reset() ne déclenche pas l'événement input
+  },
+
+  // Story 14 : met la jauge au niveau "", "weak", "medium" ou "strong" (calculé par Auth).
+  // Le CSS lit data-niveau pour la longueur et la couleur de la barre ; le mot est écrit à côté.
+  afficherJauge: function (niveau) {
+    document.getElementById("jauge").dataset.niveau = niveau;
+    const texte = niveau === "" ? "" : "Robustesse : " + Interface.LIBELLES_JAUGE[niveau];
+    document.getElementById("jauge-texte").textContent = texte;
+  },
+
+  // traiter(motDePasse) est appelée à chaque caractère tapé ou effacé dans le mot de passe.
+  surSaisieMotDePasse: function (traiter) {
+    const champ = document.getElementById("creation-mdp");
+    champ.addEventListener("input", function () {
+      traiter(champ.value);
+    });
   },
 
   // traiter(donnees) est appelée au clic sur « Créer le compte » ou avec la touche Entrée.

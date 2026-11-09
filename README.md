@@ -39,7 +39,7 @@ Chaque fonctionnalité est développée sur sa propre branche `feature/...`, cr�
 
 - [x] `feature/auth-stockage` : objet `Auth` (règles du mot de passe, hachage SHA-256, comptes) et `Stockage` des comptes (`taskflow_users`) et de la session (`taskflow_session`)
 - [x] `feature/connexion` : écran du premier lancement (choix du mot de passe), écran de connexion, session, bouton « Se déconnecter » (stories 12, 13 et 15)
-- [ ] `feature/jauge-robustesse` : jauge Faible / Moyen / Fort pendant la saisie du mot de passe (story 14)
+- [x] `feature/jauge-robustesse` : jauge Faible / Moyen / Fort pendant la saisie du mot de passe (story 14)
 - [ ] `feature/blocage-connexion` : blocage de 20 secondes après 3 échecs (story 16, bonus)
 - [ ] `feature/bilan-sprint3` : note de vérification, entrée de PROMPTS.md
 
@@ -237,12 +237,12 @@ En tant qu'utilisateur, je veux que mon mot de passe soit refusé s'il ne contie
 
 **14. Voir la jauge de robustesse**
 En tant qu'utilisateur, je veux voir une jauge faible / moyen / fort se mettre à jour pendant que je tape mon mot de passe afin de savoir tout de suite s'il est assez robuste.
-- [ ] La jauge est affichée sous le champ où le mot de passe est choisi, pas sur l'écran de connexion.
-- [ ] Elle se met à jour à chaque caractère tapé ou effacé.
-- [ ] Le niveau dépend du nombre de règles respectées parmi les 4 de la story 13 : Faible de 0 à 2, Moyen avec 3, Fort avec 4.
-- [ ] Chaque niveau a une couleur (Faible : rouge, Moyen : orange, Fort : vert) **et** le mot, pour rester lisible sans distinguer les couleurs.
-- [ ] Quand le champ est vide, la jauge est vide et n'affiche aucun mot.
-- [ ] La jauge et la story 13 ne se contredisent jamais : seul le niveau Fort permet de créer le compte.
+- [x] La jauge est affichée sous le champ où le mot de passe est choisi, pas sur l'écran de connexion.
+- [x] Elle se met à jour à chaque caractère tapé ou effacé.
+- [x] Le niveau dépend du nombre de règles respectées parmi les 4 de la story 13 : Faible de 0 à 2, Moyen avec 3, Fort avec 4.
+- [x] Chaque niveau a une couleur (Faible : rouge, Moyen : orange, Fort : vert) **et** le mot, pour rester lisible sans distinguer les couleurs.
+- [x] Quand le champ est vide, la jauge est vide et n'affiche aucun mot.
+- [x] La jauge et la story 13 ne se contredisent jamais : seul le niveau Fort permet de créer le compte.
 
 **15. Protéger le mot de passe par hachage**
 En tant qu'utilisateur, je veux que mon mot de passe soit enregistré sous forme hachée et jamais en clair afin qu'il ne soit pas lisible par quelqu'un qui consulte le stockage du navigateur.

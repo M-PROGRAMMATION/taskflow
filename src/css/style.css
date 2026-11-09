@@ -126,6 +126,54 @@ h2 {
   font-size: 0.85rem;
 }
 
+/* Jauge de robustesse (story 14) : une couleur ET un mot pour chaque niveau */
+.jauge {
+  height: 8px;
+  border-radius: 999px;
+  background: var(--bordure);
+  overflow: hidden; /* la barre garde les coins arrondis */
+}
+
+.jauge-barre {
+  width: 0; /* champ vide : jauge vide */
+  height: 100%;
+  transition: width 0.2s;
+}
+
+.jauge[data-niveau="weak"] .jauge-barre {
+  width: 33%;
+  background: var(--haute);
+}
+
+.jauge[data-niveau="medium"] .jauge-barre {
+  width: 66%;
+  background: var(--moyenne);
+}
+
+.jauge[data-niveau="strong"] .jauge-barre {
+  width: 100%;
+  background: var(--basse);
+}
+
+.jauge-texte {
+  min-height: 1.3em; /* garde la place du mot, même vide : le formulaire ne saute pas */
+  margin: 0;
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.jauge[data-niveau="weak"] + .jauge-texte {
+  color: var(--haute);
+}
+
+.jauge[data-niveau="medium"] + .jauge-texte {
+  color: var(--moyenne);
+}
+
+.jauge[data-niveau="strong"] + .jauge-texte {
+  color: var(--basse);
+}
+
 /* Rappel : compte de test uniquement */
 .avertissement {
   margin: 16px 0 0;

@@ -235,6 +235,12 @@
     Interface.afficherEcran("connexion");
   }
 
+  // Story 14 : la jauge suit chaque caractère tapé ou effacé.
+  // Le mot de passe n'est pas gardé : seul le niveau calculé est affiché.
+  function changerJauge(motDePasse) {
+    Interface.afficherJauge(Auth.niveauRobustesse(motDePasse));
+  }
+
   // Story 12 : bouton « Se connecter » ou touche Entrée.
   async function seConnecter(donnees) {
     const resultat = Auth.validerConnexion(donnees.identifiant, donnees.motDePasse);
@@ -292,6 +298,7 @@
   function demarrer() {
     // On branche les événements des trois écrans
     Interface.surCreation(creerCompte);
+    Interface.surSaisieMotDePasse(changerJauge);
     Interface.surConnexion(seConnecter);
     Interface.surDeconnexion(seDeconnecter);
     Interface.surAjout(ajouterTache);
