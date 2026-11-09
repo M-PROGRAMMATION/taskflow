@@ -10,6 +10,7 @@ const Interface = {
   // Traduction des codes enregistrés (anglais) en texte affiché (français)
   LIBELLES_PRIORITE: { high: "Haute", medium: "Moyenne", low: "Basse" },
   LIBELLES_ECHEANCE: { late: "En retard", today: "Aujourd'hui" },
+  LIBELLES_CATEGORIE: { school: "Cours", personal: "Perso", project: "Projet" },
 
   // Crée un élément HTML avec une classe et un texte.
   // Le texte passe par textContent : du HTML tapé par l'utilisateur s'affiche tel quel.
@@ -73,6 +74,16 @@ const Interface = {
         Interface.LIBELLES_PRIORITE[tache.priority]
       )
     );
+    // Badge de catégorie (story 10), seulement si la tâche en a une
+    if (tache.category !== "") {
+      infos.appendChild(
+        Interface.creerElement(
+          "span",
+          "badge categorie-" + tache.category,
+          Interface.LIBELLES_CATEGORIE[tache.category]
+        )
+      );
+    }
     const texteDate = tache.dueDate === "" ? "Sans date" : Utils.formaterDate(tache.dueDate);
     infos.appendChild(Interface.creerElement("span", "tache-date", texteDate));
     if (etatEcheance !== "") {
@@ -110,6 +121,25 @@ const Interface = {
     return bloc;
   },
 
+  // Crée une liste déroulante <select> à partir d'un objet { code: libellé }.
+  // Si texteVide est donné, une première option de valeur "" est ajoutée (ex. « Aucune »).
+  creerListe: function (id, libelles, texteVide) {
+    const liste = document.createElement("select");
+    liste.id = id;
+    if (texteVide !== undefined) {
+      const optionVide = Interface.creerElement("option", "", texteVide);
+      optionVide.value = "";
+      liste.appendChild(optionVide);
+    }
+    // Object.keys donne les codes dans l'ordre où ils sont écrits (ex. high, medium, low)
+    Object.keys(libelles).forEach(function (code) {
+      const option = Interface.creerElement("option", "", libelles[code]);
+      option.value = code;
+      liste.appendChild(option);
+    });
+    return liste;
+  },
+
   // Construit la ligne d'une tâche en cours de modification (story 4) :
   // un petit formulaire déjà rempli avec les valeurs actuelles.
   // Une seule tâche est modifiée à la fois, les id des champs sont donc uniques.
@@ -142,16 +172,14 @@ const Interface = {
     description.value = tache.description;
     formulaire.appendChild(Interface.creerChamp("champ champ-large", "Description", description));
 
-    const priorite = document.createElement("select");
-    priorite.id = "modif-priorite";
-    // Object.keys donne ["high", "medium", "low"], dans l'ordre où elles sont écrites
-    Object.keys(Interface.LIBELLES_PRIORITE).forEach(function (code) {
-      const option = Interface.creerElement("option", "", Interface.LIBELLES_PRIORITE[code]);
-      option.value = code;
-      priorite.appendChild(option);
-    });
+    const priorite = Interface.creerListe("modif-priorite", Interface.LIBELLES_PRIORITE);
     priorite.value = tache.priority; // sélectionne la priorité actuelle
     formulaire.appendChild(Interface.creerChamp("champ", "Priorité", priorite));
+
+    // Catégorie (story 10) : « Aucune » en premier, puis Cours, Perso, Projet
+    const categorie = Interface.creerListe("modif-categorie", Interface.LIBELLES_CATEGORIE, "Aucune");
+    categorie.value = tache.category; // sélectionne la catégorie actuelle ("" = Aucune)
+    formulaire.appendChild(Interface.creerChamp("champ", "Catégorie", categorie));
 
     const echeance = document.createElement("input");
     echeance.type = "date";
@@ -201,6 +229,7 @@ const Interface = {
       description: document.getElementById("modif-description").value,
       priority: document.getElementById("modif-priorite").value,
       dueDate: document.getElementById("modif-echeance").value,
+      category: document.getElementById("modif-categorie").value,
     };
   },
 
@@ -281,6 +310,7 @@ const Interface = {
       description: document.getElementById("ajout-description").value,
       priority: document.getElementById("ajout-priorite").value,
       dueDate: document.getElementById("ajout-echeance").value,
+      category: document.getElementById("ajout-categorie").value,
     };
   },
 
@@ -302,7 +332,8 @@ const Interface = {
     document.getElementById("ajout-titre").removeAttribute("aria-invalid");
   },
 
-  // Vide le formulaire (la priorité revient sur « Moyenne ») et remet le curseur dans le titre.
+  // Vide le formulaire (la priorité revient sur « Moyenne », la catégorie sur « Aucune »)
+  // et remet le curseur dans le titre.
   viderFormulaireAjout: function () {
     document.getElementById("formulaire-ajout").reset();
     Interface.effacerErreurAjout();
