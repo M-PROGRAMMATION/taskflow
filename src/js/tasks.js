@@ -135,6 +135,18 @@ const Taches = {
     });
   },
 
+  // Garde les tâches qui correspondent au filtre de statut (story 8) :
+  //   "all" → toutes, "todo" → à faire, "done" → terminées.
+  // filter renvoie une nouvelle liste : rien n'est supprimé de la liste d'origine.
+  filtrerParStatut: function (liste, filtre) {
+    if (filtre === "all") {
+      return liste.slice(); // copie de la liste entière
+    }
+    return liste.filter(function (tache) {
+      return tache.status === filtre;
+    });
+  },
+
   // Nombre de tâches encore à faire (pour le compteur de la story 2).
   compterAFaire: function (liste) {
     return liste.filter(function (tache) {

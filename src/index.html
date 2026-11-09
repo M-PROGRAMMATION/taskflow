@@ -71,9 +71,19 @@
     <!-- Liste des tâches -->
     <section class="carte" aria-labelledby="titre-liste">
       <h2 id="titre-liste">Mes tâches</h2>
-      <p id="message-vide" class="message-vide" hidden>
-        Aucune tâche pour le moment. Ajoutez-en une avec le formulaire.
-      </p>
+
+      <!-- Filtre, tri et recherche (sprint 2) : ne changent que l'affichage -->
+      <div class="barre-outils">
+        <!-- Filtres par statut (story 8) -->
+        <div id="filtres" class="filtres" role="group" aria-label="Filtrer par statut">
+          <button type="button" class="bouton-filtre" data-filtre="all" aria-pressed="true">Toutes</button>
+          <button type="button" class="bouton-filtre" data-filtre="todo" aria-pressed="false">À faire</button>
+          <button type="button" class="bouton-filtre" data-filtre="done" aria-pressed="false">Terminées</button>
+        </div>
+      </div>
+
+      <!-- Texte rempli par Interface.afficherMessageVide -->
+      <p id="message-vide" class="message-vide" hidden></p>
       <ul id="liste-taches" class="liste-taches"></ul>
     </section>
   </main>

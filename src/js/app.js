@@ -15,7 +15,22 @@
   const etat = {
     taches: [],
     idEnModification: null, // id de la tâche en cours de modification, ou null (story 4)
+    filtre: "all", // "all", "todo" ou "done" (story 8), non sauvegardé
   };
+
+  // Indique quel message afficher quand la liste à l'écran est vide :
+  //   "aucune" s'il n'existe aucune tâche (story 2),
+  //   "todo" ou "done" si c'est le filtre qui ne donne rien (story 8),
+  //   "" si la liste n'est pas vide.
+  function casListeVide(tachesVisibles) {
+    if (etat.taches.length === 0) {
+      return "aucune";
+    }
+    if (tachesVisibles.length > 0) {
+      return "";
+    }
+    return etat.filtre;
+  }
 
   // Réaffiche tout l'écran à partir de l'état.
   function rafraichir() {
@@ -26,7 +41,13 @@
       echeances[tache.id] = Taches.etatEcheance(tache, aujourdhui);
     });
 
-    Interface.afficherTaches(etat.taches, echeances, etat.idEnModification);
+    // Seules les tâches du filtre choisi sont affichées ; etat.taches ne change pas
+    const tachesVisibles = Taches.filtrerParStatut(etat.taches, etat.filtre);
+
+    Interface.afficherTaches(tachesVisibles, echeances, etat.idEnModification);
+    Interface.afficherMessageVide(casListeVide(tachesVisibles));
+    Interface.afficherFiltre(etat.filtre);
+    // Le compteur compte toujours toutes les tâches à faire, quel que soit le filtre
     Interface.afficherCompteur(Taches.compterAFaire(etat.taches));
   }
 
@@ -71,6 +92,8 @@
       Interface.afficherErreurAjout(resultat.message);
       return; // aucune tâche n'est créée
     }
+    // Retour sur « Toutes » pour que la nouvelle tâche soit visible
+    etat.filtre = "all";
     mettreAJour(Taches.creer(etat.taches, donnees));
     Interface.viderFormulaireAjout();
   }
@@ -126,6 +149,16 @@
     }
   }
 
+  // Story 8 : clic sur un bouton de filtre. Ne change que l'affichage, rien n'est sauvegardé.
+  // Comme les autres actions, une modification en cours est d'abord enregistrée.
+  function changerFiltre(filtre) {
+    if (!enregistrerModificationEnCours()) {
+      return;
+    }
+    etat.filtre = filtre;
+    rafraichir();
+  }
+
   // ---------- Démarrage ----------
 
   function demarrer() {
@@ -136,6 +169,7 @@
     Interface.surAjout(ajouterTache);
     Interface.surActionListe(traiterActionListe);
     Interface.surModification(enregistrerModification, annulerModification);
+    Interface.surFiltre(changerFiltre);
 
     rafraichir();
   }
