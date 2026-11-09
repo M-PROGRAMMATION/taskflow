@@ -35,6 +35,14 @@ Chaque fonctionnalité est développée sur sa propre branche `feature/...`, cr�
 
 **Vérification du sprint 2** : les nouvelles fonctions pures de `Taches` (`filtrerParStatut`, `trier`, `rechercher`, validation de la catégorie) ont été testées avec Node (31 vérifications), puis l'application complète dans Chrome, avec un script qui simule les actions : catégories à l'ajout et à la modification, couleurs des badges, tâches enregistrées avant le sprint 2, chaque filtre et ses messages, chaque tri et les égalités, recherche (casse, accents, espaces, HTML dans le mot-clé), combinaison des trois, retour sur « Toutes » après un ajout, et modification en cours pendant un changement de filtre, de tri ou de recherche. Les 68 vérifications passent. Reste à faire à la main par le binôme : un rechargement (F5) sur Firefox et Safari pour vérifier qu'on repart bien de « Toutes », « Plus récentes » et d'une recherche vide, et un essai sur téléphone.
 
+### Sprint 3 · Cybersécurité (branche `sprint3`)
+
+- [x] `feature/auth-stockage` : objet `Auth` (règles du mot de passe, hachage SHA-256, comptes) et `Stockage` des comptes (`taskflow_users`) et de la session (`taskflow_session`)
+- [ ] `feature/connexion` : écran du premier lancement (choix du mot de passe), écran de connexion, session, bouton « Se déconnecter » (stories 12, 13 et 15)
+- [ ] `feature/jauge-robustesse` : jauge Faible / Moyen / Fort pendant la saisie du mot de passe (story 14)
+- [ ] `feature/blocage-connexion` : blocage de 20 secondes après 3 échecs (story 16, bonus)
+- [ ] `feature/bilan-sprint3` : note de vérification, entrée de PROMPTS.md
+
 ## Modèle de données d'une tâche
 
 Une tâche est un objet JavaScript. Les clés et les valeurs enregistrées sont en anglais ; seul le texte affiché à l'écran est en français. Exemple :
@@ -222,10 +230,10 @@ En tant qu'utilisateur, je veux me connecter avec un identifiant et un mot de pa
 **13. Exiger un mot de passe robuste**
 En tant qu'utilisateur, je veux que mon mot de passe soit refusé s'il ne contient pas au moins 8 caractères, une majuscule, un chiffre et un caractère spécial afin d'être obligé de choisir un mot de passe robuste.
 - [ ] Le contrôle se fait quand le mot de passe est choisi, pas à la connexion.
-- [ ] Les 4 règles sont vérifiées : au moins 8 caractères, une majuscule (A à Z), un chiffre (0 à 9), un caractère spécial.
-- [ ] Un caractère spécial est tout ce qui n'est ni une lettre ni un chiffre : `!`, `?`, `#` ou un espace. Une lettre accentuée (`é`, `è`, `à`…) n'en est pas un.
+- [x] Les 4 règles sont vérifiées : au moins 8 caractères, une majuscule (A à Z), un chiffre (0 à 9), un caractère spécial.
+- [x] Un caractère spécial est tout ce qui n'est ni une lettre ni un chiffre : `!`, `?`, `#` ou un espace. Une lettre accentuée (`é`, `è`, `à`…) n'en est pas un.
 - [ ] Si une règle n'est pas respectée, le compte n'est pas créé et le message indique chaque règle manquante, par exemple « Il manque : une majuscule, un chiffre. ».
-- [ ] Exemples à tester : `Abcdef1!` est accepté ; `abcdef1!` (pas de majuscule), `Abcdefg!` (pas de chiffre), `Abcdefg1` et `Abcdefé1` (pas de caractère spécial) et `Abc1!` (trop court) sont refusés.
+- [x] Exemples à tester : `Abcdef1!` est accepté ; `abcdef1!` (pas de majuscule), `Abcdefg!` (pas de chiffre), `Abcdefg1` et `Abcdefé1` (pas de caractère spécial) et `Abc1!` (trop court) sont refusés.
 
 **14. Voir la jauge de robustesse**
 En tant qu'utilisateur, je veux voir une jauge faible / moyen / fort se mettre à jour pendant que je tape mon mot de passe afin de savoir tout de suite s'il est assez robuste.
