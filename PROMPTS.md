@@ -265,3 +265,25 @@ Format : l'arborescence mise à jour et les règles d'utilisation (emplacement, 
 **Rejeté :** une action externe pour créer la release (par exemple `softprops/action-gh-release`) et un outil qui calcule la version tout seul à partir des messages de commit (`semantic-release`).
 **Pourquoi :** le binôme choisit lui-même quand une version est prête (une par sprint, comme les commits demandés par le cours). Le message du tag et la liste des commits suffisent à expliquer le contenu de chaque version. Le zip ne contient que `src/` : ni les PDF du cours, ni la documentation.
 **Points de vigilance :** la qualité des notes dépend des messages de commit, il faut donc les écrire clairement. Un tag déjà poussé ne doit pas être réutilisé : si une release est ratée, on la supprime sur GitHub avec son tag avant de recommencer.
+
+## Prompt 15 · Développement du sprint 1, une branche par fonctionnalité (Claude Code)
+**Prompt :** Développe entièrement le Sprint 1, petit à petit, met des "checks", dans le README.md pour savoir ce qui a été fait, etc.. créer une nouvelle branche pour ça, en suivant les bonnes conventions "feature/...", Il faut une branche "sprint1", et ensuite on créer des sous branches de "sprint1", avec "feature/...", et on découpe par feature, on fait des pr petit à petit, tu peux push, commit, créer des pr, etc.. juste à la fin je veux que tu me laisses "sprint1". Met ce prompt, dans PROMPTS.md aussi oublie, pas, fait le à la fin.
+**Résultat :** une branche `sprint1` créée depuis `main`, puis 7 branches `feature/...` créées depuis `sprint1`, chacune fusionnée dans `sprint1` avant de passer à la suivante :
+1. `feature/utils-stockage` : `Utils` (id, date jj/mm/aaaa, date du jour, nettoyage) et `Stockage` (lecture / écriture protégée par `try/catch`).
+2. `feature/afficher-taches` : liste, badges de priorité, « Sans date », badges « En retard » / « Aujourd'hui », compteur, message de liste vide, icônes SVG locales.
+3. `feature/ajouter-tache` : formulaire d'ajout, `Taches.valider` (titre vide, 100 caractères maximum), formulaire vidé et curseur remis dans le titre.
+4. `feature/terminer-tache` : case à cocher, tâche barrée, un seul écouteur de clic sur la liste (délégation).
+5. `feature/supprimer-tache` : corbeille avec `confirm()` qui rappelle le titre.
+6. `feature/modifier-tache` : la ligne devient un formulaire (Enregistrer, Annuler, touche Échap), une seule tâche à la fois.
+7. `feature/bilan-sprint1` : cases de la story 7 cochées, note de vérification et cette entrée.
+Le README a une nouvelle section « Avancement » avec une case par branche, et les critères d'acceptation des stories 1 à 7 sont cochés au fur et à mesure.
+**Tests :** fonctions pures testées avec Node ; application complète testée dans Chrome sans fenêtre (headless), avec un script qui simule les clics et les saisies : 29 vérifications sur 29. Rechargement de la page et données abîmées dans `localStorage` vérifiés aussi.
+**Modifié :** « des PR » : l'outil `gh` n'est pas installé sur l'ordinateur, l'IA n'a donc pas pu ouvrir de vraies pull requests sur GitHub. Chaque branche a été poussée sur GitHub puis fusionnée dans `sprint1` avec `git merge --no-ff`, ce qui garde un commit « Merge feature/... into sprint1 » par fonctionnalité, comme une PR. La règle du cours « un commit par sprint » devient « une branche et un commit par fonctionnalité » : c'est la demande du binôme, et le sprint reste regroupé sur la branche `sprint1`.
+**Choix proposés par l'IA (à valider) :**
+- Toute action sur la liste (cocher, supprimer, ajouter) referme une modification en cours sans l'enregistrer, comme « Annuler ». Sinon le texte tapé serait effacé sans prévenir au réaffichage.
+- Les tâches illisibles dans `localStorage` (mauvais `id`, priorité inconnue…) sont ignorées une par une par `Taches.nettoyerListe`, au lieu de vider toute la liste.
+- Compteur « 0 tâche à faire » au singulier (règle du français pour 0 et 1).
+- `app.js` est enfermé dans une fonction appelée tout de suite (IIFE), pour ne créer aucune variable globale.
+- Les événements sont branchés par des fonctions d'`Interface` (`surAjout`, `surActionListe`, `surModification`), pour que `app.js` ne touche jamais au DOM.
+**Pourquoi :** une branche par fonctionnalité permet de relire et de tester chaque morceau séparément, et l'historique montre l'avancement pas à pas. `sprint1` n'est pas fusionnée dans `main` : c'est au binôme de relire le code, de tester à la main, puis de décider de la fusion et du tag `v0.1.0`.
+**Points de vigilance :** tester sur Firefox et Safari ; l'id `Date.now()` suppose qu'on ne crée jamais deux tâches dans la même milliseconde ; `confirm()` a l'apparence du navigateur et ne se personnalise pas.
