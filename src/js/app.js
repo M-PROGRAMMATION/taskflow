@@ -18,6 +18,8 @@
     filtre: "all", // "all", "todo" ou "done" (story 8), non sauvegardé
     tri: "recent", // "recent", "priority" ou "dueDate" (story 9), non sauvegardé
     recherche: "", // texte tapé dans le champ « Rechercher » (story 11), non sauvegardé
+    utilisateur: "", // identifiant de l'utilisateur connecté, "" si personne (story 12)
+    // Jamais de mot de passe ni d'empreinte dans l'état (story 15)
   };
 
   // Indique quel message afficher quand la liste à l'écran est vide :
@@ -194,13 +196,114 @@
     rafraichir();
   }
 
+  // ---------- Connexion (sprint 3) ----------
+
+  // Comptes enregistrés, sans les comptes illisibles. Relus à chaque fois dans
+  // le stockage, pour tenir compte d'un compte créé ou bloqué dans un autre onglet.
+  function chargerUtilisateurs() {
+    return Auth.nettoyerUtilisateurs(Stockage.chargerUtilisateurs());
+  }
+
+  // Premier lancement (stories 12, 13 et 15) : création du compte de test.
+  // Le mot de passe n'est gardé nulle part : il est haché, puis seule l'empreinte est enregistrée.
+  // async : on attend (await) le hachage, qui est asynchrone.
+  async function creerCompte(donnees) {
+    if (chargerUtilisateurs().length > 0) {
+      // Compte déjà créé (par exemple dans un autre onglet) : on ne le remplace pas.
+      Interface.viderFormulaireCreation();
+      Interface.afficherEcran("connexion");
+      return;
+    }
+    const resultat = Auth.validerCreation(donnees.motDePasse, donnees.confirmation);
+    if (!resultat.valide) {
+      Interface.afficherErreurCreation(resultat.message);
+      return; // le compte n'est pas créé
+    }
+    const hachage = Auth.verifierHachage();
+    if (!hachage.valide) {
+      Interface.afficherErreurCreation(hachage.message);
+      return; // jamais de mot de passe en clair à la place
+    }
+    const empreinte = await Auth.hacher(donnees.motDePasse);
+    const utilisateurs = Auth.creerUtilisateur([], Auth.IDENTIFIANT_TEST, empreinte);
+    if (!Stockage.sauverUtilisateurs(utilisateurs)) {
+      Interface.afficherErreurCreation(Interface.MESSAGE_SAUVEGARDE_COMPTE);
+      return;
+    }
+    // Compte créé : cet écran ne réapparaîtra plus, on passe à la connexion.
+    Interface.viderFormulaireCreation();
+    Interface.afficherEcran("connexion");
+  }
+
+  // Story 14 : la jauge suit chaque caractère tapé ou effacé.
+  // Le mot de passe n'est pas gardé : seul le niveau calculé est affiché.
+  function changerJauge(motDePasse) {
+    Interface.afficherJauge(Auth.niveauRobustesse(motDePasse));
+  }
+
+  // Story 12 : bouton « Se connecter » ou touche Entrée.
+  async function seConnecter(donnees) {
+    const resultat = Auth.validerConnexion(donnees.identifiant, donnees.motDePasse);
+    if (!resultat.valide) {
+      Interface.afficherErreurConnexion(resultat.message);
+      return; // champ vide : aucune tentative de connexion
+    }
+    const hachage = Auth.verifierHachage();
+    if (!hachage.valide) {
+      Interface.afficherErreurConnexion(hachage.message);
+      return;
+    }
+    // Le mot de passe saisi est haché, puis comparé à l'empreinte enregistrée (story 15)
+    const empreinte = await Auth.hacher(donnees.motDePasse);
+    // Date.now() : l'heure actuelle, pour le blocage après 3 échecs (story 16)
+    const connexion = Auth.connecter(chargerUtilisateurs(), donnees.identifiant, empreinte, Date.now());
+    // Compteur d'échecs et heure de fin du blocage enregistrés : le blocage
+    // continue après un rechargement de la page.
+    Stockage.sauverUtilisateurs(connexion.utilisateurs);
+    Interface.viderMotDePasseConnexion(); // le mot de passe ne reste pas dans le champ
+    if (!connexion.reussi) {
+      Interface.afficherErreurConnexion(connexion.message);
+      return;
+    }
+    ouvrirSession(connexion.identifiant);
+  }
+
+  // Après une connexion réussie, ou au rechargement si la session existe déjà :
+  // on retient l'utilisateur, on charge les tâches (story 7) et on affiche leur écran.
+  function ouvrirSession(identifiant) {
+    etat.utilisateur = identifiant;
+    Stockage.ecrireSession(identifiant); // l'identifiant seulement
+    etat.taches = Taches.nettoyerListe(Stockage.chargerTaches());
+    Interface.afficherUtilisateur(identifiant);
+    Interface.afficherEcran("taches");
+    rafraichir();
+  }
+
+  // Bouton « Se déconnecter ». Décision du binôme (PROMPTS.md, prompt 20) : contrairement
+  // aux autres actions, une modification en cours n'est PAS enregistrée, elle est
+  // abandonnée comme avec « Annuler ». La déconnexion n'est donc jamais bloquée.
+  function seDeconnecter() {
+    Stockage.effacerSession();
+    // On repart d'un état vide, comme après un rechargement : les tâches ne restent
+    // pas dans la page, et le filtre, le tri et la recherche reviennent par défaut.
+    etat.utilisateur = "";
+    etat.taches = [];
+    etat.idEnModification = null; // la modification en cours est abandonnée
+    etat.filtre = "all";
+    etat.tri = "recent";
+    etat.recherche = "";
+    rafraichir();
+    Interface.afficherEcran("connexion");
+  }
+
   // ---------- Démarrage ----------
 
   function demarrer() {
-    // On recharge les tâches enregistrées (story 7)
-    etat.taches = Taches.nettoyerListe(Stockage.chargerTaches());
-
-    // On branche les événements
+    // On branche les événements des trois écrans
+    Interface.surCreation(creerCompte);
+    Interface.surSaisieMotDePasse(changerJauge);
+    Interface.surConnexion(seConnecter);
+    Interface.surDeconnexion(seDeconnecter);
     Interface.surAjout(ajouterTache);
     Interface.surActionListe(traiterActionListe);
     Interface.surModification(enregistrerModification, annulerModification);
@@ -208,7 +311,20 @@
     Interface.surTri(changerTri);
     Interface.surRecherche(changerRecherche);
 
-    rafraichir();
+    // Quel écran afficher ?
+    const utilisateurs = chargerUtilisateurs();
+    if (utilisateurs.length === 0) {
+      // Aucun compte : premier lancement, on choisit le mot de passe du compte de test
+      Interface.afficherEcran("creation");
+      return;
+    }
+    // Session encore ouverte dans cet onglet (rechargement) : pas besoin de se reconnecter
+    const session = Stockage.lireSession();
+    if (Auth.trouver(utilisateurs, session) !== undefined) {
+      ouvrirSession(session);
+    } else {
+      Interface.afficherEcran("connexion");
+    }
   }
 
   demarrer();

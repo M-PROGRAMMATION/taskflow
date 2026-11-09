@@ -334,3 +334,40 @@ Les cases de la section « Avancement » et les critères d'acceptation des stor
 3. Recherche et filtre actifs sans résultat : c'est le message de la recherche qui est affiché.
 4. Le badge de catégorie a une bordure en plus de sa couleur.
 **Pourquoi :** le choix 1 suit la règle du prompt 16 (ne jamais perdre une saisie sans le vouloir). Les choix 2 à 4 gardent l'application stable et lisible. Une fois validés par le binôme, ils deviennent des critères d'acceptation, que l'audit de la séance 3 pourra vérifier.
+
+## Prompt 19 · Développement du sprint 3, une branche par fonctionnalité (Claude Code)
+**Prompt :** Développe entièrement le Sprint 3, petit à petit, met des "checks", dans le README.md pour savoir ce qui a été fait, etc.. créer une nouvelle branche pour ça, en suivant les bonnes conventions "feature/...", Il faut une branche "sprint3", et ensuite on créer des sous branches de "sprint3", avec "feature/...", et on découpe par feature, on fait des pr petit à petit, tu peux push, commit, créer des pr, etc.. juste à la fin je veux que tu me laisses "sprint1". Met ce prompt, dans PROMPTS.md aussi oublie, pas, fait le à la fin.
+**Résultat :** une branche `sprint3` créée depuis `main`, puis 5 branches `feature/...` créées depuis `sprint3`, chacune poussée sur GitHub et fusionnée dans `sprint3` avant de passer à la suivante :
+1. `feature/auth-stockage` : objet `Auth` (les 4 règles du mot de passe, message « Il manque : … », hachage SHA-256 avec `crypto.subtle.digest`, comptes) et `Stockage` des comptes (`taskflow_users`) et de la session (`taskflow_session`, dans `sessionStorage`).
+2. `feature/connexion` (stories 12, 13 et 15) : trois écrans (premier lancement, connexion, tâches), un seul visible à la fois ; choix du mot de passe du compte `test` avec confirmation ; connexion par comparaison des empreintes ; session gardée au rechargement ; bouton « Se déconnecter ».
+3. `feature/jauge-robustesse` (story 14) : jauge Faible / Moyen / Fort sous le mot de passe du premier lancement, mise à jour à chaque caractère, couleur et mot.
+4. `feature/blocage-connexion` (story 16, bonus) : 3 échecs de suite bloquent le compte 20 secondes ; l'heure de fin est enregistrée, le blocage continue donc après un rechargement.
+5. `feature/bilan-sprint3` : note de vérification et cette entrée.
+Les cases de la section « Avancement » et les critères d'acceptation des stories 12 à 16 sont cochés au fur et à mesure dans le README.
+**Tests :** 51 vérifications Node sur les fonctions de `Auth` et 90 dans Chrome sans fenêtre (headless), en `file://` comme un double-clic, avec un script qui pilote la page par le protocole des outils de développement (il peut recharger la page et lire `sessionStorage`). Toutes passent, y compris une vraie attente de 20 secondes pour le blocage et un navigateur privé de `crypto.subtle`. Une erreur trouvée par les tests et corrigée : le formulaire de connexion s'affichait sur deux colonnes (règle CSS écrasée par `.formulaire`).
+**Modifié :**
+- Comme aux sprints 1 et 2, `gh` n'est pas installé : chaque « PR » est une branche poussée sur GitHub puis fusionnée avec `git merge --no-ff` (un commit « Merge feature/... into sprint3 »). `sprint3` n'est pas fusionnée dans `main`.
+- « laisse-moi sprint1 » a été compris comme « sprint3 » (le même prompt disait `sprint1` au sprint 1 et `sprint2` au sprint 2, et CLAUDE.md demande de finir sur la branche du sprint). Le dépôt est laissé sur `sprint3`.
+- `Auth.connecter` reçoit l'heure (`Date.now()`) en paramètre et renvoie la nouvelle liste des comptes : elle reste une fonction pure, testable sans attendre 20 secondes, et c'est `app.js` qui sauvegarde.
+**Choix proposés par l'IA (à valider) :**
+1. Le champ mot de passe est vidé aussi après une connexion refusée, pas seulement après une réussite.
+2. « Se déconnecter » pendant une modification enregistre d'abord la modification (règle du prompt 16) ; si le titre est refusé, on reste connecté.
+3. À la déconnexion, les tâches sont retirées de la page et le filtre, le tri et la recherche reviennent par défaut, comme après un rechargement.
+4. Pendant le blocage, le message donne le temps restant (« Réessayez dans 17 secondes. »), au lieu de toujours dire 20. Une tentative pendant le blocage ne le prolonge pas.
+5. Le message « Compte bloqué » montre qu'un compte existe, puisqu'un identifiant inconnu n'est jamais bloqué. Sans gravité ici (l'identifiant `test` est connu), mais à ajouter aux limites de sécurité du README si le binôme le souhaite.
+6. Si `taskflow_users` est illisible (modifié à la main), l'écran du premier lancement revient et permet de choisir un nouveau mot de passe ; les tâches sont gardées. C'est une variante de la limite « vider les données du site » déjà notée dans le README.
+7. Le mot vide est refusé avec « Choisissez un mot de passe. », et la robustesse est contrôlée avant la confirmation : on ne demande pas de confirmer un mot de passe trop faible.
+**Pourquoi :** une branche par fonctionnalité, comme aux sprints 1 et 2 (organisation Git du CLAUDE.md). Le mot de passe ne passe que dans des variables locales : il est haché tout de suite et n'est jamais gardé dans l'état de `app.js`. Les trois écrans sont cachés par défaut dans le HTML : sans JavaScript, aucune tâche ne s'affiche, et les tâches ne sont chargées dans la page qu'après la connexion.
+**Points de vigilance :** tester le hachage sur Firefox et Safari en double-clic et sur GitHub Pages ; garder en tête que la connexion ne protège que l'affichage (voir « Limites de sécurité d'une connexion côté client » dans le README).
+
+## Prompt 20 · Retours du binôme sur le sprint 3 (Claude Code)
+**Prompt :** "Le champ mot de passe est vidé aussi quand la connexion est refusée." Oui. "Cliquer sur « Se déconnecter » pendant une modification enregistre d'abord la modification, comme les autres actions.", Non elle ne l'enregistre pas. "À la déconnexion, les tâches disparaissent de la page, et le filtre, le tri et la recherche reviennent à leur valeur de départ.", Oui. "Pendant le blocage, le message donne le temps restant (« Réessayez dans 17 secondes. »).", Oui. "Le message « Compte bloqué » révèle qu'un compte existe. On peut l'ajouter aux limites de sécurité du README.", Oui rajoute le au limite de sécurité. "Si les comptes enregistrés sont illisibles, l'écran du premier lancement revient. Les tâches sont gardées.", Oui. "La robustesse est contrôlée avant la confirmation du mot de passe.", Oui.
+**Contexte :** réponse du binôme aux 7 choix proposés par l'IA à la fin du prompt 19.
+**Résultat :** une branche `feature/retours-binome-sprint3`, créée depuis `sprint3` puis fusionnée dedans.
+- `app.js` : « Se déconnecter » n'enregistre plus une modification en cours. Elle est abandonnée, comme avec « Annuler », et la déconnexion n'est jamais bloquée par un titre vide.
+- README : critères d'acceptation ajoutés aux stories 12, 13 et 16, déjà cochés ; la story 4 cite « Se déconnecter » parmi les actions qui n'enregistrent pas ; nouvelle ligne dans les limites de sécurité sur le message « Compte bloqué ».
+- CLAUDE.md : les décisions ajoutées à la liste des décisions du sprint 3.
+**Gardé :** les choix 1, 3, 4, 5, 6 et 7 tels quels.
+**Modifié :** le choix 2. L'IA appliquait la règle du prompt 16 (toute autre action enregistre d'abord la modification). Le binôme fait une exception pour la déconnexion.
+**Tests :** le script de connexion vérifie maintenant qu'une déconnexion pendant une modification n'enregistre rien, avec un titre vide comme avec un titre valide, et que le filtre, le tri et la recherche reviennent par défaut. 47 vérifications de connexion, 35 autres dans Chrome et 51 avec Node : toutes passent.
+**Pourquoi :** se déconnecter doit toujours marcher, sans être bloqué par une erreur dans une tâche. La limite sur le message « Compte bloqué » est notée pour être honnête sur ce que la connexion protège, ce que l'audit de la séance 3 pourra vérifier.

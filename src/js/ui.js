@@ -11,8 +11,12 @@ const Interface = {
   LIBELLES_PRIORITE: { high: "Haute", medium: "Moyenne", low: "Basse" },
   LIBELLES_ECHEANCE: { late: "En retard", today: "Aujourd'hui" },
   LIBELLES_CATEGORIE: { school: "Cours", personal: "Perso", project: "Projet" },
+  LIBELLES_JAUGE: { weak: "Faible", medium: "Moyen", strong: "Fort" },
   // Messages de liste vide : aucune tâche du tout (story 2), ou filtre sans résultat (story 8).
   // Le message de la recherche (story 11) contient le mot-clé : il est construit dans afficherMessageVide.
+  // Message affiché si le compte n'a pas pu être enregistré (stockage bloqué ou plein)
+  MESSAGE_SAUVEGARDE_COMPTE:
+    "Le compte n'a pas pu être enregistré : le stockage du navigateur est bloqué ou plein.",
   MESSAGES_VIDE: {
     aucune: "Aucune tâche pour le moment. Ajoutez-en une avec le formulaire.",
     todo: "Aucune tâche à faire.",
@@ -438,5 +442,151 @@ const Interface = {
       mot = "tâche";
     }
     document.getElementById("compteur").textContent = nombre + " " + mot + " à faire";
+  },
+
+  // ---------- Écrans (sprint 3) ----------
+
+  // Affiche un seul écran et cache les deux autres.
+  // nom : "creation" (premier lancement), "connexion" ou "taches".
+  // Le curseur est placé dans le premier champ utile de l'écran affiché.
+  afficherEcran: function (nom) {
+    document.getElementById("ecran-creation").hidden = nom !== "creation";
+    document.getElementById("ecran-connexion").hidden = nom !== "connexion";
+    document.getElementById("ecran-taches").hidden = nom !== "taches";
+
+    if (nom === "creation") {
+      document.getElementById("creation-mdp").focus();
+    } else if (nom === "connexion") {
+      const identifiant = document.getElementById("connexion-identifiant");
+      // Si l'identifiant est déjà rempli, on passe directement au mot de passe
+      if (identifiant.value === "") {
+        identifiant.focus();
+      } else {
+        document.getElementById("connexion-mdp").focus();
+      }
+    } else {
+      document.getElementById("ajout-titre").focus();
+    }
+  },
+
+  // Affiche un message d'erreur dans le paragraphe idErreur (textContent : pas de HTML).
+  afficherMessageErreur: function (idErreur, message) {
+    const erreur = document.getElementById(idErreur);
+    erreur.textContent = message;
+    erreur.hidden = false;
+  },
+
+  // Cache le message d'erreur du paragraphe idErreur.
+  effacerMessageErreur: function (idErreur) {
+    const erreur = document.getElementById(idErreur);
+    erreur.textContent = "";
+    erreur.hidden = true;
+  },
+
+  // ---------- Premier lancement : choix du mot de passe (stories 12 et 13) ----------
+
+  // Lit le mot de passe et sa confirmation, tels que tapés (sans trim : un espace compte).
+  // Les valeurs ne sont gardées nulle part : app.js les passe directement à Auth.
+  lireFormulaireCreation: function () {
+    return {
+      motDePasse: document.getElementById("creation-mdp").value,
+      confirmation: document.getElementById("creation-confirmation").value,
+    };
+  },
+
+  // Affiche l'erreur (règles manquantes, confirmation différente…) et remet le curseur
+  // dans le premier champ.
+  afficherErreurCreation: function (message) {
+    Interface.afficherMessageErreur("erreur-creation", message);
+    const champ = document.getElementById("creation-mdp");
+    champ.setAttribute("aria-invalid", "true");
+    champ.focus();
+  },
+
+  effacerErreurCreation: function () {
+    Interface.effacerMessageErreur("erreur-creation");
+    document.getElementById("creation-mdp").removeAttribute("aria-invalid");
+  },
+
+  // Vide les deux champs : le mot de passe ne reste pas à l'écran.
+  viderFormulaireCreation: function () {
+    document.getElementById("formulaire-creation").reset();
+    Interface.effacerErreurCreation();
+    Interface.afficherJauge(""); // reset() ne déclenche pas l'événement input
+  },
+
+  // Story 14 : met la jauge au niveau "", "weak", "medium" ou "strong" (calculé par Auth).
+  // Le CSS lit data-niveau pour la longueur et la couleur de la barre ; le mot est écrit à côté.
+  afficherJauge: function (niveau) {
+    document.getElementById("jauge").dataset.niveau = niveau;
+    const texte = niveau === "" ? "" : "Robustesse : " + Interface.LIBELLES_JAUGE[niveau];
+    document.getElementById("jauge-texte").textContent = texte;
+  },
+
+  // traiter(motDePasse) est appelée à chaque caractère tapé ou effacé dans le mot de passe.
+  surSaisieMotDePasse: function (traiter) {
+    const champ = document.getElementById("creation-mdp");
+    champ.addEventListener("input", function () {
+      traiter(champ.value);
+    });
+  },
+
+  // traiter(donnees) est appelée au clic sur « Créer le compte » ou avec la touche Entrée.
+  surCreation: function (traiter) {
+    const formulaire = document.getElementById("formulaire-creation");
+    formulaire.addEventListener("submit", function (evenement) {
+      evenement.preventDefault(); // empêche le rechargement de la page
+      traiter(Interface.lireFormulaireCreation());
+    });
+    // L'erreur disparaît dès que l'utilisateur modifie un des deux champs
+    formulaire.addEventListener("input", Interface.effacerErreurCreation);
+  },
+
+  // ---------- Connexion (story 12) ----------
+
+  // Lit l'identifiant et le mot de passe tels que tapés (Auth les vérifie).
+  lireFormulaireConnexion: function () {
+    return {
+      identifiant: document.getElementById("connexion-identifiant").value,
+      motDePasse: document.getElementById("connexion-mdp").value,
+    };
+  },
+
+  afficherErreurConnexion: function (message) {
+    Interface.afficherMessageErreur("erreur-connexion", message);
+  },
+
+  effacerErreurConnexion: function () {
+    Interface.effacerMessageErreur("erreur-connexion");
+  },
+
+  // Vide le champ mot de passe (après une connexion réussie ou refusée)
+  // et y remet le curseur. L'identifiant est gardé.
+  viderMotDePasseConnexion: function () {
+    const champ = document.getElementById("connexion-mdp");
+    champ.value = "";
+    champ.focus();
+  },
+
+  // traiter(donnees) est appelée au clic sur « Se connecter » ou avec la touche Entrée.
+  surConnexion: function (traiter) {
+    const formulaire = document.getElementById("formulaire-connexion");
+    formulaire.addEventListener("submit", function (evenement) {
+      evenement.preventDefault();
+      traiter(Interface.lireFormulaireConnexion());
+    });
+    formulaire.addEventListener("input", Interface.effacerErreurConnexion);
+  },
+
+  // Affiche « Connecté : test » dans l'en-tête de l'écran des tâches.
+  afficherUtilisateur: function (identifiant) {
+    document.getElementById("utilisateur-connecte").textContent = "Connecté : " + identifiant;
+  },
+
+  // traiter() est appelée au clic sur « Se déconnecter ».
+  surDeconnexion: function (traiter) {
+    document.getElementById("bouton-deconnexion").addEventListener("click", function () {
+      traiter();
+    });
   },
 };

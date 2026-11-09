@@ -8,12 +8,80 @@
   <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
-  <!-- Écran de connexion (Cybersécurité, sprint 3) -->
-  <section id="ecran-connexion" hidden>
-  </section>
+  <!-- Les trois écrans sont cachés (hidden) au départ : app.js n'en affiche qu'un seul.
+       Sans JavaScript, aucune tâche n'est donc visible. -->
+
+  <!-- Écran du premier lancement : choix du mot de passe du compte de test (stories 12, 13, 14) -->
+  <main id="ecran-creation" class="conteneur conteneur-etroit" hidden>
+    <h1 class="logo logo-centre">
+      <img src="assets/icones/favicon.svg" alt="" width="32" height="32">
+      TaskFlow
+    </h1>
+    <section class="carte" aria-labelledby="titre-creation">
+      <h2 id="titre-creation">Premier lancement</h2>
+      <p class="texte-doux">
+        Choisissez le mot de passe du compte de test. Identifiant : <strong>test</strong>
+      </p>
+      <form id="formulaire-creation" class="formulaire formulaire-colonne" novalidate>
+        <!-- Champ caché : indique l'identifiant au gestionnaire de mots de passe du navigateur -->
+        <input type="text" name="username" value="test" autocomplete="username" hidden>
+
+        <div class="champ">
+          <label for="creation-mdp">Mot de passe</label>
+          <input type="password" id="creation-mdp" autocomplete="new-password"
+                 aria-describedby="creation-regles erreur-creation">
+          <!-- Jauge de robustesse (story 14) : remplie par Interface.afficherJauge -->
+          <div id="jauge" class="jauge" data-niveau="">
+            <div class="jauge-barre"></div>
+          </div>
+          <p id="jauge-texte" class="jauge-texte" aria-live="polite"></p>
+          <p id="creation-regles" class="aide">
+            Au moins 8 caractères, une majuscule, un chiffre et un caractère spécial.
+          </p>
+        </div>
+
+        <div class="champ">
+          <label for="creation-confirmation">Confirmer le mot de passe</label>
+          <input type="password" id="creation-confirmation" autocomplete="new-password">
+        </div>
+
+        <p id="erreur-creation" class="message-erreur" role="alert" hidden></p>
+        <button type="submit" class="bouton bouton-principal">Créer le compte</button>
+      </form>
+      <p class="avertissement">Application de démonstration : n'utilisez pas un vrai mot de passe.</p>
+    </section>
+  </main>
+
+  <!-- Écran de connexion (story 12) -->
+  <main id="ecran-connexion" class="conteneur conteneur-etroit" hidden>
+    <h1 class="logo logo-centre">
+      <img src="assets/icones/favicon.svg" alt="" width="32" height="32">
+      TaskFlow
+    </h1>
+    <section class="carte" aria-labelledby="titre-connexion">
+      <h2 id="titre-connexion">Connexion</h2>
+      <form id="formulaire-connexion" class="formulaire formulaire-colonne" novalidate>
+        <div class="champ">
+          <label for="connexion-identifiant">Identifiant</label>
+          <input type="text" id="connexion-identifiant" autocomplete="username"
+                 autocapitalize="none" spellcheck="false">
+        </div>
+
+        <div class="champ">
+          <label for="connexion-mdp">Mot de passe</label>
+          <!-- type="password" : la saisie est masquée -->
+          <input type="password" id="connexion-mdp" autocomplete="current-password">
+        </div>
+
+        <p id="erreur-connexion" class="message-erreur" role="alert" hidden></p>
+        <button type="submit" class="bouton bouton-principal">Se connecter</button>
+      </form>
+      <p class="avertissement">Application de démonstration : n'utilisez pas un vrai mot de passe.</p>
+    </section>
+  </main>
 
   <!-- Écran des tâches (base, sprints 1 et 2) -->
-  <main id="ecran-taches" class="conteneur">
+  <main id="ecran-taches" class="conteneur" hidden>
     <header class="entete">
       <h1 class="logo">
         <img src="assets/icones/favicon.svg" alt="" width="32" height="32">
@@ -21,6 +89,11 @@
       </h1>
       <!-- aria-live : le lecteur d'écran annonce le nouveau nombre à chaque changement -->
       <p id="compteur" class="compteur" aria-live="polite"></p>
+      <!-- Utilisateur connecté et déconnexion (story 12) -->
+      <div class="session">
+        <span id="utilisateur-connecte" class="utilisateur-connecte"></span>
+        <button type="button" id="bouton-deconnexion" class="bouton bouton-petit">Se déconnecter</button>
+      </div>
     </header>
 
     <!-- Formulaire d'ajout (story 1) -->
