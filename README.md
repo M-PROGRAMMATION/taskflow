@@ -10,7 +10,7 @@ Ouvrir `src/index.html` par double-clic (ou avec l'extension Live Server de VS C
 
 ## Avancement
 
-Chaque fonctionnalité est développée sur sa propre branche `feature/...`, puis fusionnée dans la branche du sprint. Une case cochée = fusionnée dans le sprint. Le détail est coché dans les critères d'acceptation des user stories, plus bas.
+Chaque fonctionnalité est développée sur sa propre branche `feature/...`, créée depuis la branche du sprint (`sprint1`, `sprint2`…), puis fusionnée dans cette branche. La branche du sprint n'est fusionnée dans `main` que quand le binôme l'a validée. Une case cochée = fusionnée dans le sprint. Le détail est coché dans les critères d'acceptation des user stories, plus bas.
 
 ### Sprint 1 · La base (branche `sprint1`)
 
@@ -21,8 +21,9 @@ Chaque fonctionnalité est développée sur sa propre branche `feature/...`, pui
 - [x] `feature/supprimer-tache` : corbeille avec confirmation (story 6)
 - [x] `feature/modifier-tache` : modification directement dans la liste (story 4)
 - [x] Sauvegarde après chaque action et démarrage avec des données abîmées (story 7), vérifiée sur toutes les features
+- [x] `feature/retours-binome-sprint1` : modification enregistrée avant toute autre action, compteur « 0 tâche(s) à faire », nouvelle organisation Git dans CLAUDE.md
 
-**Vérification du sprint 1** : les fonctions pures (`Utils`, `Stockage`, `Taches`) ont été testées avec Node, puis l'application complète dans Chrome, avec un script qui simule les actions : ajout, titre vide, HTML dans le titre, cocher et décocher, modification avec Annuler, Échap et titre vide, suppression avec et sans confirmation, rechargement de la page, données abîmées dans `localStorage`. Les 29 vérifications passent. Reste à faire à la main par le binôme : un test sur Firefox et Safari, et sur le site GitHub Pages.
+**Vérification du sprint 1** : les fonctions pures (`Utils`, `Stockage`, `Taches`) ont été testées avec Node, puis l'application complète dans Chrome, avec un script qui simule les actions : ajout, titre vide, HTML dans le titre, cocher et décocher, modification avec Annuler, Échap et titre vide, suppression avec et sans confirmation, rechargement de la page, données abîmées dans `localStorage`. Les 37 vérifications passent. Reste à faire à la main par le binôme : un test sur Firefox et Safari, et sur le site GitHub Pages.
 
 ## Modèle de données d'une tâche
 
@@ -97,7 +98,7 @@ En tant qu'utilisateur, je veux voir la liste de toutes mes tâches avec leur ti
 - [x] Une tâche sans échéance affiche « Sans date ».
 - [x] Les tâches les plus récentes apparaissent en haut de la liste.
 - [x] Quand la liste est vide, un message l'indique : « Aucune tâche pour le moment. Ajoutez-en une avec le formulaire. »
-- [x] Un compteur indique le nombre de tâches restantes, par exemple « 3 tâches à faire » (« 1 tâche à faire » au singulier).
+- [x] Un compteur indique le nombre de tâches restantes, par exemple « 3 tâches à faire », « 1 tâche à faire » au singulier, et « 0 tâche(s) à faire » quand il n'en reste aucune.
 
 **3. Repérer les échéances proches**
 En tant qu'utilisateur, je veux voir au premier coup d'œil les tâches en retard ou à faire aujourd'hui afin de ne pas rater une échéance.
@@ -113,6 +114,7 @@ En tant qu'utilisateur, je veux modifier le titre, la description, la priorité 
 - [x] Les règles de l'ajout s'appliquent aussi : un titre vide est refusé avec un message d'erreur.
 - [x] Un bouton « Enregistrer » valide les changements ; un bouton « Annuler » (ou la touche Échap) referme sans rien changer.
 - [x] Une seule tâche peut être en cours de modification à la fois.
+- [x] Une autre action faite pendant une modification (cocher, supprimer, ajouter, ouvrir une autre tâche) enregistre d'abord la modification en cours. Si le titre saisi est refusé, l'erreur s'affiche et l'autre action n'est pas faite. Seuls « Annuler » et Échap referment sans enregistrer.
 - [x] La modification ne change ni l'identifiant, ni le statut, ni la place de la tâche dans la liste.
 
 **5. Terminer une tâche**
