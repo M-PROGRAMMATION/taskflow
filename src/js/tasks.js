@@ -147,6 +147,37 @@ const Taches = {
     });
   },
 
+  // Trie les tâches (story 9) et renvoie une NOUVELLE liste :
+  //   "recent"   → ordre enregistré (les plus récentes en haut, story 2),
+  //   "priority" → Haute, Moyenne, Basse,
+  //   "dueDate"  → date la plus proche en premier, tâches sans date à la fin.
+  // On trie une copie (slice) : sort modifie le tableau sur lequel il est appelé.
+  // sort est stable : deux tâches à égalité gardent leur ordre « plus récentes ».
+  trier: function (liste, tri) {
+    const copie = liste.slice();
+    if (tri === "priority") {
+      // indexOf donne 0 pour "high", 1 pour "medium", 2 pour "low"
+      copie.sort(function (a, b) {
+        return Taches.PRIORITES.indexOf(a.priority) - Taches.PRIORITES.indexOf(b.priority);
+      });
+    } else if (tri === "dueDate") {
+      copie.sort(function (a, b) {
+        if (a.dueDate === b.dueDate) {
+          return 0; // même date, ou toutes les deux sans date
+        }
+        if (a.dueDate === "") {
+          return 1; // a n'a pas de date : elle va après b
+        }
+        if (b.dueDate === "") {
+          return -1; // b n'a pas de date : a passe devant
+        }
+        // Deux dates ISO se comparent comme du texte
+        return a.dueDate < b.dueDate ? -1 : 1;
+      });
+    }
+    return copie; // "recent" : l'ordre enregistré ne change pas
+  },
+
   // Nombre de tâches encore à faire (pour le compteur de la story 2).
   compterAFaire: function (liste) {
     return liste.filter(function (tache) {

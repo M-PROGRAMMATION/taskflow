@@ -16,6 +16,7 @@
     taches: [],
     idEnModification: null, // id de la tâche en cours de modification, ou null (story 4)
     filtre: "all", // "all", "todo" ou "done" (story 8), non sauvegardé
+    tri: "recent", // "recent", "priority" ou "dueDate" (story 9), non sauvegardé
   };
 
   // Indique quel message afficher quand la liste à l'écran est vide :
@@ -41,12 +42,15 @@
       echeances[tache.id] = Taches.etatEcheance(tache, aujourdhui);
     });
 
-    // Seules les tâches du filtre choisi sont affichées ; etat.taches ne change pas
-    const tachesVisibles = Taches.filtrerParStatut(etat.taches, etat.filtre);
+    // Seules les tâches du filtre choisi sont affichées, dans l'ordre du tri choisi.
+    // etat.taches ne change pas : filtre et tri renvoient de nouvelles listes.
+    const tachesFiltrees = Taches.filtrerParStatut(etat.taches, etat.filtre);
+    const tachesVisibles = Taches.trier(tachesFiltrees, etat.tri);
 
     Interface.afficherTaches(tachesVisibles, echeances, etat.idEnModification);
     Interface.afficherMessageVide(casListeVide(tachesVisibles));
     Interface.afficherFiltre(etat.filtre);
+    Interface.afficherTri(etat.tri);
     // Le compteur compte toujours toutes les tâches à faire, quel que soit le filtre
     Interface.afficherCompteur(Taches.compterAFaire(etat.taches));
   }
@@ -159,6 +163,17 @@
     rafraichir();
   }
 
+  // Story 9 : choix dans la liste « Trier par ». Ne change que l'affichage.
+  // Si la modification en cours est refusée, la liste reprend le tri d'avant.
+  function changerTri(tri) {
+    if (!enregistrerModificationEnCours()) {
+      Interface.afficherTri(etat.tri);
+      return;
+    }
+    etat.tri = tri;
+    rafraichir();
+  }
+
   // ---------- Démarrage ----------
 
   function demarrer() {
@@ -170,6 +185,7 @@
     Interface.surActionListe(traiterActionListe);
     Interface.surModification(enregistrerModification, annulerModification);
     Interface.surFiltre(changerFiltre);
+    Interface.surTri(changerTri);
 
     rafraichir();
   }

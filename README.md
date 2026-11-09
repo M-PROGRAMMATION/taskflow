@@ -29,7 +29,7 @@ Chaque fonctionnalité est développée sur sa propre branche `feature/...`, cr�
 
 - [x] `feature/categories` : catégorie facultative (Cours, Perso, Projet) à l'ajout et à la modification, badge en couleur (story 10)
 - [x] `feature/filtrer-statut` : filtres Toutes / À faire / Terminées (story 8)
-- [ ] `feature/trier-taches` : tri par date d'ajout, priorité ou échéance (story 9)
+- [x] `feature/trier-taches` : tri par date d'ajout, priorité ou échéance (story 9)
 - [ ] `feature/rechercher-tache` : recherche par mot-clé dans le titre (story 11, bonus)
 - [ ] `feature/bilan-sprint2` : règles communes aux stories 8, 9 et 11, note de vérification, entrée de PROMPTS.md
 
@@ -159,15 +159,15 @@ En tant qu'utilisateur, je veux filtrer mes tâches par statut (toutes, à faire
 
 **9. Trier les tâches**
 En tant qu'utilisateur, je veux trier mes tâches par priorité ou par date d'échéance afin de savoir quoi faire en premier.
-- [ ] Une liste déroulante « Trier par » propose : « Plus récentes », « Priorité », « Échéance ».
-- [ ] « Plus récentes » est le tri par défaut : c'est l'ordre de la story 2.
-- [ ] « Priorité » affiche les tâches dans l'ordre Haute, Moyenne, Basse.
-- [ ] « Échéance » affiche la date la plus proche en premier, les tâches en retard arrivent donc en tête.
-- [ ] Avec le tri « Échéance », les tâches sans date sont placées à la fin.
-- [ ] Deux tâches à égalité (même priorité ou même date) gardent entre elles l'ordre « Plus récentes ».
-- [ ] Les tâches terminées sont triées comme les autres, sans traitement à part.
-- [ ] Le tri ne change que l'affichage : l'ordre enregistré ne bouge pas, et revenir à « Plus récentes » redonne l'ordre de départ.
-- [ ] Le tri reste actif après une action : une tâche ajoutée ou modifiée se place selon le tri choisi. C'est la seule exception à la story 4, où la modification ne change pas la place de la tâche.
+- [x] Une liste déroulante « Trier par » propose : « Plus récentes », « Priorité », « Échéance ».
+- [x] « Plus récentes » est le tri par défaut : c'est l'ordre de la story 2.
+- [x] « Priorité » affiche les tâches dans l'ordre Haute, Moyenne, Basse.
+- [x] « Échéance » affiche la date la plus proche en premier, les tâches en retard arrivent donc en tête.
+- [x] Avec le tri « Échéance », les tâches sans date sont placées à la fin.
+- [x] Deux tâches à égalité (même priorité ou même date) gardent entre elles l'ordre « Plus récentes ».
+- [x] Les tâches terminées sont triées comme les autres, sans traitement à part.
+- [x] Le tri ne change que l'affichage : l'ordre enregistré ne bouge pas, et revenir à « Plus récentes » redonne l'ordre de départ.
+- [x] Le tri reste actif après une action : une tâche ajoutée ou modifiée se place selon le tri choisi. C'est la seule exception à la story 4, où la modification ne change pas la place de la tâche.
 
 **10. Classer par catégorie**
 En tant qu'utilisateur, je veux classer mes tâches dans une catégorie (cours, perso, projet) affichée avec sa propre couleur afin de distinguer d'un coup d'œil les différents domaines de ma vie.
