@@ -20,7 +20,9 @@ Chaque fonctionnalité est développée sur sa propre branche `feature/...`, pui
 - [x] `feature/terminer-tache` : case à cocher, tâche barrée (story 5)
 - [x] `feature/supprimer-tache` : corbeille avec confirmation (story 6)
 - [x] `feature/modifier-tache` : modification directement dans la liste (story 4)
-- [ ] Sauvegarde après chaque action et démarrage avec des données abîmées (story 7), vérifiée sur toutes les features
+- [x] Sauvegarde après chaque action et démarrage avec des données abîmées (story 7), vérifiée sur toutes les features
+
+**Vérification du sprint 1** : les fonctions pures (`Utils`, `Stockage`, `Taches`) ont été testées avec Node, puis l'application complète dans Chrome, avec un script qui simule les actions : ajout, titre vide, HTML dans le titre, cocher et décocher, modification avec Annuler, Échap et titre vide, suppression avec et sans confirmation, rechargement de la page, données abîmées dans `localStorage`. Les 29 vérifications passent. Reste à faire à la main par le binôme : un test sur Firefox et Safari, et sur le site GitHub Pages.
 
 ## Modèle de données d'une tâche
 
@@ -128,10 +130,10 @@ En tant qu'utilisateur, je veux supprimer une tâche avec l'icône corbeille afi
 
 **7. Retrouver ses tâches**
 En tant qu'utilisateur, je veux retrouver mes tâches après avoir fermé puis rouvert mon navigateur afin de ne pas perdre mon travail.
-- [ ] Chaque action (ajout, modification, case cochée, suppression) est sauvegardée immédiatement, sans bouton « Enregistrer » global.
-- [ ] Après fermeture et réouverture du navigateur, on retrouve les mêmes tâches, avec le même statut et dans le même ordre.
-- [ ] Si les données sauvegardées sont illisibles (abîmées ou modifiées à la main), l'application démarre quand même, avec une liste vide, sans planter.
-- [ ] Limite connue : les tâches sont liées à ce navigateur sur cet appareil. Elles ne sont pas visibles depuis un autre ordinateur, et vider les données du site les efface.
+- [x] Chaque action (ajout, modification, case cochée, suppression) est sauvegardée immédiatement, sans bouton « Enregistrer » global.
+- [x] Après fermeture et réouverture du navigateur, on retrouve les mêmes tâches, avec le même statut et dans le même ordre.
+- [x] Si les données sauvegardées sont illisibles (abîmées ou modifiées à la main), l'application démarre quand même, avec une liste vide, sans planter.
+- [x] Limite connue : les tâches sont liées à ce navigateur sur cet appareil. Elles ne sont pas visibles depuis un autre ordinateur, et vider les données du site les efface.
 
 ### Sprint 2 · Informatique
 
