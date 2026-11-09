@@ -134,7 +134,7 @@ En tant qu'utilisateur, je veux modifier le titre, la description, la priorité 
 - [x] Les règles de l'ajout s'appliquent aussi : un titre vide est refusé avec un message d'erreur.
 - [x] Un bouton « Enregistrer » valide les changements ; un bouton « Annuler » (ou la touche Échap) referme sans rien changer.
 - [x] Une seule tâche peut être en cours de modification à la fois.
-- [x] Une autre action faite pendant une modification (cocher, supprimer, ajouter, ouvrir une autre tâche) enregistre d'abord la modification en cours. Si le titre saisi est refusé, l'erreur s'affiche et l'autre action n'est pas faite. Seuls « Annuler » et Échap referment sans enregistrer.
+- [x] Une autre action faite pendant une modification (cocher, supprimer, ajouter, ouvrir une autre tâche) enregistre d'abord la modification en cours. Si le titre saisi est refusé, l'erreur s'affiche et l'autre action n'est pas faite. Seuls « Annuler », Échap et « Se déconnecter » (story 12) referment sans enregistrer.
 - [x] La modification ne change ni l'identifiant, ni le statut, ni la place de la tâche dans la liste.
 
 **5. Terminer une tâche**
@@ -227,6 +227,10 @@ En tant qu'utilisateur, je veux me connecter avec un identifiant et un mot de pa
 - [x] Une fois le compte créé, cet écran ne réapparaît plus : les ouvertures suivantes affichent l'écran de connexion.
 - [x] Recharger la page ne déconnecte pas : la session est gardée dans `sessionStorage` jusqu'à la fermeture de l'onglet. Seul l'identifiant y est enregistré, jamais le mot de passe ni son empreinte.
 - [x] Un bouton « Se déconnecter » efface la session et ramène à l'écran de connexion.
+- [x] Une modification de tâche en cours n'est pas enregistrée à la déconnexion : elle est abandonnée, comme avec « Annuler ». C'est la seule exception à la règle de la story 4.
+- [x] À la déconnexion, les tâches sont retirées de la page, et le filtre, le tri et la recherche reviennent à leur valeur de départ.
+- [x] Le champ mot de passe est vidé après chaque tentative de connexion, réussie ou refusée.
+- [x] Si les comptes enregistrés sont illisibles (modifiés à la main), l'écran du premier lancement revient. Les tâches sont gardées.
 - [x] Les tâches sont communes : le modèle de données d'une tâche ne change pas.
 
 **13. Exiger un mot de passe robuste**
@@ -235,6 +239,7 @@ En tant qu'utilisateur, je veux que mon mot de passe soit refusé s'il ne contie
 - [x] Les 4 règles sont vérifiées : au moins 8 caractères, une majuscule (A à Z), un chiffre (0 à 9), un caractère spécial.
 - [x] Un caractère spécial est tout ce qui n'est ni une lettre ni un chiffre : `!`, `?`, `#` ou un espace. Une lettre accentuée (`é`, `è`, `à`…) n'en est pas un.
 - [x] Si une règle n'est pas respectée, le compte n'est pas créé et le message indique chaque règle manquante, par exemple « Il manque : une majuscule, un chiffre. ».
+- [x] La robustesse est contrôlée avant la confirmation : un mot de passe trop faible est refusé, même si les deux champs sont identiques.
 - [x] Exemples à tester : `Abcdef1!` est accepté ; `abcdef1!` (pas de majuscule), `Abcdefg!` (pas de chiffre), `Abcdefg1` et `Abcdefé1` (pas de caractère spécial) et `Abc1!` (trop court) sont refusés.
 
 **14. Voir la jauge de robustesse**
@@ -263,6 +268,7 @@ En tant qu'utilisateur, je veux que la connexion soit bloquée après 3 mots de 
 - [x] Le blocage dure 20 secondes, puis se lève tout seul et le compteur repart de 0.
 - [x] Pendant le blocage, la connexion est refusée même avec le bon mot de passe.
 - [x] Le blocage continue après un rechargement de la page, car l'heure de fin est enregistrée.
+- [x] Pendant le blocage, le message donne le temps restant, par exemple « Compte bloqué. Réessayez dans 17 secondes. ». Une tentative pendant le blocage ne le prolonge pas.
 
 **Modèle utilisateur**
 
@@ -282,6 +288,7 @@ Ces limites sont connues et ne se corrigent pas sans serveur :
 - La connexion ne protège que l'affichage : avec les outils de développement, n'importe qui peut lire ou modifier `localStorage`, y compris les tâches, qui ne sont pas chiffrées, et se déclarer connecté en écrivant dans `sessionStorage`.
 - Le blocage se contourne en vidant les données du site ou en remettant le compteur à 0.
 - SHA-256 est un hachage rapide et il n'y a pas de sel : deux mots de passe identiques donnent la même empreinte, et les mots de passe faibles se retrouvent facilement. Un vrai site utiliserait un algorithme lent et salé, côté serveur.
+- Le message « Compte bloqué » révèle qu'un compte existe, puisqu'un identifiant inconnu n'est jamais bloqué. Ici, c'est sans gravité : le seul identifiant, `test`, est connu de tous. Un vrai site afficherait le même message dans les deux cas.
 - Un mot de passe oublié ne peut pas être récupéré, puisque seule l'empreinte est enregistrée. Il faut vider les données du site, ce qui efface aussi les tâches.
 - Pour toutes ces raisons, l'application n'accepte que des comptes de test fictifs : jamais de vrai mot de passe ni de données personnelles réelles.
 

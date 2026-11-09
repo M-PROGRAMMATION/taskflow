@@ -279,17 +279,16 @@
     rafraichir();
   }
 
-  // Bouton « Se déconnecter ». Comme les autres actions, une modification en cours
-  // est d'abord enregistrée (si le titre est refusé, on reste connecté).
+  // Bouton « Se déconnecter ». Décision du binôme (PROMPTS.md, prompt 20) : contrairement
+  // aux autres actions, une modification en cours n'est PAS enregistrée, elle est
+  // abandonnée comme avec « Annuler ». La déconnexion n'est donc jamais bloquée.
   function seDeconnecter() {
-    if (!enregistrerModificationEnCours()) {
-      return;
-    }
     Stockage.effacerSession();
     // On repart d'un état vide, comme après un rechargement : les tâches ne restent
     // pas dans la page, et le filtre, le tri et la recherche reviennent par défaut.
     etat.utilisateur = "";
     etat.taches = [];
+    etat.idEnModification = null; // la modification en cours est abandonnée
     etat.filtre = "all";
     etat.tri = "recent";
     etat.recherche = "";
