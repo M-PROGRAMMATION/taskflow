@@ -11,7 +11,8 @@ const Interface = {
   LIBELLES_PRIORITE: { high: "Haute", medium: "Moyenne", low: "Basse" },
   LIBELLES_ECHEANCE: { late: "En retard", today: "Aujourd'hui" },
   LIBELLES_CATEGORIE: { school: "Cours", personal: "Perso", project: "Projet" },
-  // Messages de liste vide : aucune tâche du tout (story 2), ou filtre sans résultat (story 8)
+  // Messages de liste vide : aucune tâche du tout (story 2), ou filtre sans résultat (story 8).
+  // Le message de la recherche (story 11) contient le mot-clé : il est construit dans afficherMessageVide.
   MESSAGES_VIDE: {
     aucune: "Aucune tâche pour le moment. Ajoutez-en une avec le formulaire.",
     todo: "Aucune tâche à faire.",
@@ -224,11 +225,19 @@ const Interface = {
   },
 
   // Affiche le message de liste vide qui correspond à cas
-  // ("aucune", "todo", "done"), ou le cache si cas vaut "".
-  afficherMessageVide: function (cas) {
+  // ("aucune", "todo", "done", "recherche"), ou le cache si cas vaut "".
+  // motCle : le mot recherché, repris dans le message de la story 11.
+  afficherMessageVide: function (cas, motCle) {
     const message = document.getElementById("message-vide");
     message.hidden = cas === "";
-    message.textContent = cas === "" ? "" : Interface.MESSAGES_VIDE[cas];
+    if (cas === "") {
+      message.textContent = "";
+    } else if (cas === "recherche") {
+      // textContent : un mot-clé contenant du HTML s'affiche tel quel
+      message.textContent = "Aucune tâche ne correspond à « " + motCle + " ».";
+    } else {
+      message.textContent = Interface.MESSAGES_VIDE[cas];
+    }
   },
 
   // ---------- Filtres (story 8) ----------
@@ -264,6 +273,25 @@ const Interface = {
     const liste = document.getElementById("tri");
     liste.addEventListener("change", function () {
       traiter(liste.value);
+    });
+  },
+
+  // ---------- Recherche (story 11) ----------
+
+  // Remet dans le champ le texte de l'état (par exemple "" après un ajout).
+  // On ne réécrit que si le texte est différent, pour ne pas déplacer le curseur pendant la frappe.
+  afficherRecherche: function (texte) {
+    const champ = document.getElementById("recherche");
+    if (champ.value !== texte) {
+      champ.value = texte;
+    }
+  },
+
+  // traiter(texte) est appelée à chaque caractère tapé ou effacé (événement input).
+  surRecherche: function (traiter) {
+    const champ = document.getElementById("recherche");
+    champ.addEventListener("input", function () {
+      traiter(champ.value);
     });
   },
 

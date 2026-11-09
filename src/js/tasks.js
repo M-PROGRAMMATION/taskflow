@@ -147,6 +147,20 @@ const Taches = {
     });
   },
 
+  // Garde les tâches dont le titre contient le mot-clé (story 11).
+  // Majuscules et minuscules ignorées (toLowerCase), mais pas les accents :
+  // « revision » ne trouve pas « Révision » (décision du binôme, pas de normalize).
+  // Un mot-clé vide (ou fait d'espaces) garde toutes les tâches.
+  rechercher: function (liste, motCle) {
+    const mot = Utils.nettoyerTexte(motCle).toLowerCase();
+    if (mot === "") {
+      return liste.slice();
+    }
+    return liste.filter(function (tache) {
+      return tache.title.toLowerCase().includes(mot);
+    });
+  },
+
   // Trie les tâches (story 9) et renvoie une NOUVELLE liste :
   //   "recent"   → ordre enregistré (les plus récentes en haut, story 2),
   //   "priority" → Haute, Moyenne, Basse,

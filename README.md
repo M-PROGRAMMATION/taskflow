@@ -30,7 +30,7 @@ Chaque fonctionnalité est développée sur sa propre branche `feature/...`, cr�
 - [x] `feature/categories` : catégorie facultative (Cours, Perso, Projet) à l'ajout et à la modification, badge en couleur (story 10)
 - [x] `feature/filtrer-statut` : filtres Toutes / À faire / Terminées (story 8)
 - [x] `feature/trier-taches` : tri par date d'ajout, priorité ou échéance (story 9)
-- [ ] `feature/rechercher-tache` : recherche par mot-clé dans le titre (story 11, bonus)
+- [x] `feature/rechercher-tache` : recherche par mot-clé dans le titre (story 11, bonus)
 - [ ] `feature/bilan-sprint2` : règles communes aux stories 8, 9 et 11, note de vérification, entrée de PROMPTS.md
 
 ## Modèle de données d'une tâche
@@ -182,15 +182,15 @@ En tant qu'utilisateur, je veux classer mes tâches dans une catégorie (cours, 
 
 **11. Rechercher une tâche** *(bonus)*
 En tant qu'utilisateur, je veux rechercher une tâche par un mot-clé de son titre afin de la retrouver rapidement quand la liste est longue.
-- [ ] Un champ « Rechercher » est affiché au-dessus de la liste. La liste se met à jour à chaque caractère tapé, sans bouton à cliquer.
-- [ ] La recherche porte sur le titre uniquement, pas sur la description.
-- [ ] Une partie de mot suffit : « css » trouve « Réviser le CSS ».
-- [ ] Les majuscules et les minuscules sont ignorées.
-- [ ] Les accents comptent : « revision » ne trouve pas « Révision ».
-- [ ] Les espaces au début et à la fin du mot-clé sont ignorés. Un champ vide affiche à nouveau toutes les tâches.
-- [ ] Si rien ne correspond, un message l'indique : « Aucune tâche ne correspond à « xyz ». ».
-- [ ] Un mot-clé contenant du HTML (ex. `<b>test</b>`) s'affiche tel quel dans ce message, sans être interprété.
-- [ ] Le compteur de la story 2 ne change pas pendant une recherche.
+- [x] Un champ « Rechercher » est affiché au-dessus de la liste. La liste se met à jour à chaque caractère tapé, sans bouton à cliquer.
+- [x] La recherche porte sur le titre uniquement, pas sur la description.
+- [x] Une partie de mot suffit : « css » trouve « Réviser le CSS ».
+- [x] Les majuscules et les minuscules sont ignorées.
+- [x] Les accents comptent : « revision » ne trouve pas « Révision ».
+- [x] Les espaces au début et à la fin du mot-clé sont ignorés. Un champ vide affiche à nouveau toutes les tâches.
+- [x] Si rien ne correspond, un message l'indique : « Aucune tâche ne correspond à « xyz ». ».
+- [x] Un mot-clé contenant du HTML (ex. `<b>test</b>`) s'affiche tel quel dans ce message, sans être interprété.
+- [x] Le compteur de la story 2 ne change pas pendant une recherche.
 
 **Règles communes aux stories 8, 9 et 11**
 - [ ] Le filtre, la recherche et le tri se combinent : avec « À faire », « css » et le tri « Priorité », on voit uniquement les tâches à faire dont le titre contient « css », triées par priorité.
