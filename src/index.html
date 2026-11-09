@@ -4,6 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>TaskFlow</title>
+  <link rel="icon" href="assets/icones/favicon.svg" type="image/svg+xml">
   <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
@@ -12,8 +13,24 @@
   </section>
 
   <!-- Écran des tâches (base, sprints 1 et 2) -->
-  <main id="ecran-taches">
-    <h1>TaskFlow</h1>
+  <main id="ecran-taches" class="conteneur">
+    <header class="entete">
+      <h1 class="logo">
+        <img src="assets/icones/favicon.svg" alt="" width="32" height="32">
+        TaskFlow
+      </h1>
+      <!-- aria-live : le lecteur d'écran annonce le nouveau nombre à chaque changement -->
+      <p id="compteur" class="compteur" aria-live="polite"></p>
+    </header>
+
+    <!-- Liste des tâches -->
+    <section class="carte" aria-labelledby="titre-liste">
+      <h2 id="titre-liste">Mes tâches</h2>
+      <p id="message-vide" class="message-vide" hidden>
+        Aucune tâche pour le moment. Ajoutez-en une avec le formulaire.
+      </p>
+      <ul id="liste-taches" class="liste-taches"></ul>
+    </section>
   </main>
 
   <!-- Scripts classiques (pas de type="module"), dans l'ordre des dépendances -->
