@@ -3,6 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- Le titre de l'onglet change avec l'écran affiché (Interface.afficherEcran) -->
   <title>TaskFlow</title>
   <link rel="icon" href="assets/icones/favicon.svg" type="image/svg+xml">
   <link rel="stylesheet" href="css/style.css">
@@ -11,172 +12,297 @@
   <!-- Les trois écrans sont cachés (hidden) au départ : app.js n'en affiche qu'un seul.
        Sans JavaScript, aucune tâche n'est donc visible. -->
 
-  <!-- Écran du premier lancement : choix du mot de passe du compte de test (stories 12, 13, 14) -->
-  <main id="ecran-creation" class="conteneur conteneur-etroit" hidden>
-    <h1 class="logo logo-centre">
-      <img src="assets/icones/favicon.svg" alt="" width="32" height="32">
-      TaskFlow
-    </h1>
-    <section class="carte" aria-labelledby="titre-creation">
-      <h2 id="titre-creation">Premier lancement</h2>
-      <p class="texte-doux">
-        Choisissez le mot de passe du compte de test. Identifiant : <strong>test</strong>
-      </p>
-      <form id="formulaire-creation" class="formulaire formulaire-colonne" novalidate>
-        <!-- Champ caché : indique l'identifiant au gestionnaire de mots de passe du navigateur -->
-        <input type="text" name="username" value="test" autocomplete="username" hidden>
+  <!-- ========== Écran du premier lancement : choix du mot de passe (stories 12, 13, 14) ========== -->
+  <div id="ecran-creation" class="auth" hidden>
+    <aside class="auth-side" aria-label="Présentation de TaskFlow">
+      <div class="logo logo-clair">
+        <img src="assets/icones/logo-clair.svg" alt="" width="34" height="34">
+        <span class="logo-text">TaskFlow</span>
+      </div>
 
-        <div class="champ">
-          <label for="creation-mdp">Mot de passe</label>
-          <input type="password" id="creation-mdp" autocomplete="new-password"
-                 aria-describedby="creation-regles erreur-creation">
-          <!-- Jauge de robustesse (story 14) : remplie par Interface.afficherJauge -->
-          <div id="jauge" class="jauge" data-niveau="">
-            <div class="jauge-barre"></div>
+      <div class="auth-pitch">
+        <span class="pill-outline">
+          <img src="assets/icones/cadenas.svg" alt="" width="14" height="14">
+          Premier lancement
+        </span>
+        <p class="auth-pitch-title">Un mot de passe solide, et c'est parti.</p>
+        <p class="auth-pitch-text">Il est haché en SHA-256 avant d'être enregistré : seule son empreinte est gardée, jamais le mot de passe en clair.</p>
+      </div>
+
+      <div></div>
+    </aside>
+
+    <main class="auth-main">
+      <!-- novalidate : la validation est faite par Auth, avec nos propres messages -->
+      <form id="formulaire-creation" class="auth-form" aria-labelledby="titre-creation" novalidate>
+        <div class="auth-head">
+          <h1 id="titre-creation">Choisissez votre mot de passe</h1>
+          <p>Votre compte de test est prêt, il ne manque que le mot de passe.</p>
+        </div>
+
+        <p class="alert alert-warning">Application de démonstration : n'utilisez pas un vrai mot de passe.</p>
+
+        <div class="field">
+          <label class="label" for="creation-identifiant">Identifiant</label>
+          <!-- readonly : l'identifiant « test » est imposé (décision du binôme).
+               autocomplete="username" : le gestionnaire de mots de passe du navigateur le retient. -->
+          <input class="input input-lg" id="creation-identifiant" type="text" value="test"
+                 autocomplete="username" readonly>
+        </div>
+
+        <div class="field">
+          <label class="label" for="creation-mdp">Mot de passe</label>
+          <input class="input input-lg" id="creation-mdp" type="password" autocomplete="new-password"
+                 aria-describedby="jauge-texte regles erreur-creation">
+
+          <!-- Jauge de robustesse (story 14) : data-niveau rempli par Interface.afficherJauge -->
+          <div id="jauge" class="gauge" data-niveau="">
+            <div class="gauge-bars" aria-hidden="true"><span></span><span></span><span></span></div>
+            <span id="jauge-texte" class="gauge-label" aria-live="polite"></span>
           </div>
-          <p id="jauge-texte" class="jauge-texte" aria-live="polite"></p>
-          <p id="creation-regles" class="aide">
-            Au moins 8 caractères, une majuscule, un chiffre et un caractère spécial.
-          </p>
+
+          <!-- Règles de la story 13 : la classe is-ok est ajoutée quand la règle est respectée.
+               L'ordre est celui de Auth.REGLES. -->
+          <ul id="regles" class="rules" aria-label="Règles du mot de passe">
+            <li>Au moins 8 caractères</li>
+            <li>Une majuscule</li>
+            <li>Un chiffre</li>
+            <li>Un caractère spécial (! ? # espace…)</li>
+          </ul>
         </div>
 
-        <div class="champ">
-          <label for="creation-confirmation">Confirmer le mot de passe</label>
-          <input type="password" id="creation-confirmation" autocomplete="new-password">
+        <div class="field">
+          <label class="label" for="creation-confirmation">Confirmation</label>
+          <input class="input input-lg" id="creation-confirmation" type="password" autocomplete="new-password">
         </div>
 
-        <p id="erreur-creation" class="message-erreur" role="alert" hidden></p>
-        <button type="submit" class="bouton bouton-principal">Créer le compte</button>
+        <p id="erreur-creation" class="alert alert-error" role="alert" hidden></p>
+        <button type="submit" class="btn btn-primary btn-lg btn-block">Créer le compte</button>
       </form>
-      <p class="avertissement">Application de démonstration : n'utilisez pas un vrai mot de passe.</p>
-    </section>
-  </main>
+    </main>
+  </div>
 
-  <!-- Écran de connexion (story 12) -->
-  <main id="ecran-connexion" class="conteneur conteneur-etroit" hidden>
-    <h1 class="logo logo-centre">
-      <img src="assets/icones/favicon.svg" alt="" width="32" height="32">
-      TaskFlow
-    </h1>
-    <section class="carte" aria-labelledby="titre-connexion">
-      <h2 id="titre-connexion">Connexion</h2>
-      <form id="formulaire-connexion" class="formulaire formulaire-colonne" novalidate>
-        <div class="champ">
-          <label for="connexion-identifiant">Identifiant</label>
-          <input type="text" id="connexion-identifiant" autocomplete="username"
+  <!-- ========== Écran de connexion (story 12) ========== -->
+  <div id="ecran-connexion" class="auth" hidden>
+    <aside class="auth-side" aria-label="Présentation de TaskFlow">
+      <div class="logo logo-clair">
+        <img src="assets/icones/logo-clair.svg" alt="" width="34" height="34">
+        <span class="logo-text">TaskFlow</span>
+      </div>
+
+      <!-- Illustration : trois tâches abstraites (décorative, ignorée par les lecteurs d'écran) -->
+      <div class="mock-tasks" aria-hidden="true">
+        <div class="mock-task">
+          <span class="mock-box is-checked"><img src="assets/icones/coche-blanche.svg" alt="" width="12" height="12"></span>
+          <span class="mock-line mock-line-1"></span>
+          <span class="mock-chip mock-chip-low"></span>
+        </div>
+        <div class="mock-task">
+          <span class="mock-box"></span>
+          <span class="mock-line mock-line-2 is-bright"></span>
+          <span class="mock-chip mock-chip-medium"></span>
+        </div>
+        <div class="mock-task">
+          <span class="mock-box"></span>
+          <span class="mock-line mock-line-3"></span>
+          <span class="mock-chip mock-chip-high"></span>
+        </div>
+      </div>
+
+      <div class="auth-pitch">
+        <p class="auth-pitch-title">Ce que vous avez à faire, au même endroit.</p>
+        <p class="auth-pitch-text">Ajoutez, triez, cochez. Vos tâches restent enregistrées dans ce navigateur.</p>
+      </div>
+    </aside>
+
+    <main class="auth-main">
+      <form id="formulaire-connexion" class="auth-form" aria-labelledby="titre-connexion" novalidate>
+        <div class="auth-head">
+          <h1 id="titre-connexion">Connexion</h1>
+          <p>Connectez-vous pour voir vos tâches.</p>
+        </div>
+
+        <p class="alert alert-warning">Application de démonstration : n'utilisez pas un vrai mot de passe.</p>
+
+        <div class="field">
+          <label class="label" for="connexion-identifiant">Identifiant</label>
+          <input class="input input-lg" id="connexion-identifiant" type="text" autocomplete="username"
                  autocapitalize="none" spellcheck="false">
         </div>
 
-        <div class="champ">
-          <label for="connexion-mdp">Mot de passe</label>
+        <div class="field">
+          <label class="label" for="connexion-mdp">Mot de passe</label>
           <!-- type="password" : la saisie est masquée -->
-          <input type="password" id="connexion-mdp" autocomplete="current-password">
+          <input class="input input-lg" id="connexion-mdp" type="password" autocomplete="current-password"
+                 aria-describedby="erreur-connexion">
         </div>
 
-        <p id="erreur-connexion" class="message-erreur" role="alert" hidden></p>
-        <button type="submit" class="bouton bouton-principal">Se connecter</button>
+        <!-- Message d'erreur ; pendant un blocage (story 16), il prend la classe alert-locked -->
+        <p id="erreur-connexion" class="alert alert-error" role="alert" hidden></p>
+        <button type="submit" id="bouton-connexion" class="btn btn-primary btn-lg btn-block">Se connecter</button>
       </form>
-      <p class="avertissement">Application de démonstration : n'utilisez pas un vrai mot de passe.</p>
-    </section>
-  </main>
+    </main>
+  </div>
 
-  <!-- Écran des tâches (base, sprints 1 et 2) -->
-  <main id="ecran-taches" class="conteneur" hidden>
-    <header class="entete">
-      <h1 class="logo">
-        <img src="assets/icones/favicon.svg" alt="" width="32" height="32">
-        TaskFlow
-      </h1>
-      <!-- aria-live : le lecteur d'écran annonce le nouveau nombre à chaque changement -->
-      <p id="compteur" class="compteur" aria-live="polite"></p>
-      <!-- Utilisateur connecté et déconnexion (story 12) -->
-      <div class="session">
-        <span id="utilisateur-connecte" class="utilisateur-connecte"></span>
-        <button type="button" id="bouton-deconnexion" class="bouton bouton-petit">Se déconnecter</button>
+  <!-- ========== Écran des tâches (base, sprints 1 et 2) ========== -->
+  <div id="ecran-taches" hidden>
+    <header class="topbar">
+      <div class="topbar-inner">
+        <div class="logo">
+          <img src="assets/icones/favicon.svg" alt="" width="34" height="34">
+          <span class="logo-text">TaskFlow</span>
+        </div>
+        <!-- Utilisateur connecté et déconnexion (story 12) -->
+        <div class="topbar-user">
+          <p class="user-chip">
+            <span id="utilisateur-initiale" class="avatar" aria-hidden="true"></span>
+            <span class="sr-only">Connecté :</span>
+            <span id="utilisateur-connecte"></span>
+          </p>
+          <button type="button" id="bouton-deconnexion" class="btn btn-secondary">
+            <img src="assets/icones/deconnexion.svg" alt="" width="16" height="16">
+            Se déconnecter
+          </button>
+        </div>
       </div>
     </header>
 
-    <!-- Formulaire d'ajout (story 1) -->
-    <!-- novalidate : la validation est faite par Taches.valider, avec nos propres messages -->
-    <section class="carte" aria-labelledby="titre-ajout">
-      <h2 id="titre-ajout">Nouvelle tâche</h2>
-      <form id="formulaire-ajout" class="formulaire" novalidate>
-        <div class="champ champ-large">
-          <label for="ajout-titre">Titre</label>
-          <input type="text" id="ajout-titre" maxlength="100" autocomplete="off"
-                 placeholder="Ex. Réviser le CSS" aria-describedby="erreur-ajout">
-          <p id="erreur-ajout" class="message-erreur" role="alert" hidden></p>
+    <main class="container">
+      <div class="page-head">
+        <div>
+          <p id="date-du-jour" class="page-head-date"></p>
+          <h1 class="page-title">Mes tâches</h1>
         </div>
-
-        <div class="champ champ-large">
-          <label for="ajout-description">Description <span class="facultatif">(facultative)</span></label>
-          <input type="text" id="ajout-description" autocomplete="off" placeholder="Ex. Flexbox">
-        </div>
-
-        <div class="champ">
-          <label for="ajout-priorite">Priorité</label>
-          <select id="ajout-priorite">
-            <option value="high">Haute</option>
-            <option value="medium" selected>Moyenne</option>
-            <option value="low">Basse</option>
-          </select>
-        </div>
-
-        <div class="champ">
-          <label for="ajout-echeance">Échéance <span class="facultatif">(facultative)</span></label>
-          <input type="date" id="ajout-echeance">
-        </div>
-
-        <div class="champ">
-          <label for="ajout-categorie">Catégorie <span class="facultatif">(facultative)</span></label>
-          <select id="ajout-categorie">
-            <option value="" selected>Aucune</option>
-            <option value="school">Cours</option>
-            <option value="personal">Perso</option>
-            <option value="project">Projet</option>
-          </select>
-        </div>
-
-        <button type="submit" class="bouton bouton-principal">Ajouter</button>
-      </form>
-    </section>
-
-    <!-- Liste des tâches -->
-    <section class="carte" aria-labelledby="titre-liste">
-      <h2 id="titre-liste">Mes tâches</h2>
-
-      <!-- Filtre, tri et recherche (sprint 2) : ne changent que l'affichage -->
-      <div class="barre-outils">
-        <!-- Recherche par mot-clé dans le titre (story 11) -->
-        <div class="champ champ-recherche">
-          <label for="recherche">Rechercher</label>
-          <input type="search" id="recherche" autocomplete="off" placeholder="Mot-clé du titre">
-        </div>
-
-        <!-- Filtres par statut (story 8) -->
-        <div id="filtres" class="filtres" role="group" aria-label="Filtrer par statut">
-          <button type="button" class="bouton-filtre" data-filtre="all" aria-pressed="true">Toutes</button>
-          <button type="button" class="bouton-filtre" data-filtre="todo" aria-pressed="false">À faire</button>
-          <button type="button" class="bouton-filtre" data-filtre="done" aria-pressed="false">Terminées</button>
-        </div>
-
-        <!-- Tri (story 9) -->
-        <div class="champ champ-tri">
-          <label for="tri">Trier par</label>
-          <!-- autocomplete="off" : au rechargement, le navigateur ne remet pas l'ancien tri -->
-          <select id="tri" autocomplete="off">
-            <option value="recent" selected>Plus récentes</option>
-            <option value="priority">Priorité</option>
-            <option value="dueDate">Échéance</option>
-          </select>
-        </div>
+        <!-- Compteur (story 2). aria-live : le lecteur d'écran annonce chaque changement -->
+        <p id="compteur" class="counter" aria-live="polite">
+          <span class="counter-number"></span>
+          <span class="counter-label"></span>
+        </p>
       </div>
 
-      <!-- Texte rempli par Interface.afficherMessageVide -->
-      <p id="message-vide" class="message-vide" hidden></p>
-      <ul id="liste-taches" class="liste-taches"></ul>
-    </section>
-  </main>
+      <div class="layout">
+        <!-- Formulaire d'ajout (story 1) -->
+        <!-- novalidate : la validation est faite par Taches.valider, avec nos propres messages -->
+        <form id="formulaire-ajout" class="card add-form" aria-labelledby="titre-ajout" novalidate>
+          <h2 id="titre-ajout">Nouvelle tâche</h2>
+
+          <div class="field">
+            <div class="field-head">
+              <label class="label" for="ajout-titre">Titre</label>
+              <!-- Nombre de caractères tapés, mis à jour par Interface -->
+              <span id="ajout-nombre-caracteres" class="char-count" aria-hidden="true">0 / 100</span>
+            </div>
+            <input class="input" id="ajout-titre" type="text" maxlength="100" autocomplete="off"
+                   placeholder="Ex. Réviser le CSS" aria-describedby="erreur-ajout">
+            <p id="erreur-ajout" class="field-error" role="alert" hidden></p>
+          </div>
+
+          <div class="field">
+            <label class="label" for="ajout-description">Description <span class="label-hint">(facultative)</span></label>
+            <!-- input et non textarea : la touche Entrée doit ajouter la tâche (story 1) -->
+            <input class="input" id="ajout-description" type="text" autocomplete="off" placeholder="Ajoutez un détail">
+          </div>
+
+          <div class="field-row">
+            <div class="field">
+              <label class="label" for="ajout-priorite">Priorité</label>
+              <select class="select" id="ajout-priorite">
+                <option value="high">Haute</option>
+                <option value="medium" selected>Moyenne</option>
+                <option value="low">Basse</option>
+              </select>
+            </div>
+            <div class="field">
+              <label class="label" for="ajout-categorie">Catégorie</label>
+              <select class="select" id="ajout-categorie">
+                <option value="" selected>Aucune</option>
+                <option value="school">Cours</option>
+                <option value="personal">Perso</option>
+                <option value="project">Projet</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="field">
+            <label class="label" for="ajout-echeance">Échéance <span class="label-hint">(facultative)</span></label>
+            <input class="input" id="ajout-echeance" type="date">
+          </div>
+
+          <div class="add-form-actions">
+            <button type="submit" class="btn btn-primary btn-lg btn-block">
+              <img src="assets/icones/plus.svg" alt="" width="18" height="18">
+              Ajouter
+            </button>
+            <p class="add-form-hint">ou appuyez sur <kbd>Entrée</kbd></p>
+          </div>
+        </form>
+
+        <!-- Liste des tâches (stories 2 à 11) -->
+        <section class="tasks" aria-labelledby="titre-liste">
+          <h2 id="titre-liste" class="sr-only">Liste des tâches</h2>
+
+          <!-- Filtre, tri et recherche (sprint 2) : ne changent que l'affichage -->
+          <div class="toolbar">
+            <!-- Recherche par mot-clé dans le titre (story 11) -->
+            <div class="search">
+              <label class="sr-only" for="recherche">Rechercher</label>
+              <input class="input" id="recherche" type="search" autocomplete="off" placeholder="Rechercher">
+            </div>
+
+            <!-- Filtres par statut (story 8) -->
+            <div id="filtres" class="segmented" role="group" aria-label="Filtrer par statut">
+              <button type="button" data-filtre="all" aria-pressed="true">Toutes</button>
+              <button type="button" data-filtre="todo" aria-pressed="false">À faire</button>
+              <button type="button" data-filtre="done" aria-pressed="false">Terminées</button>
+            </div>
+
+            <!-- Tri (story 9) -->
+            <div class="sort">
+              <label class="label" for="tri">Trier par</label>
+              <!-- autocomplete="off" : au rechargement, le navigateur ne remet pas l'ancien tri -->
+              <select class="select" id="tri" autocomplete="off">
+                <option value="recent" selected>Plus récentes</option>
+                <option value="priority">Priorité</option>
+                <option value="dueDate">Échéance</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="card task-card">
+            <!-- Message de liste vide, rempli par Interface.afficherMessageVide :
+                 classe "empty" (aucune tâche, avec illustration) ou "empty-box" (filtre ou recherche) -->
+            <div id="message-vide" class="empty" hidden>
+              <div class="empty-illustration" aria-hidden="true">
+                <span class="back"></span>
+                <span class="front"><span class="box"></span><span class="line"></span></span>
+              </div>
+              <p id="message-vide-texte"></p>
+            </div>
+            <ul id="liste-taches" class="task-list"></ul>
+          </div>
+        </section>
+      </div>
+    </main>
+  </div>
+
+  <!-- ========== Fenêtre de confirmation de suppression (story 6) ========== -->
+  <!-- <dialog> est un élément HTML standard ; showModal() l'ouvre par-dessus la page.
+       Le formulaire method="dialog" ferme la fenêtre, et returnValue vaut la value du bouton cliqué. -->
+  <dialog id="fenetre-suppression" class="dialog" aria-labelledby="fenetre-suppression-titre">
+    <form method="dialog">
+      <div class="dialog-body">
+        <span class="dialog-icon"><img src="assets/icones/corbeille-rouge.svg" alt="" width="18" height="18"></span>
+        <div>
+          <p id="fenetre-suppression-titre" class="dialog-title"></p>
+          <p class="dialog-text">La suppression est définitive.</p>
+        </div>
+      </div>
+      <div class="dialog-actions">
+        <button type="submit" value="annuler" class="btn btn-secondary">Annuler</button>
+        <button type="submit" value="supprimer" class="btn btn-danger">Supprimer</button>
+      </div>
+    </form>
+  </dialog>
 
   <!-- Scripts classiques (pas de type="module"), dans l'ordre des dépendances -->
   <script src="js/utils.js"></script>

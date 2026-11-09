@@ -32,6 +32,19 @@ const Utils = {
     return annee + "-" + mois + "-" + jour;
   },
 
+  // Date du jour en toutes lettres, par exemple « Lundi 9 novembre 2026 » (en-tête de la page).
+  // toLocaleDateString est une fonction standard : "fr-FR" donne les noms des jours et des mois en français.
+  dateDuJourLongue: function () {
+    const texte = new Date().toLocaleDateString("fr-FR", {
+      weekday: "long",
+      day: "numeric",
+      month: "long",
+      year: "numeric",
+    });
+    // « lundi 9 novembre 2026 » → « Lundi 9 novembre 2026 »
+    return texte.charAt(0).toUpperCase() + texte.slice(1);
+  },
+
   // Nettoie une saisie : la transforme en texte et retire les espaces au début et à la fin.
   nettoyerTexte: function (texte) {
     if (texte === undefined || texte === null) {

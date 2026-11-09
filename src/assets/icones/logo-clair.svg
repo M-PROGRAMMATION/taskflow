@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32">
+  <!-- Logo TaskFlow pour fond foncé : une coche foncée dans un carré arrondi blanc -->
+  <rect width="32" height="32" rx="9" fill="#FFFFFF"/>
+  <path d="M10 16.5l4 4L22.5 12" fill="none" stroke="#14171F" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>

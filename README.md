@@ -45,6 +45,11 @@ Chaque fonctionnalité est développée sur sa propre branche `feature/...`, cr�
 
 **Vérification du sprint 3** : les fonctions de `Auth` (règles du mot de passe, exemples de la story 13, jauge, empreinte SHA-256 connue, comptes, connexion et blocage avec une heure choisie) ont été testées avec Node (51 vérifications). Puis l'application complète dans Chrome, ouverte en `file://` comme par un double-clic, avec un script qui pilote la page : premier lancement et chaque refus, empreinte dans `taskflow_users` et aucun mot de passe en clair, connexion (champs vides, identifiant inconnu, mauvais mot de passe, touche Entrée), session gardée après un rechargement, session falsifiée, déconnexion, jauge caractère par caractère, blocage au 3e échec, rechargement pendant le blocage, vraie attente de 20 secondes, navigateur sans `crypto.subtle`, comptes abîmés dans `localStorage`, et non-régression des sprints 1 et 2 une fois connecté (ajout, tri, filtre, recherche, modification, suppression, largeur de téléphone). Les 90 vérifications passent. Reste à faire à la main par le binôme : le hachage sur Firefox et Safari en double-clic, et sur le site GitHub Pages (dernier critère de la story 15).
 
+### Nouveau design (branche `feature/refonte-design`)
+
+- [x] Tout le front refait d'après la maquette générée avec Claude Design : écrans de connexion et du premier lancement en deux panneaux, barre du haut avec l'utilisateur, formulaire d'ajout à gauche et liste à droite, nouveaux badges, jauge en trois barres avec la liste des règles cochées en direct, fenêtre de confirmation de suppression (`<dialog>`) à la place de `confirm()`, bouton « Se connecter » désactivé pendant un blocage.
+- [x] Adapté aux règles du projet : icônes en fichiers SVG locaux dans `src/assets/icones/`, polices du système au lieu de Google Fonts (pas de CDN), bordure gardée sur les badges de catégorie (prompt 18). Aucune règle métier ni donnée enregistrée ne change.
+
 ## Modèle de données d'une tâche
 
 Une tâche est un objet JavaScript. Les clés et les valeurs enregistrées sont en anglais ; seul le texte affiché à l'écran est en français. Exemple :

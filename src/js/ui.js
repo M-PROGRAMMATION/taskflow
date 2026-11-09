@@ -1,7 +1,8 @@
 /*
  * ui.js — objet Interface
- * Tout l'accès au DOM : afficher la liste, lire le formulaire, afficher les erreurs,
- * la jauge, basculer entre les écrans.
+ * Tout l'accès au DOM : afficher la liste, lire les formulaires, afficher les erreurs,
+ * la jauge, la fenêtre de confirmation, basculer entre les écrans.
+ * Les classes CSS (task, badge-high…) viennent de la maquette Claude Design.
  * Toujours textContent / createElement, jamais innerHTML (XSS).
  * Dépend de : Utils.
  * Pas de règle métier ici.
@@ -12,6 +13,8 @@ const Interface = {
   LIBELLES_ECHEANCE: { late: "En retard", today: "Aujourd'hui" },
   LIBELLES_CATEGORIE: { school: "Cours", personal: "Perso", project: "Projet" },
   LIBELLES_JAUGE: { weak: "Faible", medium: "Moyen", strong: "Fort" },
+  // Titre de l'onglet du navigateur pour chaque écran
+  TITRES_ECRAN: { creation: "Premier lancement", connexion: "Connexion", taches: "Mes tâches" },
   // Messages de liste vide : aucune tâche du tout (story 2), ou filtre sans résultat (story 8).
   // Le message de la recherche (story 11) contient le mot-clé : il est construit dans afficherMessageVide.
   // Message affiché si le compte n'a pas pu être enregistré (stockage bloqué ou plein)
@@ -38,8 +41,9 @@ const Interface = {
 
   // Crée un bouton qui ne contient qu'une icône (modifier, supprimer).
   // action : valeur de data-action, lue par app.js pour savoir quel bouton a été cliqué.
-  creerBoutonIcone: function (action, icone, libelle) {
-    const bouton = Interface.creerElement("button", "bouton-icone");
+  // classe : classe en plus de "btn-icon" (ex. "is-danger" pour la corbeille), ou "".
+  creerBoutonIcone: function (action, icone, libelle, classe) {
+    const bouton = Interface.creerElement("button", ("btn-icon " + classe).trim());
     bouton.type = "button";
     bouton.dataset.action = action;
     bouton.title = libelle;
@@ -48,6 +52,8 @@ const Interface = {
     const image = document.createElement("img");
     image.src = "assets/icones/" + icone;
     image.alt = ""; // l'image est décorative, le libellé est sur le bouton
+    image.width = 18;
+    image.height = 18;
     bouton.appendChild(image);
     return bouton;
   },
@@ -55,67 +61,80 @@ const Interface = {
   // Construit la ligne <li> d'une tâche.
   // etatEcheance : "late", "today" ou "" (calculé par Taches.etatEcheance).
   creerLigneTache: function (tache, etatEcheance) {
-    const ligne = Interface.creerElement("li", "tache");
+    const ligne = Interface.creerElement("li", "task");
     ligne.dataset.id = tache.id; // permet de retrouver la tâche au clic
-    if (tache.status === "done") {
-      ligne.classList.add("tache-terminee");
+    const terminee = tache.status === "done";
+    if (terminee) {
+      ligne.classList.add("is-done");
     }
 
-    // Case à cocher pour terminer la tâche
+    // Case à cocher pour terminer la tâche, dans un <label> qui agrandit la zone cliquable
+    const zoneCase = Interface.creerElement("label", "task-check");
     const caseACocher = document.createElement("input");
     caseACocher.type = "checkbox";
-    caseACocher.className = "tache-case";
     caseACocher.dataset.action = "terminer";
-    caseACocher.checked = tache.status === "done";
-    caseACocher.setAttribute("aria-label", "Terminer « " + tache.title + " »");
-    ligne.appendChild(caseACocher);
+    caseACocher.checked = terminee;
+    const texteCase = terminee ? "Remettre à faire « " : "Terminer « ";
+    caseACocher.setAttribute("aria-label", texteCase + tache.title + " »");
+    zoneCase.appendChild(caseACocher);
+    ligne.appendChild(zoneCase);
 
-    // Titre, description, puis la ligne d'informations (priorité, date, badge)
-    const contenu = Interface.creerElement("div", "tache-contenu");
-    contenu.appendChild(Interface.creerElement("p", "tache-titre", tache.title));
+    // Titre, description, puis les badges (priorité, catégorie, date, échéance)
+    const contenu = Interface.creerElement("div", "task-body");
+    contenu.appendChild(Interface.creerElement("span", "task-title", tache.title));
     if (tache.description !== "") {
-      contenu.appendChild(Interface.creerElement("p", "tache-description", tache.description));
+      contenu.appendChild(Interface.creerElement("span", "task-desc", tache.description));
     }
 
-    const infos = Interface.creerElement("div", "tache-infos");
-    infos.appendChild(
+    const badges = Interface.creerElement("div", "badges");
+    badges.appendChild(
       Interface.creerElement(
         "span",
-        "badge priorite-" + tache.priority,
+        "badge badge-" + tache.priority,
         Interface.LIBELLES_PRIORITE[tache.priority]
       )
     );
     // Badge de catégorie (story 10), seulement si la tâche en a une
     if (tache.category !== "") {
-      infos.appendChild(
+      badges.appendChild(
         Interface.creerElement(
           "span",
-          "badge categorie-" + tache.category,
+          "badge tag tag-" + tache.category,
           Interface.LIBELLES_CATEGORIE[tache.category]
         )
       );
     }
+    // Date avec une icône calendrier (ajoutée par le CSS) ; en gris si « Sans date » ou terminée
     const texteDate = tache.dueDate === "" ? "Sans date" : Utils.formaterDate(tache.dueDate);
-    infos.appendChild(Interface.creerElement("span", "tache-date", texteDate));
+    const date = Interface.creerElement("span", "due", texteDate);
+    if (tache.dueDate === "" || terminee) {
+      date.classList.add("is-empty");
+    }
+    badges.appendChild(date);
     if (etatEcheance !== "") {
-      infos.appendChild(
+      badges.appendChild(
         Interface.creerElement(
           "span",
-          "badge echeance-" + etatEcheance,
+          "badge badge-" + etatEcheance,
           Interface.LIBELLES_ECHEANCE[etatEcheance]
         )
       );
     }
-    contenu.appendChild(infos);
+    contenu.appendChild(badges);
     ligne.appendChild(contenu);
 
     // Boutons d'action
-    const actions = Interface.creerElement("div", "tache-actions");
+    const actions = Interface.creerElement("div", "task-actions");
     actions.appendChild(
-      Interface.creerBoutonIcone("modifier", "modifier.svg", "Modifier « " + tache.title + " »")
+      Interface.creerBoutonIcone("modifier", "modifier.svg", "Modifier « " + tache.title + " »", "")
     );
     actions.appendChild(
-      Interface.creerBoutonIcone("supprimer", "corbeille.svg", "Supprimer « " + tache.title + " »")
+      Interface.creerBoutonIcone(
+        "supprimer",
+        "corbeille.svg",
+        "Supprimer « " + tache.title + " »",
+        "is-danger"
+      )
     );
     ligne.appendChild(actions);
 
@@ -125,7 +144,7 @@ const Interface = {
   // Crée un champ (libellé + élément de saisie) pour le formulaire de modification.
   creerChamp: function (classe, libelle, champ) {
     const bloc = Interface.creerElement("div", classe);
-    const etiquette = Interface.creerElement("label", "", libelle);
+    const etiquette = Interface.creerElement("label", "label", libelle);
     etiquette.htmlFor = champ.id; // relie le libellé au champ (clic sur le libellé = focus)
     bloc.appendChild(etiquette);
     bloc.appendChild(champ);
@@ -135,7 +154,7 @@ const Interface = {
   // Crée une liste déroulante <select> à partir d'un objet { code: libellé }.
   // Si texteVide est donné, une première option de valeur "" est ajoutée (ex. « Aucune »).
   creerListe: function (id, libelles, texteVide) {
-    const liste = document.createElement("select");
+    const liste = Interface.creerElement("select", "select");
     liste.id = id;
     if (texteVide !== undefined) {
       const optionVide = Interface.creerElement("option", "", texteVide);
@@ -151,61 +170,74 @@ const Interface = {
     return liste;
   },
 
+  // Crée un champ de saisie <input> avec la classe de la maquette.
+  creerSaisie: function (type, id, valeur) {
+    const saisie = Interface.creerElement("input", "input");
+    saisie.type = type;
+    saisie.id = id;
+    saisie.value = valeur; // value, comme textContent, n'interprète pas le HTML
+    return saisie;
+  },
+
   // Construit la ligne d'une tâche en cours de modification (story 4) :
   // un petit formulaire déjà rempli avec les valeurs actuelles.
   // Une seule tâche est modifiée à la fois, les id des champs sont donc uniques.
   creerLigneModification: function (tache) {
-    const ligne = Interface.creerElement("li", "tache tache-en-modification");
+    const ligne = Interface.creerElement("li", "task-edit");
     ligne.dataset.id = tache.id;
 
-    const formulaire = Interface.creerElement("form", "formulaire formulaire-modification");
+    const formulaire = Interface.creerElement("form", "formulaire-modification");
     formulaire.noValidate = true; // validation faite par Taches.valider
+    formulaire.setAttribute("aria-label", "Modifier la tâche");
 
-    const titre = document.createElement("input");
-    titre.type = "text";
-    titre.id = "modif-titre";
+    // En-tête : « Modification » et rappel de la touche Échap
+    const entete = Interface.creerElement("div", "task-edit-head");
+    entete.appendChild(Interface.creerElement("span", "eyebrow", "Modification"));
+    const aide = Interface.creerElement("span", "task-edit-hint");
+    aide.appendChild(Interface.creerElement("kbd", "", "Échap"));
+    aide.appendChild(document.createTextNode(" pour annuler"));
+    entete.appendChild(aide);
+    formulaire.appendChild(entete);
+
+    const titre = Interface.creerSaisie("text", "modif-titre", tache.title);
     titre.maxLength = 100;
     titre.autocomplete = "off";
-    titre.value = tache.title; // value, comme textContent, n'interprète pas le HTML
     titre.setAttribute("aria-describedby", "erreur-modif");
-    const blocTitre = Interface.creerChamp("champ champ-large", "Titre", titre);
-    const erreur = Interface.creerElement("p", "message-erreur");
+    const blocTitre = Interface.creerChamp("field", "Titre", titre);
+    const erreur = Interface.creerElement("p", "field-error");
     erreur.id = "erreur-modif";
     erreur.setAttribute("role", "alert");
     erreur.hidden = true;
     blocTitre.appendChild(erreur);
     formulaire.appendChild(blocTitre);
 
-    const description = document.createElement("input");
-    description.type = "text";
-    description.id = "modif-description";
+    const description = Interface.creerSaisie("text", "modif-description", tache.description);
     description.autocomplete = "off";
-    description.value = tache.description;
-    formulaire.appendChild(Interface.creerChamp("champ champ-large", "Description", description));
+    formulaire.appendChild(Interface.creerChamp("field", "Description", description));
 
+    // Priorité, échéance et catégorie sur une ligne (ou les unes sous les autres sur téléphone)
+    const rangee = Interface.creerElement("div", "field-row-auto");
     const priorite = Interface.creerListe("modif-priorite", Interface.LIBELLES_PRIORITE);
     priorite.value = tache.priority; // sélectionne la priorité actuelle
-    formulaire.appendChild(Interface.creerChamp("champ", "Priorité", priorite));
+    rangee.appendChild(Interface.creerChamp("field", "Priorité", priorite));
+
+    const echeance = Interface.creerSaisie("date", "modif-echeance", tache.dueDate);
+    rangee.appendChild(Interface.creerChamp("field", "Échéance", echeance));
 
     // Catégorie (story 10) : « Aucune » en premier, puis Cours, Perso, Projet
     const categorie = Interface.creerListe("modif-categorie", Interface.LIBELLES_CATEGORIE, "Aucune");
     categorie.value = tache.category; // sélectionne la catégorie actuelle ("" = Aucune)
-    formulaire.appendChild(Interface.creerChamp("champ", "Catégorie", categorie));
+    rangee.appendChild(Interface.creerChamp("field", "Catégorie", categorie));
+    formulaire.appendChild(rangee);
 
-    const echeance = document.createElement("input");
-    echeance.type = "date";
-    echeance.id = "modif-echeance";
-    echeance.value = tache.dueDate;
-    formulaire.appendChild(Interface.creerChamp("champ", "Échéance", echeance));
-
-    const boutons = Interface.creerElement("div", "boutons-modification");
-    const enregistrer = Interface.creerElement("button", "bouton bouton-principal", "Enregistrer");
-    enregistrer.type = "submit";
-    const annuler = Interface.creerElement("button", "bouton", "Annuler");
+    const boutons = Interface.creerElement("div", "task-edit-actions");
+    const annuler = Interface.creerElement("button", "btn btn-secondary", "Annuler");
     annuler.type = "button";
     annuler.dataset.action = "annuler"; // traité par la délégation de clic, comme la corbeille
-    boutons.appendChild(enregistrer);
+    const enregistrer = Interface.creerElement("button", "btn btn-primary", "Enregistrer");
+    enregistrer.type = "submit";
     boutons.appendChild(annuler);
+    boutons.appendChild(enregistrer);
     formulaire.appendChild(boutons);
 
     ligne.appendChild(formulaire);
@@ -231,16 +263,19 @@ const Interface = {
   // Affiche le message de liste vide qui correspond à cas
   // ("aucune", "todo", "done", "recherche"), ou le cache si cas vaut "".
   // motCle : le mot recherché, repris dans le message de la story 11.
+  // « aucune » : grand message avec une illustration ; filtre ou recherche : cadre en pointillés.
   afficherMessageVide: function (cas, motCle) {
-    const message = document.getElementById("message-vide");
-    message.hidden = cas === "";
+    const bloc = document.getElementById("message-vide");
+    const texte = document.getElementById("message-vide-texte");
+    bloc.hidden = cas === "";
+    bloc.className = cas === "aucune" ? "empty" : "empty-box";
     if (cas === "") {
-      message.textContent = "";
+      texte.textContent = "";
     } else if (cas === "recherche") {
       // textContent : un mot-clé contenant du HTML s'affiche tel quel
-      message.textContent = "Aucune tâche ne correspond à « " + motCle + " ».";
+      texte.textContent = "Aucune tâche ne correspond à « " + motCle + " ».";
     } else {
-      message.textContent = Interface.MESSAGES_VIDE[cas];
+      texte.textContent = Interface.MESSAGES_VIDE[cas];
     }
   },
 
@@ -374,10 +409,34 @@ const Interface = {
     }
   },
 
-  // Demande confirmation avant une suppression (story 6).
-  // confirm() est une fonction standard du navigateur : elle renvoie true (OK) ou false (Annuler).
-  confirmerSuppression: function (titre) {
-    return window.confirm("Supprimer la tâche « " + titre + " » ?");
+  // Demande confirmation avant une suppression (story 6), dans la fenêtre <dialog> de index.html.
+  // La fenêtre ne bloque pas le code comme confirm() : siConfirme() est appelée plus tard,
+  // seulement si l'utilisateur clique sur « Supprimer ». « Annuler » ou Échap ne font rien.
+  confirmerSuppression: function (titre, siConfirme) {
+    const fenetre = document.getElementById("fenetre-suppression");
+    // Navigateur trop ancien pour <dialog> : on revient à confirm(), standard partout
+    if (typeof fenetre.showModal !== "function") {
+      if (window.confirm("Supprimer la tâche « " + titre + " » ?")) {
+        siConfirme();
+      }
+      return;
+    }
+    document.getElementById("fenetre-suppression-titre").textContent =
+      "Supprimer la tâche « " + titre + " » ?";
+    fenetre.returnValue = ""; // Échap ferme sans changer returnValue : on le vide avant
+    // once: true : l'écouteur est retiré après la fermeture, il ne s'accumule pas
+    fenetre.addEventListener(
+      "close",
+      function () {
+        if (fenetre.returnValue === "supprimer") {
+          siConfirme();
+        }
+      },
+      { once: true }
+    );
+    fenetre.showModal();
+    // Le curseur va sur « Annuler » : une touche Entrée par erreur ne supprime rien
+    fenetre.querySelector('button[value="annuler"]').focus();
   },
 
   // ---------- Formulaire d'ajout (story 1) ----------
@@ -403,6 +462,13 @@ const Interface = {
     champTitre.focus();
   },
 
+  // Affiche « 12 / 100 » au-dessus du champ titre.
+  afficherNombreCaracteres: function () {
+    const titre = document.getElementById("ajout-titre");
+    document.getElementById("ajout-nombre-caracteres").textContent =
+      titre.value.length + " / " + titre.maxLength;
+  },
+
   // Cache le message d'erreur du formulaire d'ajout.
   effacerErreurAjout: function () {
     const erreur = document.getElementById("erreur-ajout");
@@ -416,6 +482,7 @@ const Interface = {
   viderFormulaireAjout: function () {
     document.getElementById("formulaire-ajout").reset();
     Interface.effacerErreurAjout();
+    Interface.afficherNombreCaracteres(); // reset() ne déclenche pas l'événement input
     document.getElementById("ajout-titre").focus();
   },
 
@@ -426,8 +493,10 @@ const Interface = {
       evenement.preventDefault(); // empêche le navigateur de recharger la page
       traiter(Interface.lireFormulaireAjout());
     });
-    // L'erreur disparaît dès que l'utilisateur corrige le titre
-    document.getElementById("ajout-titre").addEventListener("input", Interface.effacerErreurAjout);
+    // L'erreur disparaît dès que l'utilisateur corrige le titre, et le nombre de caractères suit
+    const titre = document.getElementById("ajout-titre");
+    titre.addEventListener("input", Interface.effacerErreurAjout);
+    titre.addEventListener("input", Interface.afficherNombreCaracteres);
   },
 
   // ---------- Compteur ----------
@@ -441,7 +510,9 @@ const Interface = {
     } else if (nombre === 1) {
       mot = "tâche";
     }
-    document.getElementById("compteur").textContent = nombre + " " + mot + " à faire";
+    const compteur = document.getElementById("compteur");
+    compteur.querySelector(".counter-number").textContent = nombre;
+    compteur.querySelector(".counter-label").textContent = mot + " à faire";
   },
 
   // ---------- Écrans (sprint 3) ----------
@@ -450,6 +521,7 @@ const Interface = {
   // nom : "creation" (premier lancement), "connexion" ou "taches".
   // Le curseur est placé dans le premier champ utile de l'écran affiché.
   afficherEcran: function (nom) {
+    document.title = "TaskFlow · " + Interface.TITRES_ECRAN[nom];
     document.getElementById("ecran-creation").hidden = nom !== "creation";
     document.getElementById("ecran-connexion").hidden = nom !== "connexion";
     document.getElementById("ecran-taches").hidden = nom !== "taches";
@@ -512,15 +584,27 @@ const Interface = {
   viderFormulaireCreation: function () {
     document.getElementById("formulaire-creation").reset();
     Interface.effacerErreurCreation();
-    Interface.afficherJauge(""); // reset() ne déclenche pas l'événement input
+    // reset() ne déclenche pas l'événement input : on vide la jauge et les règles à la main
+    Interface.afficherJauge("");
+    Interface.afficherRegles([false, false, false, false]);
   },
 
   // Story 14 : met la jauge au niveau "", "weak", "medium" ou "strong" (calculé par Auth).
-  // Le CSS lit data-niveau pour la longueur et la couleur de la barre ; le mot est écrit à côté.
+  // Le CSS lit data-niveau pour colorer 1, 2 ou 3 barres ; le mot est écrit à côté.
+  // Champ vide : aucune barre colorée et aucun mot.
   afficherJauge: function (niveau) {
     document.getElementById("jauge").dataset.niveau = niveau;
-    const texte = niveau === "" ? "" : "Robustesse : " + Interface.LIBELLES_JAUGE[niveau];
+    const texte = niveau === "" ? "" : Interface.LIBELLES_JAUGE[niveau];
     document.getElementById("jauge-texte").textContent = texte;
+  },
+
+  // Story 13 : coche chaque règle respectée sous le champ.
+  // respectees : tableau de 4 booléens, dans l'ordre des <li> (calculé par Auth.reglesRespectees).
+  afficherRegles: function (respectees) {
+    const lignes = document.querySelectorAll("#regles li");
+    lignes.forEach(function (ligne, index) {
+      ligne.classList.toggle("is-ok", respectees[index]);
+    });
   },
 
   // traiter(motDePasse) est appelée à chaque caractère tapé ou effacé dans le mot de passe.
@@ -554,10 +638,29 @@ const Interface = {
 
   afficherErreurConnexion: function (message) {
     Interface.afficherMessageErreur("erreur-connexion", message);
+    document.getElementById("erreur-connexion").classList.remove("alert-locked");
   },
 
+  // L'erreur disparaît quand on tape, sauf le message de blocage, qui reste jusqu'à la fin.
   effacerErreurConnexion: function () {
+    if (document.getElementById("erreur-connexion").classList.contains("alert-locked")) {
+      return;
+    }
     Interface.effacerMessageErreur("erreur-connexion");
+  },
+
+  // Story 16 : bandeau « Compte bloqué » avec un cadenas, et bouton « Se connecter » désactivé.
+  afficherBlocageConnexion: function (message) {
+    Interface.afficherMessageErreur("erreur-connexion", message);
+    document.getElementById("erreur-connexion").classList.add("alert-locked");
+    document.getElementById("bouton-connexion").disabled = true;
+  },
+
+  // Fin du blocage : le bandeau disparaît et le bouton fonctionne à nouveau.
+  leverBlocageConnexion: function () {
+    document.getElementById("erreur-connexion").classList.remove("alert-locked");
+    Interface.effacerMessageErreur("erreur-connexion");
+    document.getElementById("bouton-connexion").disabled = false;
   },
 
   // Vide le champ mot de passe (après une connexion réussie ou refusée)
@@ -578,9 +681,16 @@ const Interface = {
     formulaire.addEventListener("input", Interface.effacerErreurConnexion);
   },
 
-  // Affiche « Connecté : test » dans l'en-tête de l'écran des tâches.
+  // Affiche l'utilisateur connecté dans la barre du haut : son initiale dans un rond, puis son nom.
+  // Un texte caché « Connecté : » est lu par les lecteurs d'écran avant le nom.
   afficherUtilisateur: function (identifiant) {
-    document.getElementById("utilisateur-connecte").textContent = "Connecté : " + identifiant;
+    document.getElementById("utilisateur-initiale").textContent = identifiant.charAt(0).toUpperCase();
+    document.getElementById("utilisateur-connecte").textContent = identifiant;
+  },
+
+  // Affiche la date du jour au-dessus du titre « Mes tâches » (texte préparé par Utils).
+  afficherDateDuJour: function (texte) {
+    document.getElementById("date-du-jour").textContent = texte;
   },
 
   // traiter() est appelée au clic sur « Se déconnecter ».
