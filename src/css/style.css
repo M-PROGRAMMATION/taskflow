@@ -1,524 +1,1338 @@
 /*
  * style.css
- * Mise en page, couleurs des priorités (haute / moyenne / basse)
- * et des catégories (cours / perso / projet), tâche terminée barrée,
- * jauge de robustesse du mot de passe.
+ * Design « clair et net » généré avec Claude Design (taskflow-design.zip), adapté au projet :
+ *  - polices du système au lieu de Google Fonts (pas de lien vers un CDN, règle du CLAUDE.md) ;
+ *  - icônes en fichiers SVG locaux dans assets/icones (pas de SVG copié dans le HTML) ;
+ *  - badge de catégorie avec une bordure (décision du binôme, PROMPTS.md, prompt 18).
+ * Les noms de classes viennent de la maquette (en anglais), pour pouvoir la comparer facilement.
  */
 
-/* ---------- Couleurs (variables réutilisées partout) ---------- */
+/* ---------- Variables (couleurs, formes, polices) ---------- */
 :root {
-  --fond: #f4f6fb;
-  --carte: #ffffff;
-  --texte: #1f2430;
-  --texte-doux: #5b6170;
-  --bordure: #dde1ea;
-  --principal: #3b5bdb;
-  --principal-fonce: #2f4ac0;
+  /* Fond et texte */
+  --bg: #F5F6F8;
+  --surface: #FFFFFF;
+  --surface-soft: #FAFBFC;
+  --surface-muted: #EEF0F3;
+  --border: #E3E6EB;
+  --border-strong: #D5D9E0;
+  --ink: #14171F;
+  --ink-2: #3A3F4B;
+  --muted: #5B6270;
+  --subtle: #6B7280;
 
-  /* Priorités : couleur du texte et couleur de fond du badge */
-  --haute: #b42318;
-  --haute-fond: #fde8e6;
-  --moyenne: #a65300;
-  --moyenne-fond: #fff1df;
-  --basse: #1f7a37;
-  --basse-fond: #e5f5ea;
+  /* Priorités (story 2) : Haute rouge, Moyenne orange, Basse vert */
+  --high-bg: #FDE8E7;   --high-fg: #B42318;   --high-dot: #D92D20;
+  --medium-bg: #FEF0DC; --medium-fg: #93470A; --medium-dot: #EA8A0C;
+  --low-bg: #E3F4E8;    --low-fg: #1B6E37;    --low-dot: #16A34A;
 
-  /* Catégories (story 10) : bleu, violet, turquoise, différentes des priorités */
-  --cours: #1d4ed8;
-  --cours-fond: #e3ecfd;
-  --perso: #6d28d9;
-  --perso-fond: #efe7fc;
-  --projet: #0f766e;
-  --projet-fond: #dcf5f2;
+  /* Catégories (story 10) : Cours bleu, Perso violet, Projet turquoise */
+  --school-bg: #E5EEFF;   --school-fg: #1D4ED8;   --school-dot: #2563EB;
+  --personal-bg: #F1E9FF; --personal-fg: #6D28D9; --personal-dot: #7C3AED;
+  --project-bg: #DDF4F1;  --project-fg: #0F6B63;  --project-dot: #14B8A6;
 
-  --rayon: 10px;
+  /* Échéances (story 3) */
+  --late: #C62828;
+  --today-bg: #FDB022; --today-fg: #4A2500;
+
+  /* Messages */
+  --error-bg: #FDECEC; --error-fg: #A11B1B; --error-border: #C62828;
+  --warn-bg: #FFF6E5;  --warn-fg: #6B3A00;  --warn-border: #F5D7A1;
+
+  /* Jauge (story 14) */
+  --gauge-weak: #D92D20;
+  --gauge-medium: #E8890C;
+  --gauge-strong: #16A34A;
+
+  /* Formes */
+  --radius-sm: 6px;
+  --radius: 10px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --shadow-sm: 0 1px 2px rgba(20, 23, 31, 0.12);
+  --shadow-lg: 0 12px 32px rgba(20, 23, 31, 0.16);
+
+  /* Polices du système : rien à télécharger, l'application marche hors ligne */
+  --font-text: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --font-title: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
 }
 
 /* ---------- Base ---------- */
-* {
+*,
+*::before,
+*::after {
   box-sizing: border-box;
+}
+
+/* L'attribut hidden cache toujours l'élément, même si une classe lui donne display: flex */
+[hidden] {
+  display: none !important;
 }
 
 body {
   margin: 0;
-  background: var(--fond);
-  color: var(--texte);
-  font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  min-height: 100vh;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--font-text);
+  font-size: 15px;
   line-height: 1.5;
 }
 
 h1,
-h2 {
+h2,
+h3 {
+  margin: 0;
+  font-family: var(--font-title);
+  letter-spacing: -0.02em;
+}
+
+p {
   margin: 0;
 }
 
-h2 {
-  font-size: 1.1rem;
-  margin-bottom: 12px;
+input,
+select,
+textarea,
+button {
+  font: inherit;
+  color: inherit;
 }
 
-.conteneur {
-  max-width: 720px;
-  margin: 0 auto;
-  padding: 24px 16px 48px;
+/* Contour visible au clavier (touche Tab) */
+:focus-visible {
+  outline: 2px solid var(--ink);
+  outline-offset: 2px;
 }
 
-/* ---------- En-tête ---------- */
-.entete {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: space-between;
-  gap: 8px;
-  margin-bottom: 20px;
+/* Texte lu par les lecteurs d'écran, mais invisible à l'écran */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
 }
 
+kbd {
+  padding: 1px 6px;
+  border: 1px solid var(--border-strong);
+  border-bottom-width: 2px;
+  border-radius: 5px;
+  background: var(--surface);
+  color: var(--ink-2);
+  font-family: inherit;
+  font-size: 11px;
+  font-weight: 600;
+}
+
+/* ---------- Logo ---------- */
 .logo {
   display: flex;
   align-items: center;
   gap: 10px;
-  font-size: 1.6rem;
 }
 
-.compteur {
-  margin: 0;
-  color: var(--texte-doux);
-  font-weight: 600;
+.logo-text {
+  font-family: var(--font-title);
+  font-size: 21px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
 }
 
-/* Utilisateur connecté et bouton « Se déconnecter » (story 12) */
-.session {
-  display: flex;
+/* ---------- Boutons ---------- */
+.btn {
+  height: 44px;
+  padding: 0 18px;
+  display: inline-flex;
   align-items: center;
-  gap: 8px;
-  font-size: 0.9rem;
-  color: var(--texte-doux);
-}
-
-.utilisateur-connecte {
-  font-weight: 600;
-}
-
-/* ---------- Écrans du premier lancement et de connexion (sprint 3) ---------- */
-.conteneur-etroit {
-  max-width: 420px;
-  padding-top: 48px;
-}
-
-.logo-centre {
   justify-content: center;
-  margin-bottom: 20px;
+  gap: 8px;
+  border: 1px solid transparent;
+  border-radius: var(--radius);
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.15s, border-color 0.15s, color 0.15s;
 }
 
-/* Un seul champ par ligne (deux classes : passe avant la règle .formulaire, écrite plus bas) */
-.formulaire.formulaire-colonne {
-  grid-template-columns: 1fr;
+.btn-primary {
+  background: var(--ink);
+  color: #FFFFFF;
 }
 
-.texte-doux {
-  margin: 0 0 16px;
-  color: var(--texte-doux);
+.btn-primary:hover {
+  background: #2A2E38;
 }
 
-.aide {
-  margin: 0;
-  color: var(--texte-doux);
-  font-size: 0.85rem;
+.btn-secondary {
+  background: var(--surface);
+  border-color: var(--border-strong);
+  font-weight: 500;
 }
 
-/* Jauge de robustesse (story 14) : une couleur ET un mot pour chaque niveau */
-.jauge {
-  height: 8px;
-  border-radius: 999px;
-  background: var(--bordure);
-  overflow: hidden; /* la barre garde les coins arrondis */
+.btn-secondary:hover {
+  background: var(--surface-muted);
 }
 
-.jauge-barre {
-  width: 0; /* champ vide : jauge vide */
-  height: 100%;
-  transition: width 0.2s;
+.btn-danger {
+  background: var(--high-fg);
+  color: #FFFFFF;
 }
 
-.jauge[data-niveau="weak"] .jauge-barre {
-  width: 33%;
-  background: var(--haute);
+.btn-danger:hover {
+  background: #8F1C13;
 }
 
-.jauge[data-niveau="medium"] .jauge-barre {
-  width: 66%;
-  background: var(--moyenne);
+.btn-lg {
+  height: 50px;
+  border-radius: var(--radius-md);
 }
 
-.jauge[data-niveau="strong"] .jauge-barre {
+.btn-block {
   width: 100%;
-  background: var(--basse);
 }
 
-.jauge-texte {
-  min-height: 1.3em; /* garde la place du mot, même vide : le formulaire ne saute pas */
-  margin: 0;
-  font-size: 0.85rem;
-  font-weight: 600;
+/* Bouton désactivé (connexion pendant un blocage, story 16) */
+.btn:disabled {
+  background: var(--border);
+  color: var(--muted);
+  border-color: transparent;
+  cursor: not-allowed;
 }
 
-.jauge[data-niveau="weak"] + .jauge-texte {
-  color: var(--haute);
-}
-
-.jauge[data-niveau="medium"] + .jauge-texte {
-  color: var(--moyenne);
-}
-
-.jauge[data-niveau="strong"] + .jauge-texte {
-  color: var(--basse);
-}
-
-/* Rappel : compte de test uniquement */
-.avertissement {
-  margin: 16px 0 0;
-  padding: 8px 12px;
-  border-left: 4px solid var(--moyenne);
-  border-radius: 4px;
-  background: var(--moyenne-fond);
-  font-size: 0.9rem;
-}
-
-/* ---------- Cartes (blocs blancs) ---------- */
-.carte {
-  background: var(--carte);
-  border: 1px solid var(--bordure);
-  border-radius: var(--rayon);
-  padding: 20px;
-  margin-bottom: 20px;
-}
-
-/* ---------- Filtre, tri et recherche (sprint 2) ---------- */
-.barre-outils {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: flex-end;
-  gap: 12px 16px;
-  margin-bottom: 12px;
-}
-
-.filtres {
-  display: flex;
-  gap: 4px;
-  padding: 3px;
-  border: 1px solid var(--bordure);
-  border-radius: 8px;
-  background: var(--fond);
-}
-
-.bouton-filtre {
-  padding: 6px 12px;
+/* Boutons qui ne contiennent qu'une icône (modifier, supprimer) */
+.btn-icon {
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   border: none;
-  border-radius: 6px;
+  border-radius: var(--radius);
   background: transparent;
-  color: var(--texte-doux);
-  font: inherit;
-  font-weight: 600;
   cursor: pointer;
 }
 
-.bouton-filtre:hover {
-  color: var(--texte);
+.btn-icon:hover {
+  background: var(--surface-muted);
 }
 
-/* La recherche prend toute la largeur, au-dessus des filtres et du tri */
-.champ-recherche {
-  flex-basis: 100%;
+.btn-icon.is-danger:hover {
+  background: var(--error-bg);
 }
 
-.champ-tri {
-  margin-left: auto; /* le tri se place à droite des filtres */
+/* ---------- Champs ---------- */
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
 }
 
-/* Filtre actif mis en évidence (story 8) */
-.bouton-filtre[aria-pressed="true"] {
-  background: var(--principal);
-  color: #ffffff;
+.field-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+}
+
+.label {
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.label-hint {
+  font-weight: 400;
+  color: var(--subtle);
+}
+
+.char-count {
+  font-size: 12px;
+  color: var(--subtle);
+}
+
+.input,
+.select {
+  width: 100%;
+  height: 44px;
+  padding: 0 14px;
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius);
+  background: var(--surface);
+}
+
+.input:hover,
+.select:hover {
+  border-color: #B9BEC8;
+}
+
+.input:focus,
+.select:focus {
+  border-color: var(--ink);
+}
+
+.input-lg {
+  height: 48px;
+}
+
+.input[readonly] {
+  background: var(--surface-muted);
+  border-color: var(--border);
+  color: var(--ink-2);
+}
+
+/* Champ refusé par la validation */
+.input[aria-invalid="true"] {
+  border: 1.5px solid var(--error-border);
+}
+
+/* Liste déroulante : la flèche du navigateur est remplacée par l'icône chevron.svg */
+.select {
+  appearance: none;
+  -webkit-appearance: none;
+  padding-right: 36px;
+  background: var(--surface) url("../assets/icones/chevron.svg") no-repeat right 12px center / 16px;
+  cursor: pointer;
+}
+
+/* Message d'erreur sous un champ (titre refusé, stories 1 et 4) */
+.field-error {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--error-fg);
+}
+
+.field-error::before {
+  content: "";
+  flex: none;
+  width: 15px;
+  height: 15px;
+  background: url("../assets/icones/erreur-champ.svg") no-repeat center / contain;
+}
+
+.field-row {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.field-row-auto {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(150px, 100%), 1fr));
+  gap: 12px;
+}
+
+/* ---------- Messages (avertissement, erreur, blocage) ---------- */
+/* L'icône est ajoutée par ::before : le texte reste rempli avec textContent */
+.alert {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 12px 14px;
+  border-radius: var(--radius-md);
+  font-size: 14px;
+}
+
+.alert::before {
+  content: "";
+  flex: none;
+  width: 18px;
+  height: 18px;
+  margin-top: 1px;
+  background: no-repeat center / contain;
+}
+
+.alert-warning {
+  background: var(--warn-bg);
+  color: var(--warn-fg);
+  border: 1px solid var(--warn-border);
+}
+
+.alert-warning::before {
+  background-image: url("../assets/icones/alerte.svg");
+}
+
+.alert-error {
+  align-items: center;
+  background: var(--error-bg);
+  color: var(--error-fg);
+  font-weight: 500;
+}
+
+.alert-error::before {
+  background-image: url("../assets/icones/erreur.svg");
+}
+
+/* Compte bloqué (story 16) : bandeau foncé avec un cadenas */
+.alert-error.alert-locked {
+  padding: 14px;
+  background: var(--ink);
+  color: #FFFFFF;
+}
+
+.alert-error.alert-locked::before {
+  width: 36px;
+  height: 36px;
+  margin-top: 0;
+  border-radius: var(--radius);
+  background: rgba(255, 255, 255, 0.12) url("../assets/icones/cadenas.svg") no-repeat center / 18px;
+}
+
+/* ---------- Badges ---------- */
+/* Chaque badge a une couleur ET un mot, pour rester lisible sans distinguer les couleurs */
+.badges {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+}
+
+.badge {
+  height: 24px;
+  padding: 0 10px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+/* Petit point de couleur devant le mot */
+.badge::before {
+  content: "";
+  width: 6px;
+  height: 6px;
+  border-radius: 99px;
+  background: currentColor;
+}
+
+/* Priorité : pastille ronde avec un point rond */
+.badge-high {
+  background: var(--high-bg);
+  color: var(--high-fg);
+}
+
+.badge-medium {
+  background: var(--medium-bg);
+  color: var(--medium-fg);
+}
+
+.badge-low {
+  background: var(--low-bg);
+  color: var(--low-fg);
+}
+
+.badge-high::before {
+  background: var(--high-dot);
+}
+
+.badge-medium::before {
+  background: var(--medium-dot);
+}
+
+.badge-low::before {
+  background: var(--low-dot);
+}
+
+/* Catégorie : étiquette carrée avec un point carré, et une bordure
+   pour ne pas la confondre avec la priorité (décision du binôme, prompt 18) */
+.tag {
+  padding: 0 9px;
+  border: 1px solid currentColor;
+  border-radius: var(--radius-sm);
+}
+
+.tag::before {
+  border-radius: 1px;
+}
+
+.tag-school {
+  background: var(--school-bg);
+  color: var(--school-fg);
+}
+
+.tag-personal {
+  background: var(--personal-bg);
+  color: var(--personal-fg);
+}
+
+.tag-project {
+  background: var(--project-bg);
+  color: var(--project-fg);
+}
+
+.tag-school::before {
+  background: var(--school-dot);
+}
+
+.tag-personal::before {
+  background: var(--personal-dot);
+}
+
+.tag-project::before {
+  background: var(--project-dot);
+}
+
+/* Échéance (story 3) : couleur pleine, sans point */
+.badge-late {
+  background: var(--late);
+  color: #FFFFFF;
+}
+
+.badge-today {
+  background: var(--today-bg);
+  color: var(--today-fg);
+}
+
+.badge-late::before,
+.badge-today::before {
+  display: none;
+}
+
+/* Date d'échéance, avec une icône calendrier */
+.due {
+  height: 24px;
+  padding: 0 4px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  color: var(--ink-2);
+}
+
+.due::before {
+  content: "";
+  width: 14px;
+  height: 14px;
+  background: url("../assets/icones/calendrier.svg") no-repeat center / contain;
+}
+
+/* « Sans date » ou tâche terminée : en gris */
+.due.is-empty {
+  color: var(--subtle);
+}
+
+.due.is-empty::before {
+  background-image: url("../assets/icones/calendrier-gris.svg");
+}
+
+/* ---------- Barre du haut ---------- */
+.topbar {
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+}
+
+.topbar-inner {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 14px 32px;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.topbar-user {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.user-chip {
+  padding: 6px 12px 6px 6px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.avatar {
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999px;
+  background: var(--surface-muted);
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.topbar .btn {
+  padding: 0 16px;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+/* ---------- Page des tâches ---------- */
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 40px 32px 80px;
+}
+
+.page-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 24px;
+  margin-bottom: 32px;
+}
+
+.page-head-date {
+  margin-bottom: 4px;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--muted);
+}
+
+.page-title {
+  font-size: 44px;
+  font-weight: 700;
+  line-height: 1.05;
+  letter-spacing: -0.03em;
+}
+
+/* Compteur (story 2) : grand nombre, puis « tâches à faire » */
+.counter {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+}
+
+.counter-number {
+  font-family: var(--font-title);
+  font-size: 56px;
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: -0.04em;
+}
+
+.counter-label {
+  font-size: 17px;
+  font-weight: 500;
+  color: var(--ink-2);
+}
+
+/* Formulaire à gauche, liste à droite ; l'un sous l'autre quand la place manque */
+.layout {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  gap: 32px;
+}
+
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+}
+
+/* Formulaire d'ajout (story 1) */
+.add-form {
+  flex: 1 1 320px;
+  max-width: 380px;
+  padding: 28px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.add-form h2 {
+  font-size: 20px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+
+.add-form-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.add-form-hint {
+  text-align: center;
+  font-size: 12px;
+  color: var(--subtle);
+}
+
+.tasks {
+  flex: 999 1 560px;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* Barre d'outils : recherche, filtres, tri (sprint 2) */
+.toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+}
+
+.toolbar .search {
+  flex: 1 1 220px;
+}
+
+/* Loupe dans le champ de recherche */
+.search .input {
+  padding-left: 42px;
+  background: var(--surface) url("../assets/icones/recherche.svg") no-repeat 14px center / 18px;
+}
+
+/* Filtres (story 8) : boutons collés, le filtre actif est en blanc */
+.segmented {
+  display: flex;
+  gap: 4px;
+  padding: 4px;
+  border-radius: var(--radius-md);
+  background: #EAECF0;
+}
+
+.segmented button {
+  height: 36px;
+  padding: 0 14px;
+  border: none;
+  border-radius: 9px;
+  background: transparent;
+  color: var(--ink-2);
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.segmented button:hover {
+  color: var(--ink);
+}
+
+.segmented button[aria-pressed="true"] {
+  background: var(--surface);
+  color: var(--ink);
+  font-weight: 600;
+  box-shadow: var(--shadow-sm);
+}
+
+.sort {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.sort .label {
+  font-weight: 500;
+  color: var(--muted);
+  white-space: nowrap;
+}
+
+.sort .select {
+  width: auto;
+  font-weight: 500;
 }
 
 /* ---------- Liste des tâches ---------- */
-.liste-taches {
+.task-card {
+  overflow: hidden; /* les lignes gardent les coins arrondis de la carte */
+}
+
+.task-list {
   list-style: none;
   margin: 0;
   padding: 0;
 }
 
-.message-vide {
-  margin: 0;
-  padding: 24px 0;
-  text-align: center;
-  color: var(--texte-doux);
-}
-
-.tache {
+.task {
+  padding: 18px 16px 18px 12px;
   display: flex;
   align-items: flex-start;
-  gap: 12px;
-  padding: 12px 0;
-  border-top: 1px solid var(--bordure);
+  gap: 14px;
+  border-bottom: 1px solid var(--surface-muted);
 }
 
-.tache:first-child {
-  border-top: none;
+.task:last-child {
+  border-bottom: none;
 }
 
-.tache-case {
-  width: 20px;
-  height: 20px;
-  margin-top: 2px;
-  flex-shrink: 0;
-  accent-color: var(--principal);
+/* Zone cliquable de 44 px autour de la case à cocher */
+.task-check {
+  width: 44px;
+  height: 44px;
+  flex: none;
+  margin-top: -10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   cursor: pointer;
 }
 
-.tache-contenu {
-  flex: 1;
-  min-width: 0; /* permet aux longs titres de passer à la ligne */
+.task-check input {
+  width: 20px;
+  height: 20px;
+  margin: 0;
+  accent-color: var(--ink);
+  cursor: pointer;
 }
 
-.tache-titre {
-  margin: 0;
+.task-body {
+  flex: 1;
+  min-width: 0; /* permet aux longs titres de passer à la ligne */
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.task-title {
+  font-size: 16px;
   font-weight: 600;
   overflow-wrap: anywhere;
 }
 
-.tache-description {
-  margin: 2px 0 0;
-  color: var(--texte-doux);
-  font-size: 0.95rem;
+.task-desc {
+  margin-top: -6px;
+  font-size: 14px;
+  color: var(--muted);
   overflow-wrap: anywhere;
 }
 
-.tache-infos {
+.task-actions {
+  flex: none;
+  margin-top: -10px;
   display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 8px;
-  margin-top: 6px;
-  font-size: 0.85rem;
-}
-
-.tache-date {
-  color: var(--texte-doux);
-}
-
-.tache-actions {
-  display: flex;
-  gap: 4px;
-  flex-shrink: 0;
+  gap: 2px;
 }
 
 /* Tâche terminée : titre barré et grisé (story 5) */
-.tache-terminee .tache-titre,
-.tache-terminee .tache-description {
+.task.is-done {
+  background: #FBFBFC;
+}
+
+.task.is-done .task-title {
+  font-weight: 500;
+  color: var(--subtle);
   text-decoration: line-through;
-  color: var(--texte-doux);
-  opacity: 0.7;
+  text-decoration-thickness: 1.5px;
 }
 
-/* ---------- Badges (priorité, catégorie et échéance) ---------- */
-/* Chaque badge a une couleur ET un mot, pour rester lisible sans distinguer les couleurs */
-.badge {
-  display: inline-block;
-  padding: 1px 8px;
-  border-radius: 999px;
-  font-size: 0.8rem;
-  font-weight: 600;
+/* Tâche en cours de modification (story 4) */
+.task-edit {
+  padding: 20px 20px 22px;
+  background: var(--surface-soft);
+  border-bottom: 1px solid var(--surface-muted);
+  box-shadow: inset 0 0 0 2px var(--ink);
 }
 
-.priorite-high {
-  color: var(--haute);
-  background: var(--haute-fond);
+.task-edit:last-child {
+  border-bottom: none;
 }
 
-.priorite-medium {
-  color: var(--moyenne);
-  background: var(--moyenne-fond);
-}
-
-.priorite-low {
-  color: var(--basse);
-  background: var(--basse-fond);
-}
-
-/* Badges de catégorie : bordure en plus, pour ne pas les confondre avec la priorité */
-.categorie-school,
-.categorie-personal,
-.categorie-project {
-  border: 1px solid currentColor;
-}
-
-.categorie-school {
-  color: var(--cours);
-  background: var(--cours-fond);
-}
-
-.categorie-personal {
-  color: var(--perso);
-  background: var(--perso-fond);
-}
-
-.categorie-project {
-  color: var(--projet);
-  background: var(--projet-fond);
-}
-
-/* Badges d'échéance en couleur pleine, pour les distinguer des priorités */
-.echeance-late {
-  color: #ffffff;
-  background: var(--haute);
-}
-
-.echeance-today {
-  color: #ffffff;
-  background: var(--moyenne);
-}
-
-/* ---------- Formulaires ---------- */
-.formulaire {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 12px 16px;
-  align-items: start;
-}
-
-.champ {
+.task-edit form {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 14px;
 }
 
-/* Champ sur toute la largeur du formulaire */
-.champ-large {
-  grid-column: 1 / -1;
-}
-
-label {
-  font-weight: 600;
-  font-size: 0.9rem;
-}
-
-.facultatif {
-  font-weight: 400;
-  color: var(--texte-doux);
-}
-
-input[type="text"],
-input[type="password"],
-input[type="search"],
-input[type="date"],
-select {
-  width: 100%;
-  padding: 8px 10px;
-  border: 1px solid var(--bordure);
-  border-radius: 8px;
-  background: #ffffff;
-  color: var(--texte);
-  font: inherit;
-}
-
-/* Champ refusé par la validation */
-input[aria-invalid="true"] {
-  border-color: var(--haute);
-}
-
-.message-erreur {
-  margin: 0;
-  color: var(--haute);
-  font-size: 0.9rem;
-  font-weight: 600;
-}
-
-/* Ligne en cours de modification (story 4) */
-.tache-en-modification {
-  display: block;
-  padding: 16px;
-  margin: 8px 0;
-  border: 1px solid var(--principal);
-  border-radius: var(--rayon);
-  background: #f7f9ff;
-}
-
-.formulaire-modification {
-  width: 100%;
-}
-
-.boutons-modification {
-  grid-column: 1 / -1;
+.task-edit-head {
   display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.eyebrow {
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--ink-2);
+}
+
+.task-edit-hint {
+  font-size: 12px;
+  color: var(--subtle);
+}
+
+.task-edit-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
   gap: 8px;
 }
 
-/* Sur petit écran, un seul champ par ligne */
-@media (max-width: 520px) {
-  .formulaire {
-    grid-template-columns: 1fr;
-  }
-}
-
-/* ---------- Boutons ---------- */
-.bouton {
-  padding: 9px 18px;
-  border: 1px solid var(--bordure);
-  border-radius: 8px;
-  background: #ffffff;
-  color: var(--texte);
-  font: inherit;
-  font-weight: 600;
-  cursor: pointer;
-}
-
-.bouton:hover {
-  background: var(--fond);
-}
-
-.bouton-petit {
-  padding: 5px 12px;
-  font-size: 0.85rem;
-}
-
-.bouton-principal {
-  border-color: var(--principal);
-  background: var(--principal);
-  color: #ffffff;
-}
-
-.bouton-principal:hover {
-  background: var(--principal-fonce);
-}
-
-.formulaire .bouton-principal {
-  grid-column: 1 / -1;
-  justify-self: start;
-}
-
-.bouton-icone {
-  display: inline-flex;
+/* ---------- Messages de liste vide ---------- */
+/* Aucune tâche (story 2) : illustration et texte */
+.empty {
+  padding: 48px 24px;
+  display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
+  gap: 14px;
+  text-align: center;
+  color: var(--ink-2);
+}
+
+/* Filtre ou recherche sans résultat (stories 8 et 11) : cadre en pointillés, sans illustration */
+.empty-box {
+  margin: 16px;
+  padding: 32px 16px;
+  border: 1px dashed var(--border-strong);
+  border-radius: var(--radius-md);
+  text-align: center;
+  color: var(--ink-2);
+  overflow-wrap: anywhere;
+}
+
+.empty-box .empty-illustration {
+  display: none;
+}
+
+.empty-illustration {
+  position: relative;
+  width: 72px;
+  height: 64px;
+}
+
+.empty-illustration .back {
+  position: absolute;
+  left: 8px;
+  top: 0;
+  width: 56px;
+  height: 40px;
+  border: 2px dashed var(--border-strong);
+  border-radius: 10px;
+}
+
+.empty-illustration .front {
+  position: absolute;
+  left: 0;
+  top: 18px;
+  width: 72px;
+  height: 44px;
+  padding: 0 12px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border: 2px solid var(--ink);
+  border-radius: 12px;
+  background: var(--surface);
+}
+
+.empty-illustration .box {
+  width: 14px;
+  height: 14px;
+  border: 2px solid var(--ink);
+  border-radius: 4px;
+}
+
+.empty-illustration .line {
+  flex: 1;
+  height: 6px;
+  border-radius: 3px;
+  background: var(--border-strong);
+}
+
+/* ---------- Écrans de connexion et du premier lancement ---------- */
+.auth {
+  min-height: 100vh;
+  display: flex;
+  flex-wrap: wrap;
+}
+
+/* Panneau foncé de gauche, avec une trame de points */
+.auth-side {
+  position: relative;
+  flex: 1 1 480px;
+  min-height: 420px;
+  padding: 48px 56px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 48px;
+  overflow: hidden;
+  background: var(--ink);
+  color: #FFFFFF;
+}
+
+.auth-side::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(rgba(255, 255, 255, 0.09) 1px, transparent 1px);
+  background-size: 22px 22px;
+}
+
+.auth-side > * {
+  position: relative; /* passe au-dessus de la trame */
+}
+
+.auth-pitch {
+  max-width: 460px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.auth-pitch-title {
+  font-family: var(--font-title);
+  font-size: 40px;
+  font-weight: 600;
+  line-height: 1.1;
+  letter-spacing: -0.03em;
+  text-wrap: balance;
+}
+
+.auth-pitch-text {
+  color: #C4C8D0;
+}
+
+.pill-outline {
+  align-self: flex-start;
+  height: 30px;
+  padding: 0 12px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  border-radius: 99px;
+  font-size: 13px;
+  font-weight: 500;
+  color: #E3E6EB;
+}
+
+/* Illustration : trois tâches abstraites */
+.mock-tasks {
+  max-width: 420px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.mock-task {
+  padding: 16px 18px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.mock-task:nth-child(1) {
+  transform: translateX(28px);
+}
+
+.mock-task:nth-child(2) {
+  border-color: rgba(255, 255, 255, 0.18);
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.mock-task:nth-child(3) {
+  transform: translateX(56px);
+}
+
+.mock-box {
+  width: 18px;
+  height: 18px;
+  flex: none;
+  border: 2px solid rgba(255, 255, 255, 0.55);
+  border-radius: 5px;
+}
+
+.mock-box.is-checked {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-color: #FFFFFF;
+  background: #FFFFFF;
+}
+
+.mock-line {
+  flex: 1;
+  height: 8px;
+  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.35);
+}
+
+.mock-line.is-bright {
+  background: rgba(255, 255, 255, 0.7);
+}
+
+.mock-line-1 {
+  max-width: 180px;
+}
+
+.mock-line-2 {
+  max-width: 220px;
+}
+
+.mock-line-3 {
+  max-width: 150px;
+}
+
+.mock-chip {
+  width: 50px;
+  height: 18px;
+  flex: none;
+  border-radius: 99px;
+}
+
+.mock-chip-low {
+  background: rgba(22, 163, 74, 0.55);
+}
+
+.mock-chip-medium {
+  background: #FDB022;
+}
+
+.mock-chip-high {
+  background: rgba(217, 45, 32, 0.7);
+}
+
+/* Partie droite : le formulaire */
+.auth-main {
+  flex: 1 1 480px;
+  padding: 48px 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.auth-form {
+  width: 100%;
+  max-width: 420px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.auth-head {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.auth-head h1 {
+  font-size: 34px;
+  font-weight: 700;
+  line-height: 1.15;
+  letter-spacing: -0.03em;
+  text-wrap: balance;
+}
+
+.auth-head p {
+  color: var(--muted);
+}
+
+/* ---------- Jauge de robustesse (story 14) ---------- */
+/* data-niveau vaut "", "weak", "medium" ou "strong" : 0, 1, 2 ou 3 barres colorées */
+.gauge {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.gauge-bars {
+  flex: 1;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 6px;
+}
+
+.gauge-bars span {
+  height: 6px;
+  border-radius: 3px;
+  background: var(--border);
+  transition: background-color 0.2s;
+}
+
+.gauge-label {
+  min-width: 56px;
+  text-align: right;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.gauge[data-niveau="weak"] .gauge-bars span:nth-child(1) {
+  background: var(--gauge-weak);
+}
+
+.gauge[data-niveau="medium"] .gauge-bars span:nth-child(-n + 2) {
+  background: var(--gauge-medium);
+}
+
+.gauge[data-niveau="strong"] .gauge-bars span {
+  background: var(--gauge-strong);
+}
+
+.gauge[data-niveau="weak"] .gauge-label {
+  color: var(--high-fg);
+}
+
+.gauge[data-niveau="medium"] .gauge-label {
+  color: var(--medium-fg);
+}
+
+.gauge[data-niveau="strong"] .gauge-label {
+  color: var(--low-fg);
+}
+
+/* Règles du mot de passe (story 13) : cercle gris, puis coche verte quand la règle est respectée */
+.rules {
+  margin: 4px 0 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(180px, 100%), 1fr));
+  gap: 6px 16px;
+  font-size: 13px;
+}
+
+.rules li {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--muted);
+}
+
+.rules li::before {
+  content: "";
+  flex: none;
+  width: 16px;
+  height: 16px;
+  background: url("../assets/icones/regle-non.svg") no-repeat center / contain;
+}
+
+.rules li.is-ok {
+  color: var(--low-fg);
+}
+
+.rules li.is-ok::before {
+  background-image: url("../assets/icones/regle-ok.svg");
+}
+
+/* ---------- Fenêtre de confirmation de suppression (story 6) ---------- */
+.dialog {
+  width: calc(100% - 32px);
+  max-width: 360px;
+  padding: 22px;
+  border: none;
+  border-radius: var(--radius-lg);
+  background: var(--surface);
+  color: var(--ink);
+  box-shadow: var(--shadow-lg);
+}
+
+/* Fond grisé derrière la fenêtre ouverte avec showModal() */
+.dialog::backdrop {
+  background: rgba(20, 23, 31, 0.35);
+}
+
+.dialog form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.dialog-body {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.dialog-icon {
   width: 36px;
   height: 36px;
-  padding: 0;
-  border: 1px solid transparent;
-  border-radius: 8px;
-  background: transparent;
-  cursor: pointer;
+  flex: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius);
+  background: var(--error-bg);
 }
 
-.bouton-icone:hover {
-  background: var(--fond);
-  border-color: var(--bordure);
+.dialog-title {
+  font-weight: 600;
+  overflow-wrap: anywhere;
 }
 
-/* Contour visible au clavier (touche Tab) */
-button:focus-visible,
-input:focus-visible,
-select:focus-visible {
-  outline: 3px solid var(--principal);
-  outline-offset: 2px;
+.dialog-text {
+  font-size: 14px;
+  color: var(--muted);
+}
+
+.dialog-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+/* ---------- Téléphone ---------- */
+@media (max-width: 640px) {
+  .topbar-inner,
+  .container {
+    padding-left: 16px;
+    padding-right: 16px;
+  }
+
+  .container {
+    padding-top: 28px;
+  }
+
+  .page-title {
+    font-size: 34px;
+  }
+
+  .counter-number {
+    font-size: 44px;
+  }
+
+  .add-form {
+    max-width: none;
+    padding: 20px;
+  }
+
+  .segmented {
+    width: 100%;
+  }
+
+  .segmented button {
+    flex: 1;
+  }
+
+  .sort {
+    width: 100%;
+  }
+
+  .sort .select {
+    width: 100%;
+  }
+
+  .auth-side {
+    min-height: 0;
+    padding: 32px 24px;
+    gap: 32px;
+  }
+
+  .auth-pitch-title {
+    font-size: 30px;
+  }
+
+  .mock-tasks {
+    display: none;
+  }
 }

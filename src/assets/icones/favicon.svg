@@ -1,5 +1,5 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32">
-  <!-- Favicon TaskFlow : une coche dans un carré arrondi -->
-  <rect width="32" height="32" rx="8" fill="#3b5bdb"/>
-  <path d="M9 16.5l4.5 4.5L23 11.5" fill="none" stroke="#ffffff" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"/>
+  <!-- Logo et favicon TaskFlow : une coche blanche dans un carré arrondi foncé -->
+  <rect width="32" height="32" rx="9" fill="#14171F"/>
+  <path d="M10 16.5l4 4L22.5 12" fill="none" stroke="#FFFFFF" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
 </svg>

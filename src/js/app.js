@@ -129,10 +129,13 @@
       mettreAJour(Taches.basculerStatut(etat.taches, id));
       Interface.remettreFocus(id, "terminer");
     } else if (action === "supprimer") {
-      // Story 6 : corbeille, avec confirmation qui rappelle le titre
+      // Story 6 : corbeille, avec une fenêtre de confirmation qui rappelle le titre.
+      // La fonction donnée n'est appelée que si l'utilisateur clique sur « Supprimer ».
       const tache = Taches.trouver(etat.taches, id);
-      if (tache !== undefined && Interface.confirmerSuppression(tache.title)) {
-        mettreAJour(Taches.supprimer(etat.taches, id));
+      if (tache !== undefined) {
+        Interface.confirmerSuppression(tache.title, function () {
+          mettreAJour(Taches.supprimer(etat.taches, id));
+        });
       }
     } else if (action === "modifier") {
       commencerModification(id);
@@ -235,10 +238,11 @@
     Interface.afficherEcran("connexion");
   }
 
-  // Story 14 : la jauge suit chaque caractère tapé ou effacé.
-  // Le mot de passe n'est pas gardé : seul le niveau calculé est affiché.
+  // Stories 13 et 14 : la jauge et la liste des règles suivent chaque caractère tapé ou effacé.
+  // Le mot de passe n'est pas gardé : seuls le niveau et l'état des règles sont affichés.
   function changerJauge(motDePasse) {
     Interface.afficherJauge(Auth.niveauRobustesse(motDePasse));
+    Interface.afficherRegles(Auth.reglesRespectees(motDePasse));
   }
 
   // Story 12 : bouton « Se connecter » ou touche Entrée.
@@ -261,11 +265,34 @@
     // continue après un rechargement de la page.
     Stockage.sauverUtilisateurs(connexion.utilisateurs);
     Interface.viderMotDePasseConnexion(); // le mot de passe ne reste pas dans le champ
+    if (connexion.bloque) {
+      // Story 16 : bouton désactivé jusqu'à la fin du blocage, puis levé tout seul
+      Interface.afficherBlocageConnexion(connexion.message);
+      programmerFinBlocage(connexion.resteMs);
+      return;
+    }
     if (!connexion.reussi) {
       Interface.afficherErreurConnexion(connexion.message);
       return;
     }
+    // Connexion réussie : plus de blocage affiché ni de minuterie en attente
+    clearTimeout(minuterieBlocage);
+    minuterieBlocage = null;
+    Interface.leverBlocageConnexion();
     ouvrirSession(connexion.identifiant);
+  }
+
+  // Minuterie de fin du blocage (story 16), ou null. Une seule à la fois.
+  let minuterieBlocage = null;
+
+  // Réactive le bouton « Se connecter » quand le blocage est terminé.
+  // setTimeout appelle la fonction une seule fois, après dureeMs millisecondes.
+  function programmerFinBlocage(dureeMs) {
+    clearTimeout(minuterieBlocage); // annule l'ancienne minuterie s'il y en avait une
+    minuterieBlocage = setTimeout(function () {
+      minuterieBlocage = null;
+      Interface.leverBlocageConnexion();
+    }, dureeMs);
   }
 
   // Après une connexion réussie, ou au rechargement si la session existe déjà :
@@ -275,6 +302,7 @@
     Stockage.ecrireSession(identifiant); // l'identifiant seulement
     etat.taches = Taches.nettoyerListe(Stockage.chargerTaches());
     Interface.afficherUtilisateur(identifiant);
+    Interface.afficherDateDuJour(Utils.dateDuJourLongue());
     Interface.afficherEcran("taches");
     rafraichir();
   }
