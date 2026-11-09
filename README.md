@@ -40,7 +40,7 @@ Chaque fonctionnalité est développée sur sa propre branche `feature/...`, cr�
 - [x] `feature/auth-stockage` : objet `Auth` (règles du mot de passe, hachage SHA-256, comptes) et `Stockage` des comptes (`taskflow_users`) et de la session (`taskflow_session`)
 - [x] `feature/connexion` : écran du premier lancement (choix du mot de passe), écran de connexion, session, bouton « Se déconnecter » (stories 12, 13 et 15)
 - [x] `feature/jauge-robustesse` : jauge Faible / Moyen / Fort pendant la saisie du mot de passe (story 14)
-- [ ] `feature/blocage-connexion` : blocage de 20 secondes après 3 échecs (story 16, bonus)
+- [x] `feature/blocage-connexion` : blocage de 20 secondes après 3 échecs (story 16, bonus)
 - [ ] `feature/bilan-sprint3` : note de vérification, entrée de PROMPTS.md
 
 ## Modèle de données d'une tâche
@@ -255,12 +255,12 @@ En tant qu'utilisateur, je veux que mon mot de passe soit enregistré sous forme
 
 **16. Bloquer après 3 échecs** *(bonus)*
 En tant qu'utilisateur, je veux que la connexion soit bloquée après 3 mots de passe incorrects afin d'empêcher quelqu'un d'essayer des mots de passe au hasard.
-- [ ] Le compteur d'échecs est propre à chaque compte, et les échecs sont comptés de suite : une connexion réussie le remet à 0.
-- [ ] Un champ vide ne compte pas comme un échec. Un identifiant inconnu non plus, puisqu'il n'y a pas de compte à bloquer.
-- [ ] Au 3e échec, le compte est bloqué et un message s'affiche : « Compte bloqué. Réessayez dans 20 secondes. ».
-- [ ] Le blocage dure 20 secondes, puis se lève tout seul et le compteur repart de 0.
-- [ ] Pendant le blocage, la connexion est refusée même avec le bon mot de passe.
-- [ ] Le blocage continue après un rechargement de la page, car l'heure de fin est enregistrée.
+- [x] Le compteur d'échecs est propre à chaque compte, et les échecs sont comptés de suite : une connexion réussie le remet à 0.
+- [x] Un champ vide ne compte pas comme un échec. Un identifiant inconnu non plus, puisqu'il n'y a pas de compte à bloquer.
+- [x] Au 3e échec, le compte est bloqué et un message s'affiche : « Compte bloqué. Réessayez dans 20 secondes. ».
+- [x] Le blocage dure 20 secondes, puis se lève tout seul et le compteur repart de 0.
+- [x] Pendant le blocage, la connexion est refusée même avec le bon mot de passe.
+- [x] Le blocage continue après un rechargement de la page, car l'heure de fin est enregistrée.
 
 **Modèle utilisateur**
 
