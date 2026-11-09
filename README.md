@@ -41,7 +41,9 @@ Chaque fonctionnalité est développée sur sa propre branche `feature/...`, cr�
 - [x] `feature/connexion` : écran du premier lancement (choix du mot de passe), écran de connexion, session, bouton « Se déconnecter » (stories 12, 13 et 15)
 - [x] `feature/jauge-robustesse` : jauge Faible / Moyen / Fort pendant la saisie du mot de passe (story 14)
 - [x] `feature/blocage-connexion` : blocage de 20 secondes après 3 échecs (story 16, bonus)
-- [ ] `feature/bilan-sprint3` : note de vérification, entrée de PROMPTS.md
+- [x] `feature/bilan-sprint3` : note de vérification, entrée de PROMPTS.md
+
+**Vérification du sprint 3** : les fonctions de `Auth` (règles du mot de passe, exemples de la story 13, jauge, empreinte SHA-256 connue, comptes, connexion et blocage avec une heure choisie) ont été testées avec Node (51 vérifications). Puis l'application complète dans Chrome, ouverte en `file://` comme par un double-clic, avec un script qui pilote la page : premier lancement et chaque refus, empreinte dans `taskflow_users` et aucun mot de passe en clair, connexion (champs vides, identifiant inconnu, mauvais mot de passe, touche Entrée), session gardée après un rechargement, session falsifiée, déconnexion, jauge caractère par caractère, blocage au 3e échec, rechargement pendant le blocage, vraie attente de 20 secondes, navigateur sans `crypto.subtle`, comptes abîmés dans `localStorage`, et non-régression des sprints 1 et 2 une fois connecté (ajout, tri, filtre, recherche, modification, suppression, largeur de téléphone). Les 90 vérifications passent. Reste à faire à la main par le binôme : le hachage sur Firefox et Safari en double-clic, et sur le site GitHub Pages (dernier critère de la story 15).
 
 ## Modèle de données d'une tâche
 
