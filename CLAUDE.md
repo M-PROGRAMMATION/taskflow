@@ -106,6 +106,8 @@ Règles de structure (architecture validée par le binôme, voir PROMPTS.md, pro
   5. Modification directement dans la liste : la ligne devient un petit formulaire (Enregistrer / Annuler).
   6. Couleurs des catégories : Cours bleu, Perso violet, Projet turquoise.
 
+- Décisions du sprint 2, suite (PROMPTS.md, prompt 18) : changer de filtre, de tri ou de recherche pendant une modification enregistre d'abord la modification (si le titre est refusé, le changement n'est pas fait) ; une catégorie inconnue dans `localStorage` devient « aucune catégorie », la tâche reste affichée ; quand une recherche et un filtre ne donnent rien, le message de la recherche est affiché ; le badge de catégorie a une bordure en plus de sa couleur.
+
 - Décisions du sprint 1 (PROMPTS.md, prompt 16) : une autre action faite pendant une modification (cocher, supprimer, ajouter, ouvrir une autre tâche) enregistre d'abord la modification ; si le titre est refusé, l'autre action n'est pas faite ; seuls « Annuler » et Échap n'enregistrent pas. Compteur : « 0 tâche(s) à faire », « 1 tâche à faire », « 3 tâches à faire ». Les tâches illisibles dans `localStorage` sont ignorées une par une.
 
 ## Modèle de données d'une tâche

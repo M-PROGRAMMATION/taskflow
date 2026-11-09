@@ -181,6 +181,8 @@ En tant qu'utilisateur, je veux classer mes tâches dans une catégorie (cours, 
 - [x] Une tâche sans catégorie n'affiche aucun badge de catégorie.
 - [x] Toute autre valeur que `"school"`, `"personal"`, `"project"` ou `""` est refusée à l'enregistrement.
 - [x] Une tâche enregistrée avant le sprint 2, donc sans champ `category`, s'affiche quand même, sans badge de catégorie et sans planter.
+- [x] Une catégorie inconnue trouvée dans `localStorage` (modifiée à la main) est remplacée par « aucune catégorie » : la tâche reste affichée, sans badge.
+- [x] Le badge de catégorie a une bordure en plus de sa couleur, pour ne pas le confondre avec le badge de priorité.
 
 **11. Rechercher une tâche** *(bonus)*
 En tant qu'utilisateur, je veux rechercher une tâche par un mot-clé de son titre afin de la retrouver rapidement quand la liste est longue.
@@ -190,7 +192,7 @@ En tant qu'utilisateur, je veux rechercher une tâche par un mot-clé de son tit
 - [x] Les majuscules et les minuscules sont ignorées.
 - [x] Les accents comptent : « revision » ne trouve pas « Révision ».
 - [x] Les espaces au début et à la fin du mot-clé sont ignorés. Un champ vide affiche à nouveau toutes les tâches.
-- [x] Si rien ne correspond, un message l'indique : « Aucune tâche ne correspond à « xyz ». ».
+- [x] Si rien ne correspond, un message l'indique : « Aucune tâche ne correspond à « xyz ». ». Si un filtre est aussi actif, c'est ce message qui est affiché, pas celui du filtre.
 - [x] Un mot-clé contenant du HTML (ex. `<b>test</b>`) s'affiche tel quel dans ce message, sans être interprété.
 - [x] Le compteur de la story 2 ne change pas pendant une recherche.
 
@@ -198,6 +200,7 @@ En tant qu'utilisateur, je veux rechercher une tâche par un mot-clé de son tit
 - [x] Le filtre, la recherche et le tri se combinent : avec « À faire », « css » et le tri « Priorité », on voit uniquement les tâches à faire dont le titre contient « css », triées par priorité.
 - [x] Le filtre, le tri et la recherche ne sont pas sauvegardés : au rechargement de la page, on repart de « Toutes », « Plus récentes » et d'un champ vide.
 - [x] Après l'ajout d'une tâche, le filtre revient sur « Toutes » et la recherche est vidée, pour que la nouvelle tâche soit visible. Le tri ne change pas.
+- [x] Changer de filtre, de tri ou de recherche pendant une modification enregistre d'abord la modification (comme la story 4). Si le titre est refusé, l'erreur s'affiche et le filtre, le tri ou la recherche ne change pas.
 
 ### Sprint 3 · Cybersécurité
 

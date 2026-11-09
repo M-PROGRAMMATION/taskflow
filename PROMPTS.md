@@ -321,3 +321,16 @@ Les cases de la section « Avancement » et les critères d'acceptation des stor
 - La liste « Trier par » a `autocomplete="off"`, pour que le navigateur ne remette pas l'ancien tri après un rechargement.
 **Pourquoi :** une branche par fonctionnalité, comme au sprint 1 (organisation Git du CLAUDE.md). Filtre, tri et recherche sont des fonctions pures de `Taches` qui renvoient une nouvelle liste : `app.js` les enchaîne dans `rafraichir`, et `etat.taches`, comme l'ordre enregistré, ne change jamais.
 **Points de vigilance :** tester le rechargement (F5) sur Firefox et Safari ; essayer l'affichage sur un vrai téléphone (la capture headless de Chrome ne descend pas sous 500 px de large).
+
+## Prompt 18 · Retours du binôme sur le sprint 2 (Claude Code)
+**Prompt :** 1. oui 2. oui 3. oui 4. oui carré bg
+**Contexte :** réponse du binôme aux 4 choix proposés par l'IA à la fin du prompt 17.
+**Résultat :** une branche `feature/retours-binome-sprint2`, créée depuis `sprint2` puis fusionnée dedans. Pas de changement de code : les 4 choix étaient déjà en place et testés.
+- README : 4 critères d'acceptation ajoutés (stories 10 et 11, règles communes), déjà cochés.
+- CLAUDE.md : les 4 décisions ajoutées à la liste des décisions du sprint 2, pour que l'IA les suive au sprint 3.
+**Gardé :** les 4 choix tels quels :
+1. Changer de filtre, de tri ou de recherche pendant une modification enregistre d'abord la modification ; si le titre est refusé, le changement n'est pas fait.
+2. Une catégorie inconnue dans `localStorage` devient « aucune catégorie », la tâche reste affichée.
+3. Recherche et filtre actifs sans résultat : c'est le message de la recherche qui est affiché.
+4. Le badge de catégorie a une bordure en plus de sa couleur.
+**Pourquoi :** le choix 1 suit la règle du prompt 16 (ne jamais perdre une saisie sans le vouloir). Les choix 2 à 4 gardent l'application stable et lisible. Une fois validés par le binôme, ils deviennent des critères d'acceptation, que l'audit de la séance 3 pourra vérifier.
