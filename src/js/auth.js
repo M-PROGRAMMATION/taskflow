@@ -1,7 +1,7 @@
 /*
  * auth.js — objet Auth (Cybersécurité, sprint 3)
  * Règles du mot de passe (8 caractères, majuscule, chiffre, caractère spécial),
- * hachage SHA-256, création du compte de test.
+ * hachage SHA-256, création du compte de test, vérification de la connexion.
  * Dépend de : Utils.
  * Pas d'accès au DOM ni à localStorage : les fonctions reçoivent la liste des comptes
  * et renvoient une nouvelle liste, c'est app.js qui la sauvegarde.
@@ -88,6 +88,17 @@ const Auth = {
     return typeof crypto !== "undefined" && crypto.subtle !== undefined;
   },
 
+  // Même vérification, sous forme de résultat de validation, pour qu'Interface affiche le message.
+  verifierHachage: function () {
+    if (!Auth.hachageDisponible()) {
+      return {
+        valide: false,
+        message: "Ce navigateur ne sait pas hacher le mot de passe (crypto.subtle) : impossible de continuer.",
+      };
+    }
+    return { valide: true };
+  },
+
   // Hache un mot de passe en SHA-256 et renvoie une promesse de l'empreinte
   // en 64 caractères hexadécimaux (ex. "9f86d0...").
   // crypto.subtle.digest est asynchrone : on utilise async / await.
@@ -143,5 +154,28 @@ const Auth = {
       lockedUntil: 0,
     };
     return utilisateurs.concat([compte]);
+  },
+
+  // ---------- Connexion (story 12) ----------
+
+  // Vérifie que les deux champs de l'écran de connexion sont remplis.
+  // L'identifiant est nettoyé (espaces retirés), pas le mot de passe.
+  validerConnexion: function (identifiant, motDePasse) {
+    if (Utils.nettoyerTexte(identifiant) === "" || motDePasse === "") {
+      return { valide: false, message: "Saisissez votre identifiant et votre mot de passe." };
+    }
+    return { valide: true };
+  },
+
+  // Vérifie une connexion. empreinte : le mot de passe saisi, déjà haché par Auth.hacher.
+  // Renvoie { reussi: true, identifiant: "test" } ou { reussi: false, message: "..." }.
+  // Identifiant inconnu ou mot de passe faux : le même message,
+  // pour ne pas révéler quels comptes existent.
+  connecter: function (utilisateurs, identifiant, empreinte) {
+    const compte = Auth.trouver(utilisateurs, Utils.nettoyerTexte(identifiant));
+    if (compte === undefined || compte.passwordHash !== empreinte) {
+      return { reussi: false, message: "Identifiant ou mot de passe incorrect." };
+    }
+    return { reussi: true, identifiant: compte.username };
   },
 };

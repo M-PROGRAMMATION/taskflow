@@ -86,6 +86,56 @@ h2 {
   font-weight: 600;
 }
 
+/* Utilisateur connecté et bouton « Se déconnecter » (story 12) */
+.session {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.9rem;
+  color: var(--texte-doux);
+}
+
+.utilisateur-connecte {
+  font-weight: 600;
+}
+
+/* ---------- Écrans du premier lancement et de connexion (sprint 3) ---------- */
+.conteneur-etroit {
+  max-width: 420px;
+  padding-top: 48px;
+}
+
+.logo-centre {
+  justify-content: center;
+  margin-bottom: 20px;
+}
+
+/* Un seul champ par ligne (deux classes : passe avant la règle .formulaire, écrite plus bas) */
+.formulaire.formulaire-colonne {
+  grid-template-columns: 1fr;
+}
+
+.texte-doux {
+  margin: 0 0 16px;
+  color: var(--texte-doux);
+}
+
+.aide {
+  margin: 0;
+  color: var(--texte-doux);
+  font-size: 0.85rem;
+}
+
+/* Rappel : compte de test uniquement */
+.avertissement {
+  margin: 16px 0 0;
+  padding: 8px 12px;
+  border-left: 4px solid var(--moyenne);
+  border-radius: 4px;
+  background: var(--moyenne-fond);
+  font-size: 0.9rem;
+}
+
 /* ---------- Cartes (blocs blancs) ---------- */
 .carte {
   background: var(--carte);
@@ -311,6 +361,7 @@ label {
 }
 
 input[type="text"],
+input[type="password"],
 input[type="search"],
 input[type="date"],
 select {
@@ -376,6 +427,11 @@ input[aria-invalid="true"] {
 
 .bouton:hover {
   background: var(--fond);
+}
+
+.bouton-petit {
+  padding: 5px 12px;
+  font-size: 0.85rem;
 }
 
 .bouton-principal {
